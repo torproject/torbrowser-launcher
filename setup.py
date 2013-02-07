@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='torbrowser-launcher',
-      version='2.3.25-2-0.1',
+      version='2.3.25-2-1',
       author='Micah Lee',
       author_email='micahflee@riseup.net',
       url='https://www.github.com/micahflee/torbrowser-launcher',
