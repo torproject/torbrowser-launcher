@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+import os
+import locale
+import subprocess
+
 import pygtk
 pygtk.require('2.0')
 import gtk
@@ -48,6 +52,10 @@ class Base:
     gtk.main()
 
 if __name__ == "__main__":
+  # figure out the language and architecture
+  language = locale.getdefaultlocale()[0].split('_')[0]
+  architecture = subprocess.check_output(['arch']).strip('\n')
+
   # todo: is TBB already installed?
   # if yes, launch it
   # if no, show first run dialog
