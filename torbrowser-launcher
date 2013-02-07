@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+
+import pygtk
+pygtk.require('2.0')
+import gtk
+
+class Base:
+  def delete_event(self, widget, event, data=None):
+    return False
+  
+  def destroy(self, widget, data=None):
+    gtk.main_quit()
+
+  def __init__(self):
+    self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    self.window.set_title("Tor Browser Launcher - First Run")
+    self.window.set_border_width(10)
+    
+    self.window.connect("delete_event", self.delete_event)
+    self.window.connect("destroy", self.destroy)
+
+    self.box = gtk.VBox(False, 20)
+    self.window.add(self.box)
+
+    self.label = gtk.Label("The first time you run the Tor Browser Launcher you need to download the Tor Browser Bundle from https://www.torproject.org/. Would you like to do that now?")
+    self.label.set_line_wrap(True)
+    self.box.pack_start(self.label, True, True, 0)
+    self.label.show()
+
+    self.button_box = gtk.HButtonBox()
+    self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
+    self.box.pack_start(self.button_box, True, True, 0)
+    self.button_box.show()
+
+    self.download = gtk.Button("Download")
+    self.button_box.add(self.download)
+    self.download.show()
+
+    self.exit = gtk.Button("Exit")
+    self.exit.connect("clicked", self.destroy, None)
+    self.button_box.add(self.exit)
+    self.exit.show()
+
+    self.box.show()
+    self.window.show();
+  
+  def main(self):
+    gtk.main()
+
+if __name__ == "__main__":
+  # todo: is TBB already installed?
+  # if yes, launch it
+  # if no, show first run dialog
+
+  # first run dialog
+  base = Base()
+  base.main()
