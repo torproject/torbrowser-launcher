@@ -19,5 +19,5 @@ Tor Browser Launcher will get updated each time a new version of TBB is released
 
       scripts=['torbrowser-launcher'],
       data_files=[('/usr/share/applications', ['misc/torbrowser.desktop']),
-                  ('/usr/share/pixmaps', ['misc/*.xpm'])]
+                  ('/usr/share/pixmaps', ['misc/torbrowser32.xpm', 'misc/torbrowser80.xpm'])]
       )
