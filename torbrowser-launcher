@@ -10,8 +10,10 @@ def download_chunk(base):
   # download 8192 bytes a time
   chunk = base.dl_response.read(8192)
   base.dl_bytes_so_far += len(chunk)
+  base.tarball_file.write(chunk)
 
   if not chunk:
+    base.tarball_file.close()
     return False
 
   percent = float(base.dl_bytes_so_far) / base.dl_total_size
@@ -57,6 +59,9 @@ class Base:
 
     # set a timer to download more chunks
     self.timer = gobject.timeout_add(10, download_chunk, self)
+
+    # open a file to write to
+    self.tarball_file = open(self.tarball_path, 'w')
       
   def __init__(self, tbb_version, tarball_path, tarball_url):
     self.timer = False
