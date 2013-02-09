@@ -1,22 +1,67 @@
 #!/usr/bin/env python
 
-import os
-import locale
-import subprocess
+import os, sys, subprocess, locale, urllib2, gobject
 
 import pygtk
 pygtk.require('2.0')
 import gtk
+
+def download_chunk(base):
+  # download 8192 bytes a time
+  chunk = base.dl_response.read(8192)
+  base.dl_bytes_so_far += len(chunk)
+
+  if not chunk:
+    return False
+
+  percent = float(base.dl_bytes_so_far) / base.dl_total_size
+  base.progressbar.set_fraction(percent)
+  percent = round(percent*100, 2)
+  base.progressbar.set_text("Downloaded %d" % (percent) + '%')
+  
+  sys.stdout.write("Downloaded %d of %d bytes (%0.2f%%)\r" % (base.dl_bytes_so_far, base.dl_total_size, percent))
+
+  if base.dl_bytes_so_far >= base.dl_total_size:
+    sys.stdout.write('\n')
+
+  return True
 
 class Base:
   def delete_event(self, widget, event, data=None):
     return False
   
   def destroy(self, widget, data=None):
-    gtk.main_quit()
+    if self.timer:
+      gobject.source_remove(self.timer)
+    self.timer = False
 
-  def __init__(self, tbb_version, tarball_url):
-    self.version = tbb_version
+    gtk.main_quit()
+   
+  def start_download(self, widget, data=None):
+    print 'Starting to download '+self.tarball_url
+
+    # disable the download button
+
+    # initialize the progress bar
+    self.progressbar.set_fraction(0) 
+    self.progressbar.set_text('Downloaded 0%')
+    self.progressbar.show()
+
+    # start the download
+    self.dl_response = urllib2.urlopen(self.tarball_url);
+    
+    self.dl_total_size = self.dl_response.info().getheader('Content-Length').strip()
+    self.dl_total_size = int(self.dl_total_size)
+    self.dl_bytes_so_far = 0
+
+    # set a timer to download more chunks
+    self.timer = gobject.timeout_add(10, download_chunk, self)
+      
+  def __init__(self, tbb_version, tarball_path, tarball_url):
+    self.timer = False
+
+    self.tbb_version = tbb_version
+    self.tarball_path = tarball_path
     self.tarball_url = tarball_url
 
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -34,12 +79,17 @@ class Base:
     self.box.pack_start(self.label, True, True, 0)
     self.label.show()
 
+    self.progressbar = gtk.ProgressBar(adjustment=None)
+    self.progressbar.set_orientation(gtk.PROGRESS_LEFT_TO_RIGHT)
+    self.box.pack_start(self.progressbar, True, True, 0)
+
     self.button_box = gtk.HButtonBox()
     self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
     self.box.pack_start(self.button_box, True, True, 0)
     self.button_box.show()
 
     self.download = gtk.Button("Download")
+    self.download.connect("clicked", self.start_download, None)
     self.button_box.add(self.download)
     self.download.show()
 
@@ -92,8 +142,15 @@ if __name__ == "__main__":
     subprocess.call([tbb_start])
 
   else:
-    print 'Starting downloader'
-    tarball_url = 'https://www.torproject.org/dist/torbrowser/linux/tor-browser-gnu-linux-'+architecture+'-'+tbb_version+'-dev-'+language+'.tar.gz'
-    base = Base(tbb_version, tarball_url)
-    base.main()
+    tarball_filename = 'tor-browser-gnu-linux-'+architecture+'-'+tbb_version+'-dev-'+language+'.tar.gz'
+    tarball_path = download_dir+'/'+tarball_filename
+    if os.path.exists(tarball_path):
+      # already downloaded
+      print 'Already downloaded'
+    else:
+      # launch downloader
+      tarball_url = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename
+      #tarball_url = 'http://127.0.0.1/'+tarball_filename
+      base = Base(tbb_version, tarball_path, tarball_url)
+      base.main()
 
