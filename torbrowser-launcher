@@ -41,6 +41,7 @@ class Base:
     print 'Starting to download '+self.tarball_url
 
     # disable the download button
+    self.download.set_sensitive(False)
 
     # initialize the progress bar
     self.progressbar.set_fraction(0) 
