@@ -8,5 +8,6 @@ install-sh
 missing
 Makefile.in
 Makefile
+torbrowser-launcher.desktop
 *.tar.xz
 *.swp
