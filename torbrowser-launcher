@@ -7,8 +7,8 @@ pygtk.require('2.0')
 import gtk
 
 def download_chunk(base):
-  # download 8192 bytes a time
-  chunk = base.dl_response.read(8192)
+  # download 10kb a time
+  chunk = base.dl_response.read(10240)
   base.dl_bytes_so_far += len(chunk)
   base.tarball_file.write(chunk)
 
@@ -58,7 +58,7 @@ class Base:
     self.dl_bytes_so_far = 0
 
     # set a timer to download more chunks
-    self.timer = gobject.timeout_add(10, download_chunk, self)
+    self.timer = gobject.timeout_add(1, download_chunk, self)
 
     # open a file to write to
     self.tarball_file = open(self.tarball_path, 'w')
@@ -155,8 +155,8 @@ if __name__ == "__main__":
       print 'Already downloaded'
     else:
       # launch downloader
-      tarball_url = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename
-      #tarball_url = 'http://127.0.0.1/'+tarball_filename
+      #tarball_url = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename
+      tarball_url = 'http://127.0.0.1/'+tarball_filename
       base = Base(tbb_version, tarball_path, tarball_url)
       base.main()
 
