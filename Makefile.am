@@ -10,3 +10,8 @@ EXTRA_DIST=  \
 desktopdir = $(datadir)/applications
 desktop_DATA = \
 	torbrowser-launcher.desktop
+
+# The icons
+iconsdir = $(datadir)/icons
+icons_DATA = icons/torbrowser32.xpm icons/torbrowser80.xpm
+
