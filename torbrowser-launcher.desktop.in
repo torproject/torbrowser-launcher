@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Tor Browser
+Comment=Launch the Tor Browser Bundle
+Exec=@prefix@/bin/torbrowser-launcher
+Icon=application-default-icon
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Internet;

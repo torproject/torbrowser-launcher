@@ -1,0 +1,126 @@
+#!/usr/bin/gjs
+
+const Gtk = imports.gi.Gtk;
+const GLib = imports.gi.GLib;
+const Lang = imports.lang;
+
+const TorBrowserLauncher = new Lang.Class({
+  Name: 'Tor Borwser Launcher',
+
+  // create the application
+  _init: function() {
+    this.application = new Gtk.Application();
+
+    // connect 'activate' and 'startup' signals to the callback functions
+    this.application.connect('activate', Lang.bind(this, function(){
+      this._window.present();
+    }));
+    this.application.connect('startup', Lang.bind(this, function(){
+      this.build_ui();
+    }));
+  },
+
+  // build the application's UI
+  build_ui: function() {
+
+    // create the application window
+    this._window = new Gtk.ApplicationWindow({
+      application: this.application,
+      window_position: Gtk.WindowPosition.CENTER,
+      border_width: 10,
+      title: "Tor Browser Launcher"
+    });
+
+    // create the Grid
+    this._grid = new Gtk.Grid ({
+      row_spacing: 20,
+      column_spacing: 20
+    });
+
+    // the label
+    this._label = new Gtk.Label({
+      label: 
+        "The first time you run the Tor Browser Launcher you \n"+
+        "need to download the Tor Browser Bundle. Would you \n"+
+        "like to download it from the following URL now?"
+    });
+
+    // progress bar
+    this._progress_bar = new Gtk.ProgressBar({
+      orientation: Gtk.Orientation.HORIZONTAL
+    });
+
+    // buttons
+    this._button_download = new Gtk.Button({
+      label: "Download"
+    });
+    this._button_exit = new Gtk.Button({
+      label: "Exit"
+    });
+    this._button_exit.connect('clicked', Lang.bind (this, function(){
+      this._window.destroy();
+    }));
+
+    // attach everything to the grid
+    this._grid.attach(this._label, 0, 0, 2, 1);
+    this._grid.attach(this._progress_bar, 0, 1, 2, 1);
+    this._grid.attach(this._button_download,  0, 2, 1, 1);
+    this._grid.attach(this._button_exit, 1, 2, 1, 1);
+
+    // add the grid to the window
+    this._window.add (this._grid);
+    this._window.show_all();
+  }
+});
+
+// initialize filesystem
+let tbb_version = '2.3.25-2';
+
+// get the architecture
+let[res, out] = GLib.spawn_sync(null, ['arch'], null, GLib.SpawnFlags.SEARCH_PATH, null);
+let architecture = (''+out).replace(/\s+/g, '');
+
+// figure out the language
+let available_languages = { 'en-US': true, 'ar': true, 'de': true, 'es-ES': true, 'fa': true, 'fr': true, 'it': true, 'ko': true, 'nl': true, 'pl': true, 'pt-PT': true, 'ru': true, 'vi': true, 'zh-CN': true};
+let language = GLib.getenv('LANG').split('.')[0].replace('_', '-');
+if(!available_languages[language]) {
+  language = language.split('-')[0];
+  if(!available_languages[language]) {
+    for(let i in available_languages) {
+      if(language.substring(0, 2) == available_languages[i]) {
+        language = available_languages[i];
+      }
+    }
+  }
+}
+// if language isn't available, default to english
+if(!available_languages[language]) {
+  language = 'en-US';
+}
+
+// make sure local directory structure is setup
+var data_dir = GLib.getenv('HOME')+'/.torbrowser';
+var download_dir = data_dir+'/download';
+var tbb_dir = data_dir+'/tbb/'+architecture+'/'+language;
+if(!GLib.file_test(download_dir, GLib.FileTest.EXISTS)) {
+  print('Making '+download_dir);
+  GLib.mkdir_with_parents(download_dir, 0x1c0); // 0x1c0 is 0700
+}
+if(!GLib.file_test(tbb_dir, GLib.FileTest.EXISTS)) {
+  print('Making '+tbb_dir);
+  GLib.mkdir_with_parents(tbb_dir, 0x1c0);
+}
+
+// is TBB already installed?
+var tbb_start = tbb_dir+'/start-tor-browser'
+if(GLib.file_test(tbb_start, GLib.FileTest.IS_EXECUTABLE)) {
+  print('Launching '+tbb_start);
+  GLib.spawn_sync(null, [tbb_start], null, GLib.SpawnFlags.SEARCH_PATH, null);
+} else {
+  // run the application
+  let app = new TorBrowserLauncher();
+  app.application.run(ARGV);
+}
+
+print('Tor Browser Launcher exiting');
+
