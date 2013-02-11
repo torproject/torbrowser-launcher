@@ -1,14 +1,29 @@
 #!/usr/bin/gjs
 
 const Gtk = imports.gi.Gtk;
+const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const Soup = imports.gi.Soup;
 const Lang = imports.lang;
+
+// the current version of Tor Browser Bundle
+let tbb_version = '2.3.25-2';
 
 const TorBrowserLauncher = new Lang.Class({
   Name: 'Tor Borwser Launcher',
 
   // create the application
-  _init: function() {
+  _init: function(tbb_version, tarball_path, tarball_url) {
+    // TBB related variables
+    this._tbb_version = tbb_version;
+    this._tarball_path = tarball_path;
+    this._tarball_url = tarball_url;
+
+    // start an http session to make http requests
+    this._httpSession = new Soup.SessionAsync();
+    Soup.Session.prototype.add_feature.call(this._httpSession, new Soup.ProxyResolverDefault());
+
+    // start the application
     this.application = new Gtk.Application();
 
     // connect 'activate' and 'startup' signals to the callback functions
@@ -16,12 +31,13 @@ const TorBrowserLauncher = new Lang.Class({
       this._window.present();
     }));
     this.application.connect('startup', Lang.bind(this, function(){
-      this.build_ui();
+      this._build_ui();
     }));
   },
 
   // build the application's UI
-  build_ui: function() {
+  _build_ui: function() {
+    var that = this;
 
     // create the application window
     this._window = new Gtk.ApplicationWindow({
@@ -50,22 +66,42 @@ const TorBrowserLauncher = new Lang.Class({
       orientation: Gtk.Orientation.HORIZONTAL
     });
 
-    // buttons
+    // download buttons
     this._button_download = new Gtk.Button({
       label: "Download"
     });
+    this._button_download.connect('clicked', Lang.bind(this, function(){
+      // start downloading
+      that._statusbar.set_label('Starting download');
+      var request = Soup.Message.new('GET', this._tarball_url);
+      that._httpSession.queue_message(request, function(_httpSession, message) {
+        if(message.status_code !== 200) {
+          that._statusbar.set_label('Download finished');
+          return;
+        }
+        that._statusbar.set_label('Download returned status '+message.status_code);
+      });
+    }));
+
+    // exit button
     this._button_exit = new Gtk.Button({
       label: "Exit"
     });
-    this._button_exit.connect('clicked', Lang.bind (this, function(){
+    this._button_exit.connect('clicked', Lang.bind(this, function(){
       this._window.destroy();
     }));
+
+    // status bar
+    this._statusbar = new Gtk.Label({
+      label: ''
+    });
 
     // attach everything to the grid
     this._grid.attach(this._label, 0, 0, 2, 1);
     this._grid.attach(this._progress_bar, 0, 1, 2, 1);
     this._grid.attach(this._button_download,  0, 2, 1, 1);
     this._grid.attach(this._button_exit, 1, 2, 1, 1);
+    this._grid.attach(this._statusbar, 0, 3, 2, 1);
 
     // add the grid to the window
     this._window.add (this._grid);
@@ -73,8 +109,8 @@ const TorBrowserLauncher = new Lang.Class({
   }
 });
 
-// initialize filesystem
-let tbb_version = '2.3.25-2';
+print('Tor Browser Launcher starting');
+print('https://github.com/micahflee/torbrowser-launcher');
 
 // get the architecture
 let[res, out] = GLib.spawn_sync(null, ['arch'], null, GLib.SpawnFlags.SEARCH_PATH, null);
@@ -117,9 +153,18 @@ if(GLib.file_test(tbb_start, GLib.FileTest.IS_EXECUTABLE)) {
   print('Launching '+tbb_start);
   GLib.spawn_sync(null, [tbb_start], null, GLib.SpawnFlags.SEARCH_PATH, null);
 } else {
-  // run the application
-  let app = new TorBrowserLauncher();
-  app.application.run(ARGV);
+  var tarball_filename = 'tor-browser-gnu-linux-'+architecture+'-'+tbb_version+'-dev-'+language+'.tar.gz';
+  var tarball_path = download_dir+'/'+tarball_filename;
+  if(GLib.file_test(tarball_path, GLib.FileTest.EXISTS)) {
+    // already downloaded
+    print('Already downloaded');
+  } else {
+    // run the application
+    //var tarball_url = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename;
+    var tarball_url = 'http://127.0.0.1/'+tarball_filename;
+    let app = new TorBrowserLauncher(tbb_version, tarball_path, tarball_url);
+    app.application.run(ARGV);
+  }
 }
 
 print('Tor Browser Launcher exiting');
