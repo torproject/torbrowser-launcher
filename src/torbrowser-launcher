@@ -248,11 +248,11 @@ const TorBrowserLauncher = new Lang.Class({
             return ''+mb+'mb';
           }
 
-          var total_size;
-          var bytes_so_far = 0;
+          let total_size;
+          let bytes_so_far = 0;
 
           // create an http message
-          var request = Soup.Message.new('GET', this._tarball_url);
+          let request = Soup.Message.new('GET', this._tarball_url);
 
           // grab the content-length from the headers
           request.connect('got_headers', Lang.bind(this, function(message){
