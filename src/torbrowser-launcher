@@ -27,7 +27,8 @@ const TorBrowserLauncher = new Lang.Class({
       // does the version file exist?
       if(this._file_exists(this._paths.file.version)) {
 
-        this._read_version_file(function(installed_tbb_version){
+        let installed_tbb_version = this._read_version_file();
+        if(installed_tbb_version) {
           if(installed_tbb_version == this._current_tbb_version) {
             // current version is tbb is installed, launch it
             that._exec([that._paths.file.start]);
@@ -47,7 +48,11 @@ const TorBrowserLauncher = new Lang.Class({
               "Something is wrong. The version of Tor Browser Bundle\n"+
               "you have installed is newer than the current version?");
           }
-        });
+        } else {
+          // error reading version from file
+          that._set_gui('error', 
+            "Tor Browser Launcher couldn't read this file:\n\n"+this._paths.dir.version);
+        };
       
       } else {
         // if tbb is installed but the version file doesn't exist, something is wrong
@@ -56,7 +61,9 @@ const TorBrowserLauncher = new Lang.Class({
           "installed, but the version file is missing.");
       }
     } else {
-      // todo: save current_tbb_version to paths.file.version
+
+      // save the current version to the file
+      this._write_version_file(this._current_tbb_version);
 
       // is the tarball and sig already downloaded?
       if(this._file_exists(this._paths.file.tarball) &&
@@ -333,13 +340,26 @@ const TorBrowserLauncher = new Lang.Class({
 
   // read the version file
   // callback is function(err, version)
-  _read_version_file: function(callback){
-    callback();
+  _read_version_file: function(){
+    let f = GLib.file_get_contents(this._paths.file.version);
+    if(f && f[1]) {
+      let version = f[1].replace(/\s+/g, ' ');
+      return version;
+    } else {
+      return false;
+    }
   },
 
   // write the version to the version file
-  _write_version_file: function(version, callback){
-    callback();
+  _write_version_file: function(version){
+    // make sure version is a string
+    version = ''+version;
+    try {
+      GLib.file_set_contents(this._paths.file.version, version, version.length);
+      return true;
+    } catch(err) {
+      return err;
+    }
   },
 
   // some wrapper functions, to make things less verbose
