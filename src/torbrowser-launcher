@@ -156,11 +156,11 @@ const TorBrowserLauncher = new Lang.Class({
       dir: {
         data: tbb_data,
         download: tbb_data+'/download',
-        tbb: tbb_data+'/tbb/'+this._architecture+'/'+this._language
+        tbb: tbb_data+'/tbb/'+this._architecture
       },
       file: {
         version: tbb_data+'/version',
-        start: tbb_data+'/tbb/'+this._architecture+'/'+this._language+'/start-tor-browser',
+        start: tbb_data+'/tbb/'+this._architecture+'/tor-browser_'+this._language+'/start-tor-browser',
         tarball: tbb_data+'/download/'+tarball_filename,
         tarball_sig: tbb_data+'/download/'+tarball_filename+'.asc'
       },
@@ -180,7 +180,7 @@ const TorBrowserLauncher = new Lang.Class({
     if(!this._file_exists(this._paths.dir.download)) {
       GLib.mkdir_with_parents(this._paths.dir.download, 0x1c0); // 0x1c0 is 0700
     }
-    if(!this._file_exists(this._paths.dir.download)) {
+    if(!this._file_exists(this._paths.dir.tbb)) {
       GLib.mkdir_with_parents(this._paths.dir.tbb, 0x1c0);
     }
   },
@@ -276,6 +276,7 @@ const TorBrowserLauncher = new Lang.Class({
                   });
                 });
                 break;
+
               case 'extract':
                 task_functions.push(function(done){
                   that._extract(function(){
@@ -299,7 +300,7 @@ const TorBrowserLauncher = new Lang.Class({
           // call them in order
           let i = 0;
           function series(done){
-            if(i > task_functions.length) {
+            if(i == task_functions.length) {
               done();
             }
 
@@ -307,16 +308,16 @@ const TorBrowserLauncher = new Lang.Class({
               if(err) {
                 // there was an error in the series
                 // handle it by making the start button clickable again
-                this._button_start.set_sensitive(true);
+                that._button_start.set_sensitive(true);
               } else {
                 i++;
-                series();
+                series(done);
               }
             });
           };
           series(function(){
             // all tasks have been executed, so exit
-            this._window.destroy();
+            that._window.destroy();
           });
 
         }));
@@ -384,6 +385,8 @@ const TorBrowserLauncher = new Lang.Class({
     
     // update progress bar with each chunk
     request.connect('got_chunk', Lang.bind(this, function(message, chunk){
+      // todo: write chunk to file
+
       bytes_so_far += chunk.length;
 
       if(total_size) {
@@ -409,12 +412,15 @@ const TorBrowserLauncher = new Lang.Class({
   // verify the signature on the tarball
   // callback is function(err)
   _verify: function(callback){
+    // todo: verify signature
     callback();
   },
 
   // extract tbb over the old version, while updating the progress bar
   // callback is function(err)
   _extract: function(callback){
+    let [res, out] = this._exec(['tar', '-xf', this._paths.file.tarball, '-C', this._paths.dir.tbb]);
+    print(out);
     callback();
   },
 
