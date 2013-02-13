@@ -6,18 +6,74 @@ const GLib = imports.gi.GLib;
 const Soup = imports.gi.Soup;
 const Lang = imports.lang;
 
-// the current version of Tor Browser Bundle
-let tbb_version = '2.3.25-2';
-
 const TorBrowserLauncher = new Lang.Class({
   Name: 'Tor Borwser Launcher',
 
   // create the application
-  _init: function(tbb_version, tarball_path, tarball_url) {
-    // TBB related variables
-    this._tbb_version = tbb_version;
-    this._tarball_path = tarball_path;
-    this._tarball_url = tarball_url;
+  _init: function(current_tbb_version) {
+
+    // initialize the app
+    this._current_tbb_version = current_tbb_version;
+    this._discover_arch_lang();
+    this._build_paths();
+    this._mkdirs();
+    
+    // is TBB already installed?
+    if(this._file_executable(this._paths.file.start)) {
+
+      // does the version file exist?
+      if(this._file_exists(this._paths.file.version)) {
+
+        // todo: load version file and compare with current version
+      
+      } else {
+        
+        // if tbb is installed but the version file doesn't exist, something is wrong
+        this._set_gui('error', 
+          "Something is wrong. You have the Tor Browser Bundle\n"+
+          "installed, but the version file is missing.");
+      
+      }
+    } else {
+      // todo: save current_tbb_version to paths.file.version
+
+      // is the tarball and sig already downloaded?
+      if(this._file_exists(this._paths.file.tarball) &&
+        this._file_exists(this._paths.file.tarball_sig)) {
+
+        // verify it's signature
+        this._verify_sig(null, null, function(err){
+          if(err) {
+            // signature verification failed
+            this._set_gui('error', 
+              "Something is wrong. The Tor Browser Bundle that you\n"+
+              "were about to install does not have a valid signature.\n"+
+              "Deleting this directory and try again:\n\n"+
+              this._paths.dir.download);
+
+          } else {
+            
+            // start the gui with extract
+            this._set_gui('task', 
+              "You already have Tor Browser Bundle downloaded, but\n"+
+              "it isn't installed yet.", 
+              ['extract', 'run']);
+
+          }
+        });
+
+      } else {
+
+        // first run
+        this._set_gui('task',
+          "The first time you run the Tor Browser Launcher you\n"+
+          "need to download the Tor Browser Bundle. Would you\n"+
+          "like to download it now from the following URLs?\n\n"+
+          this._paths.url.tarball+"\n"+
+          this._paths.url.tarball_sig+"\n",
+          ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']);
+      }
+    }
 
     // start an http session to make http requests
     this._httpSession = new Soup.SessionAsync();
@@ -35,10 +91,66 @@ const TorBrowserLauncher = new Lang.Class({
     }));
   },
 
+  // discover the architecture and language
+  _discover_arch_lang: function(){
+    // get the architecture
+    let [res, out] = this._exec(['arch']);
+    this._architecture = (''+out).replace(/\s+/g, '');
+
+    // figure out the language
+    let available_languages = { 'en-US': true, 'ar': true, 'de': true, 'es-ES': true, 'fa': true, 'fr': true, 'it': true, 'ko': true, 'nl': true, 'pl': true, 'pt-PT': true, 'ru': true, 'vi': true, 'zh-CN': true};
+    this._language = GLib.getenv('LANG').split('.')[0].replace('_', '-');
+    if(!available_languages[this._language]) {
+      this._language = this._language.split('-')[0];
+      if(!available_languages[this._language]) {
+        for(let i in available_languages) {
+          if(this._language.substring(0, 2) == available_languages[i]) {
+            this._language = available_languages[i];
+          }
+        }
+      }
+    }
+    // if language isn't available, default to english
+    if(!available_languages[this._language]) {
+      this._language = 'en-US';
+    }
+  },
+
+  // build all relevant paths
+  _build_paths: function(){
+    let tbb_data = GLib.getenv('HOME')+'/.torbrowser';
+    let tarball_filename = 'tor-browser-gnu-linux-'+this._architecture+'-'+this._current_tbb_version+'-dev-'+this._language+'.tar.gz';
+    this._paths = {
+      dir: {
+        data: tbb_data,
+        download: tbb_data+'/download',
+        tbb: tbb_data+'/tbb/'+this._architecture+'/'+this._language
+      },
+      file: {
+        version: tbb_data+'/version',
+        start: tbb_data+'/tbb/'+this._architecture+'/'+this._language+'/start-tor-browser',
+        tarball: tbb_data+'/download/'+tarball_filename,
+        tarball_sig: tbb_data+'/download/'+tarball_filename+'.asc'
+      },
+      url: {
+        tarball: 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
+        tarball_sig: 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+      }
+    };
+  },
+
+  // create directories that don't exist
+  _mkdirs: function(){
+    if(!this._file_exists(this._paths.dir.download)) {
+      GLib.mkdir_with_parents(this._paths.dir.download, 0x1c0); // 0x1c0 is 0700
+    }
+    if(!this._file_exists(this._paths.dir.download)) {
+      GLib.mkdir_with_parents(this._paths.dir.tbb, 0x1c0);
+    }
+  },
+
   // build the application's UI
   _build_ui: function() {
-    var that = this;
-
     // create the application window
     this._window = new Gtk.ApplicationWindow({
       application: this.application,
@@ -53,156 +165,163 @@ const TorBrowserLauncher = new Lang.Class({
       column_spacing: 20
     });
 
-    // the label
-    this._label = new Gtk.Label({
-      label: 
-        "The first time you run the Tor Browser Launcher you \n"+
-        "need to download the Tor Browser Bundle. Would you \n"+
-        "like to download it from the following URL now?"
-    });
+    switch(this._gui) {
+      case 'error':
+        // labels
+        this._label1 = new Gtk.Label({ label: this._gui_message });
+        this._label2 = new Gtk.Label({ 
+          label: 
+            "You can fix the problem by deleting:\n\n"+
+            this.paths.dir.data+"\n"+
+            "However, you will lose all your bookmarks and other\n"+
+            "Tor Browser preferences."
+        });
 
-    // progress bar
-    this._progress_bar = new Gtk.ProgressBar({
-      orientation: Gtk.Orientation.HORIZONTAL
-    });
+        // exit button
+        this._button_exit = new Gtk.Button({ label: "Exit" });
+        this._button_exit.connect('clicked', Lang.bind(this, function(){
+          this._window.destroy();
+        }));
 
-    // download buttons
-    this._button_download = new Gtk.Button({
-      label: "Download"
-    });
-    this._button_download.connect('clicked', Lang.bind(this, function(){
-      that._statusbar.set_label('Downloading Tor Browser Bundle');
+        // attach everything to the grid
+        this._grid.attach(this._label1, 0, 0, 1, 1);
+        this._grid.attach(this._label2, 0, 1, 1, 1);
+        this._grid.attach(this._button_exit, 0, 2, 1, 1);
+        break;
 
-      function file_size(bytes) {
-        if(bytes < 1024) {
-          return ''+bytes+' bytes';
-        }
-        let kb = bytes / 1024;
-        kb = Math.floor(kb);
-        if(kb < 1024) {
-          return ''+kb+'kb';
-        }
-        let mb = kb / 1024;
-        mb = Math.floor(mb * 100) / 100;
-        return ''+mb+'mb';
-      }
+      case 'task':
+        // the label
+        this._label = new Gtk.Label({
+          label: 
+            "The first time you run the Tor Browser Launcher you \n"+
+            "need to download the Tor Browser Bundle. Would you \n"+
+            "like to download it from https://www.torproject.org?"
+        });
 
-      var total_size;
-      var bytes_so_far = 0;
+        // progress bar
+        this._progress_bar = new Gtk.ProgressBar({
+          orientation: Gtk.Orientation.HORIZONTAL
+        });
 
-      // create an http message
-      var request = Soup.Message.new('GET', this._tarball_url);
+        // download buttons
+        this._button_download = new Gtk.Button({ label: "Download" });
+        this._button_download.connect('clicked', Lang.bind(this, function(){
+          this._statusbar.set_label('Downloading Tor Browser Bundle');
 
-      // grab the content-length from the headers
-      request.connect('got_headers', Lang.bind(this, function(message){
-        total_size = message.response_headers.get_content_length()
-      }));
-      
-      // update progress bar with each chunk
-      request.connect('got_chunk', Lang.bind(this, function(message, chunk){
-        //let [data, length] = chunk.get_data();
-        bytes_so_far += chunk.length;
+          function file_size(bytes) {
+            if(bytes < 1024) {
+              return ''+bytes+' bytes';
+            }
+            let kb = bytes / 1024;
+            kb = Math.floor(kb);
+            if(kb < 1024) {
+              return ''+kb+'kb';
+            }
+            let mb = kb / 1024;
+            mb = Math.floor(mb * 100) / 100;
+            return ''+mb+'mb';
+          }
 
-        if(total_size) {
-          let fraction = bytes_so_far / total_size;
-          let percent = Math.floor(fraction * 100);
-          that._progress_bar.set_fraction(fraction);
-          that._statusbar.set_label("Downloaded "+percent+"% ("+file_size(bytes_so_far)+" / "+file_size(total_size)+")");
-        }
-        //print('got chunk '+length);
-      }));
-      
-      that._httpSession.queue_message(request, function(_httpSession, message) {
-        if(message.status_code !== 200) {
-          that._statusbar.set_label('Download failed: '+message.status_code);
-          return;
-        }
-        that._progress_bar.set_fraction(1);
-        that._statusbar.set_label('Download finished');
-      });
-    }));
+          var total_size;
+          var bytes_so_far = 0;
 
-    // exit button
-    this._button_exit = new Gtk.Button({
-      label: "Exit"
-    });
-    this._button_exit.connect('clicked', Lang.bind(this, function(){
-      this._window.destroy();
-    }));
+          // create an http message
+          var request = Soup.Message.new('GET', this._tarball_url);
 
-    // status bar
-    this._statusbar = new Gtk.Label({ });
+          // grab the content-length from the headers
+          request.connect('got_headers', Lang.bind(this, function(message){
+            total_size = message.response_headers.get_content_length()
+          }));
+          
+          // update progress bar with each chunk
+          request.connect('got_chunk', Lang.bind(this, function(message, chunk){
+            //let [data, length] = chunk.get_data();
+            bytes_so_far += chunk.length;
 
-    // attach everything to the grid
-    this._grid.attach(this._label, 0, 0, 2, 1);
-    this._grid.attach(this._progress_bar, 0, 1, 2, 1);
-    this._grid.attach(this._button_download,  0, 2, 1, 1);
-    this._grid.attach(this._button_exit, 1, 2, 1, 1);
-    this._grid.attach(this._statusbar, 0, 3, 2, 1);
+            if(total_size) {
+              let fraction = bytes_so_far / total_size;
+              let percent = Math.floor(fraction * 100);
+              this._progress_bar.set_fraction(fraction);
+              this._statusbar.set_label("Downloaded "+percent+"% ("+file_size(bytes_so_far)+" / "+file_size(total_size)+")");
+            }
+            //print('got chunk '+length);
+          }));
+          
+          this._httpSession.queue_message(request, function(_httpSession, message) {
+            if(message.status_code !== 200) {
+              this._statusbar.set_label('Download failed: '+message.status_code);
+              return;
+            }
+            this._progress_bar.set_fraction(1);
+            this._statusbar.set_label('Download finished');
+          });
+        }));
+
+        // exit button
+        this._button_exit = new Gtk.Button({ label: "Exit" });
+        this._button_exit.connect('clicked', Lang.bind(this, function(){
+          this._window.destroy();
+        }));
+
+        // status bar
+        this._statusbar = new Gtk.Label({ });
+
+        // attach everything to the grid
+        this._grid.attach(this._label, 0, 0, 2, 1);
+        this._grid.attach(this._progress_bar, 0, 1, 2, 1);
+        this._grid.attach(this._button_download,  0, 2, 1, 1);
+        this._grid.attach(this._button_exit, 1, 2, 1, 1);
+        this._grid.attach(this._statusbar, 0, 3, 2, 1);
+        break;
+    }
 
     // add the grid to the window
-    this._window.add (this._grid);
+    this._window.add(this._grid);
     this._window.show_all();
+  },
+
+  // there are different GUIs that might appear, this sets which one we want
+  _set_gui: function(gui, message, tasks){
+    this._gui = gui;
+    this._gui_message = message;
+    this._gui_tasks = tasks ? tasks : [];
+  },
+
+  // download a file, while updating the progress bar
+  // callback is function(err)
+  _download_file: function(url, path, callback){
+    callback();
+  },
+  
+  // verify the signature on the tarball
+  // callback is function(err)
+  _verify_sig: function(callback){
+    callback();
+  },
+
+  // install tbb over the old version, while updating the progress bar
+  // callback is function(err)
+  _install: function(callback){
+    callback();
+  },
+
+  // some wrapper functions, to make things less verbose
+  _file_exists: function(filename){
+    return GLib.file_test(filename, GLib.FileTest.EXISTS);
+  },
+  _file_executable: function(filename){
+    return GLib.file_test(filename, GLib.FileTest.IS_EXECUTABLE);
+  },
+  _exec: function(args){
+    return GLib.spawn_sync(null, args, null, GLib.SpawnFlags.SEARCH_PATH, null);
   }
 });
 
-print('Tor Browser Launcher starting');
+print('Tor Browser Launcher');
 print('https://github.com/micahflee/torbrowser-launcher');
 
-// get the architecture
-let[res, out] = GLib.spawn_sync(null, ['arch'], null, GLib.SpawnFlags.SEARCH_PATH, null);
-let architecture = (''+out).replace(/\s+/g, '');
-
-// figure out the language
-let available_languages = { 'en-US': true, 'ar': true, 'de': true, 'es-ES': true, 'fa': true, 'fr': true, 'it': true, 'ko': true, 'nl': true, 'pl': true, 'pt-PT': true, 'ru': true, 'vi': true, 'zh-CN': true};
-let language = GLib.getenv('LANG').split('.')[0].replace('_', '-');
-if(!available_languages[language]) {
-  language = language.split('-')[0];
-  if(!available_languages[language]) {
-    for(let i in available_languages) {
-      if(language.substring(0, 2) == available_languages[i]) {
-        language = available_languages[i];
-      }
-    }
-  }
-}
-// if language isn't available, default to english
-if(!available_languages[language]) {
-  language = 'en-US';
-}
-
-// make sure local directory structure is setup
-var data_dir = GLib.getenv('HOME')+'/.torbrowser';
-var download_dir = data_dir+'/download';
-var tbb_dir = data_dir+'/tbb/'+architecture+'/'+language;
-if(!GLib.file_test(download_dir, GLib.FileTest.EXISTS)) {
-  print('Making '+download_dir);
-  GLib.mkdir_with_parents(download_dir, 0x1c0); // 0x1c0 is 0700
-}
-if(!GLib.file_test(tbb_dir, GLib.FileTest.EXISTS)) {
-  print('Making '+tbb_dir);
-  GLib.mkdir_with_parents(tbb_dir, 0x1c0);
-}
-
-// is TBB already installed?
-var tbb_start = tbb_dir+'/start-tor-browser'
-if(GLib.file_test(tbb_start, GLib.FileTest.IS_EXECUTABLE)) {
-  print('Launching '+tbb_start);
-  GLib.spawn_sync(null, [tbb_start], null, GLib.SpawnFlags.SEARCH_PATH, null);
-} else {
-  var tarball_filename = 'tor-browser-gnu-linux-'+architecture+'-'+tbb_version+'-dev-'+language+'.tar.gz';
-  var tarball_path = download_dir+'/'+tarball_filename;
-  if(GLib.file_test(tarball_path, GLib.FileTest.EXISTS)) {
-    // already downloaded
-    print('Already downloaded');
-  } else {
-    // run the application
-    var tarball_url = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename;
-    //var tarball_url = 'http://127.0.0.1/'+tarball_filename;
-    let app = new TorBrowserLauncher(tbb_version, tarball_path, tarball_url);
-    app.application.run(ARGV);
-  }
-}
-
-print('Tor Browser Launcher exiting');
+// run the application
+let current_tbb_version = '2.3.25-2';
+let app = new TorBrowserLauncher(current_tbb_version);
+app.application.run(ARGV);
 
