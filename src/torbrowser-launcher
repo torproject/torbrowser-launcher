@@ -11,6 +11,7 @@ const TorBrowserLauncher = new Lang.Class({
 
   // create the application
   _init: function(current_tbb_version) {
+    let that = this;
 
     // initialize the app
     this._current_tbb_version = current_tbb_version;
@@ -18,21 +19,41 @@ const TorBrowserLauncher = new Lang.Class({
     this._build_paths();
     this._mkdirs();
     
+    let launch_gui = true;
+
     // is TBB already installed?
     if(this._file_executable(this._paths.file.start)) {
 
       // does the version file exist?
       if(this._file_exists(this._paths.file.version)) {
 
-        // todo: load version file and compare with current version
+        this._read_version_file(function(installed_tbb_version){
+          if(installed_tbb_version == this._current_tbb_version) {
+            // current version is tbb is installed, launch it
+            that._exec([that._paths.file.start]);
+            launch_gui = false;
+          } else if(installed_tbb_version < that._current_tbb_version) {
+            // there is a tbb upgrade available
+            that._set_gui('task',
+              "Your Tor Browser Launcher is out of date. Upgrading\n"+
+              "to the newest version will download it from the\n"+
+              "following URLs:\n\n"+
+              that._paths.url.tarball+"\n"+
+              that._paths.url.tarball_sig+"\n",
+              ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']);
+          } else {
+            // for some reason the installed tbb is newer than the current version?
+            that._set_gui('error', 
+              "Something is wrong. The version of Tor Browser Bundle\n"+
+              "you have installed is newer than the current version?");
+          }
+        });
       
       } else {
-        
         // if tbb is installed but the version file doesn't exist, something is wrong
         this._set_gui('error', 
           "Something is wrong. You have the Tor Browser Bundle\n"+
           "installed, but the version file is missing.");
-      
       }
     } else {
       // todo: save current_tbb_version to paths.file.version
@@ -67,28 +88,33 @@ const TorBrowserLauncher = new Lang.Class({
         // first run
         this._set_gui('task',
           "The first time you run the Tor Browser Launcher you\n"+
-          "need to download the Tor Browser Bundle. Would you\n"+
-          "like to download it now from the following URLs?\n\n"+
+          "need to download the Tor Browser Bundle. Click start\n"+
+          "to download it now from the following URLs:\n\n"+
           this._paths.url.tarball+"\n"+
           this._paths.url.tarball_sig+"\n",
           ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']);
       }
     }
 
-    // start an http session to make http requests
-    this._httpSession = new Soup.SessionAsync();
-    Soup.Session.prototype.add_feature.call(this._httpSession, new Soup.ProxyResolverDefault());
+    if(launch_gui) {
+      // start an http session to make http requests
+      this._httpSession = new Soup.SessionAsync();
+      Soup.Session.prototype.add_feature.call(this._httpSession, new Soup.ProxyResolverDefault());
 
-    // start the application
-    this.application = new Gtk.Application();
+      // create the application
+      this.application = new Gtk.Application();
 
-    // connect 'activate' and 'startup' signals to the callback functions
-    this.application.connect('activate', Lang.bind(this, function(){
-      this._window.present();
-    }));
-    this.application.connect('startup', Lang.bind(this, function(){
-      this._build_ui();
-    }));
+      // connect 'activate' and 'startup' signals to the callback functions
+      this.application.connect('activate', Lang.bind(this, function(){
+        this._window.present();
+      }));
+      this.application.connect('startup', Lang.bind(this, function(){
+        this._build_ui();
+      }));
+
+      // run the application
+      this.application.run(ARGV);
+    }
   },
 
   // discover the architecture and language
@@ -171,8 +197,8 @@ const TorBrowserLauncher = new Lang.Class({
         this._label1 = new Gtk.Label({ label: this._gui_message });
         this._label2 = new Gtk.Label({ 
           label: 
-            "You can fix the problem by deleting:\n\n"+
-            this.paths.dir.data+"\n"+
+            "You can fix the problem by deleting:\n"+
+            this._paths.dir.data+"\n\n"+
             "However, you will lose all your bookmarks and other\n"+
             "Tor Browser preferences."
         });
@@ -305,6 +331,17 @@ const TorBrowserLauncher = new Lang.Class({
     callback();
   },
 
+  // read the version file
+  // callback is function(err, version)
+  _read_version_file: function(callback){
+    callback();
+  },
+
+  // write the version to the version file
+  _write_version_file: function(version, callback){
+    callback();
+  },
+
   // some wrapper functions, to make things less verbose
   _file_exists: function(filename){
     return GLib.file_test(filename, GLib.FileTest.EXISTS);
@@ -323,5 +360,4 @@ print('https://github.com/micahflee/torbrowser-launcher');
 // run the application
 let current_tbb_version = '2.3.25-2';
 let app = new TorBrowserLauncher(current_tbb_version);
-app.application.run(ARGV);
 
