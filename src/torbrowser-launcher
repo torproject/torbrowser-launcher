@@ -36,11 +36,10 @@ const TorBrowserLauncher = new Lang.Class({
           } else if(installed_tbb_version < that._current_tbb_version) {
             // there is a tbb upgrade available
             that._set_gui('task',
-              "Your Tor Browser Launcher is out of date. Upgrading\n"+
-              "to the newest version will download it from the\n"+
-              "following URLs:\n\n"+
-              that._paths.url.tarball+"\n"+
-              that._paths.url.tarball_sig+"\n",
+              "Your Tor Browser Launcher is out of date. Click Start to download the\n"+
+              "following files from https://www.torproject.org:\n\n"+
+              that._paths.filename.tarball+"\n"+
+              that._paths.filename.tarball_sig+"\n",
               ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']);
           } else {
             // for some reason the installed tbb is newer than the current version?
@@ -94,11 +93,11 @@ const TorBrowserLauncher = new Lang.Class({
 
         // first run
         this._set_gui('task',
-          "The first time you run the Tor Browser Launcher you\n"+
-          "need to download the Tor Browser Bundle. Click start\n"+
-          "to download it now from the following URLs:\n\n"+
-          this._paths.url.tarball+"\n"+
-          this._paths.url.tarball_sig+"\n",
+          "The first time you run the Tor Browser Launcher you need to download\n"+
+          "the Tor Browser Bundle. Click start to download it now from the\n"+
+          "following files from https://www.torproject.org/:\n\n"+
+          this._paths.filename.tarball+"\n"+
+          this._paths.filename.tarball_sig+"\n",
           ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']);
       }
     }
@@ -168,6 +167,10 @@ const TorBrowserLauncher = new Lang.Class({
       url: {
         tarball: 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
         tarball_sig: 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+      },
+      filename: {
+        tarball: tarball_filename,
+        tarball_sig: tarball_filename+'.asc'
       }
     };
   },
@@ -184,6 +187,8 @@ const TorBrowserLauncher = new Lang.Class({
 
   // build the application's UI
   _build_ui: function() {
+    let that = this;
+
     // create the application window
     this._window = new Gtk.ApplicationWindow({
       application: this.application,
@@ -194,7 +199,7 @@ const TorBrowserLauncher = new Lang.Class({
 
     // create the Grid
     this._grid = new Gtk.Grid ({
-      row_spacing: 20,
+      row_spacing: 10,
       column_spacing: 20
     });
 
@@ -224,12 +229,7 @@ const TorBrowserLauncher = new Lang.Class({
 
       case 'task':
         // the label
-        this._label = new Gtk.Label({
-          label: 
-            "The first time you run the Tor Browser Launcher you \n"+
-            "need to download the Tor Browser Bundle. Would you \n"+
-            "like to download it from https://www.torproject.org?"
-        });
+        this._label = new Gtk.Label({ label: this._gui_message });
 
         // progress bar
         this._progress_bar = new Gtk.ProgressBar({
@@ -237,57 +237,88 @@ const TorBrowserLauncher = new Lang.Class({
         });
 
         // download buttons
-        this._button_download = new Gtk.Button({ label: "Download" });
-        this._button_download.connect('clicked', Lang.bind(this, function(){
-          this._statusbar.set_label('Downloading Tor Browser Bundle');
+        this._button_start = new Gtk.Button({ label: "Start" });
+        this._button_start.connect('clicked', Lang.bind(this, function(){
+          // disable the start button
+          this._button_start.set_sensitive(false);
 
-          function file_size(bytes) {
-            if(bytes < 1024) {
-              return ''+bytes+' bytes';
+          // make an array of functions to call in order
+          let task_functions = [];
+          for(let i = 0; i < this._gui_tasks.length; i++) {
+            
+            switch(this._gui_tasks[i]){
+              case 'download_tarball':
+                task_functions.push(function(done){
+                  that._download_file('Tor Browser Bundle .tar.gz', that._paths.url.tarball, that._paths.file.tarball, function(err){
+                    if(err) {
+                      done(err);
+                      return;
+                    }
+                    done();
+                  });
+                });
+                break;
+              case 'download_tarball_sig':
+                task_functions.push(function(done){
+                  that._download_file('Tor Browser Bundle .asc', that._paths.url.tarball_sig, that._paths.file.tarball_sig, function(err){
+                    if(err) {
+                      done(err);
+                      return;
+                    }
+                    done();
+                  });
+                });
+                break;
+              case 'verify':
+                task_functions.push(function(done){
+                  that._verify(function(){
+                    done();
+                  });
+                });
+                break;
+              case 'extract':
+                task_functions.push(function(done){
+                  that._extract(function(){
+                    done();
+                  });
+                });
+                break;
+              case 'run':
+                task_functions.push(function(done){
+                  if(!that._exec([that._paths.file.start])) {
+                    that._statusbar.label = 'Failed to execute '+that._paths.file.start;
+                    that._button_start.set_sensitive(true);
+                  };
+                  done();
+                });
+                break;
             }
-            let kb = bytes / 1024;
-            kb = Math.floor(kb);
-            if(kb < 1024) {
-              return ''+kb+'kb';
-            }
-            let mb = kb / 1024;
-            mb = Math.floor(mb * 100) / 100;
-            return ''+mb+'mb';
+            
           }
 
-          let total_size;
-          let bytes_so_far = 0;
-
-          // create an http message
-          let request = Soup.Message.new('GET', this._tarball_url);
-
-          // grab the content-length from the headers
-          request.connect('got_headers', Lang.bind(this, function(message){
-            total_size = message.response_headers.get_content_length()
-          }));
-          
-          // update progress bar with each chunk
-          request.connect('got_chunk', Lang.bind(this, function(message, chunk){
-            //let [data, length] = chunk.get_data();
-            bytes_so_far += chunk.length;
-
-            if(total_size) {
-              let fraction = bytes_so_far / total_size;
-              let percent = Math.floor(fraction * 100);
-              this._progress_bar.set_fraction(fraction);
-              this._statusbar.set_label("Downloaded "+percent+"% ("+file_size(bytes_so_far)+" / "+file_size(total_size)+")");
+          // call them in order
+          let i = 0;
+          function series(done){
+            if(i > task_functions.length) {
+              done();
             }
-            //print('got chunk '+length);
-          }));
-          
-          this._httpSession.queue_message(request, function(_httpSession, message) {
-            if(message.status_code !== 200) {
-              this._statusbar.set_label('Download failed: '+message.status_code);
-              return;
-            }
-            this._progress_bar.set_fraction(1);
-            this._statusbar.set_label('Download finished');
+
+            task_functions[i](function(err){
+              if(err) {
+                // there was an error in the series
+                // handle it by making the start button clickable again
+                this._button_start.set_sensitive(true);
+              } else {
+                i++;
+                series();
+              }
+            });
+          };
+          series(function(){
+            // all tasks have been executed, so exit
+            this._window.destroy();
           });
+
         }));
 
         // exit button
@@ -302,7 +333,7 @@ const TorBrowserLauncher = new Lang.Class({
         // attach everything to the grid
         this._grid.attach(this._label, 0, 0, 2, 1);
         this._grid.attach(this._progress_bar, 0, 1, 2, 1);
-        this._grid.attach(this._button_download,  0, 2, 1, 1);
+        this._grid.attach(this._button_start,  0, 2, 1, 1);
         this._grid.attach(this._button_exit, 1, 2, 1, 1);
         this._grid.attach(this._statusbar, 0, 3, 2, 1);
         break;
@@ -322,19 +353,68 @@ const TorBrowserLauncher = new Lang.Class({
 
   // download a file, while updating the progress bar
   // callback is function(err)
-  _download_file: function(url, path, callback){
-    callback();
+  _download_file: function(name, url, path, callback){
+    let that = this;
+    this._statusbar.set_label('Downloading '+name);
+
+    function file_size(bytes) {
+      if(bytes < 1024) {
+        return ''+bytes+' bytes';
+      }
+      let kb = bytes / 1024;
+      kb = Math.floor(kb);
+      if(kb < 1024) {
+        return ''+kb+'kb';
+      }
+      let mb = kb / 1024;
+      mb = Math.floor(mb * 100) / 100;
+      return ''+mb+'mb';
+    }
+
+    let total_size;
+    let bytes_so_far = 0;
+
+    // create an http message
+    let request = Soup.Message.new('GET', url);
+
+    // grab the content-length from the headers
+    request.connect('got_headers', Lang.bind(this, function(message){
+      total_size = message.response_headers.get_content_length()
+    }));
+    
+    // update progress bar with each chunk
+    request.connect('got_chunk', Lang.bind(this, function(message, chunk){
+      bytes_so_far += chunk.length;
+
+      if(total_size) {
+        let fraction = bytes_so_far / total_size;
+        let percent = Math.floor(fraction * 100);
+        this._progress_bar.set_fraction(fraction);
+        this._statusbar.set_label("Downloading "+name+": "+percent+"% ("+file_size(bytes_so_far)+" / "+file_size(total_size)+")");
+      }
+    }));
+    
+    this._httpSession.queue_message(request, function(_httpSession, message) {
+      if(message.status_code !== 200) {
+        that._statusbar.set_label('Downloading '+name+' failed: '+message.status_code);
+        callback(true);
+        return;
+      }
+      that._progress_bar.set_fraction(1);
+      that._statusbar.set_label('Downloading '+name+' finished');
+      callback();
+    });
   },
   
   // verify the signature on the tarball
   // callback is function(err)
-  _verify_sig: function(callback){
+  _verify: function(callback){
     callback();
   },
 
-  // install tbb over the old version, while updating the progress bar
+  // extract tbb over the old version, while updating the progress bar
   // callback is function(err)
-  _install: function(callback){
+  _extract: function(callback){
     callback();
   },
 
@@ -370,7 +450,11 @@ const TorBrowserLauncher = new Lang.Class({
     return GLib.file_test(filename, GLib.FileTest.IS_EXECUTABLE);
   },
   _exec: function(args){
-    return GLib.spawn_sync(null, args, null, GLib.SpawnFlags.SEARCH_PATH, null);
+    try {
+      return GLib.spawn_sync(null, args, null, GLib.SpawnFlags.SEARCH_PATH, null);
+    } catch(err) {
+      return false;
+    }
   }
 });
 
