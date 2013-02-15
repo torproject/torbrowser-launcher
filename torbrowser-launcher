@@ -210,15 +210,10 @@ class TorBrowserLauncher:
     # open a file to write to
     self.tarball_file = open(self.tarball_path, 'w')
       
-
-  def main(self):
-    gtk.main()
-
 if __name__ == "__main__":
   print 'Tor Browser Launcher'
   print 'https://github.com/micahflee/torbrowser-launcher'
 
   current_tbb_version = '2.3.25-2'
   app = TorBrowserLauncher(current_tbb_version)
-  app.main()
 
