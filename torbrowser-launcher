@@ -82,13 +82,15 @@ class TorBrowserLauncher:
       'dir': {
         'data': tbb_data,
         'download': tbb_data+'/download',
-        'tbb': tbb_data+'/tbb/'+self.architecture
+        'tbb': tbb_data+'/tbb/'+self.architecture,
+        'gpg': tbb_data+'/gpgtmp'
       },
       'file': {
         'version': tbb_data+'/version',
         'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
         'tarball': tbb_data+'/download/'+tarball_filename,
-        'tarball_sig': tbb_data+'/download/'+tarball_filename+'.asc'
+        'tarball_sig': tbb_data+'/download/'+tarball_filename+'.asc',
+        'verify': '/usr/share/torbrowser-launcher/verify.sh'
       },
       'url': {
         #'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
@@ -264,7 +266,12 @@ class TorBrowserLauncher:
     return True
 
   def verify(self):
-    self.run_task();
+    verify_output = subprocess.check_output([self.paths['file']['verify']])
+    if 'Good signature' in verify_output:
+      self.run_task();
+
+    else:
+      self.label = "Signature verification failed!"
 
   def extract(self):
     subprocess.call(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']])
