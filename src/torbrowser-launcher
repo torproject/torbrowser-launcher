@@ -385,8 +385,8 @@ const TorBrowserLauncher = new Lang.Class({
     let bytes_so_far = 0;
 
     // open the file
-    let file = Gio.file_new_for_path(path);
-    let fstream = file.replace(null, false, Gio.FileCreateFlags.NONE, null);
+    var f = Gio.file_new_for_path(String(path));
+    var data_out = new Gio.DataOutputStream({base_stream:f.replace(null, false, Gio.FileCreateFlags.NONE, null)});
 
     // create an http message
     let request = Soup.Message.new('GET', url);
@@ -398,10 +398,11 @@ const TorBrowserLauncher = new Lang.Class({
     
     // update progress bar with each chunk
     request.connect('got_chunk', Lang.bind(this, function(message, chunk){
-      print(chunk[0]);
-      print('== start ==');
-      fstream.write(chunk, chunk.length, null);
-      print('== finish ==');
+      // write chunk to file
+      let data = chunk.get_data();
+      for(let i=0; i<chunk.length; i++) {
+        data_out.put_byte(data[i], null);
+      }
 
       bytes_so_far += chunk.length;
 
@@ -412,10 +413,10 @@ const TorBrowserLauncher = new Lang.Class({
         this._statusbar.set_label("Downloading "+name+": "+percent+"% ("+file_size(bytes_so_far)+" / "+file_size(total_size)+")");
       }
     }));
-    
+
     this._httpSession.queue_message(request, function(_httpSession, message) {
       // close the file
-      fstream.close(null);
+      data_out.close(null);
 
       if(message.status_code !== 200) {
         that._statusbar.set_label('Downloading '+name+' failed: '+message.status_code);
