@@ -177,11 +177,6 @@ class TorBrowserLauncher:
       self.button_box.add(self.exit_button)
       self.exit_button.show()
 
-      # statusbar
-      self.statusbar = gtk.Label('')
-      self.statusbar.set_line_wrap(True)
-      self.box.pack_start(self.statusbar, True, True, 0)
-
     self.box.show()
     self.window.show();
 
@@ -189,32 +184,42 @@ class TorBrowserLauncher:
   def start(self, widget, data=None):
     # disable the start button
     self.start_button.set_sensitive(False)
+
+    # start running tasks
+    self.gui_task_i = 0
+    self.run_task()
     
-    # show the statusbar
-    #self.statusbar.show()
+  # run the next task in the task list
+  def run_task(self):
+    if self.gui_task_i >= len(self.gui_tasks):
+      self.destroy(False)
+      return
 
-    # loop through tasks
-    for task in self.gui_tasks:
-      if task == 'download_tarball':
-        print 'Downloading '+self.paths['url']['tarball']
-        if not self.download('tarball', self.paths['url']['tarball'], self.paths['file']['tarball']):
-          self.start_button.set_sensitive(True)
-          break
+    task = self.gui_tasks[self.gui_task_i]
+    
+    # get ready for the next task
+    self.gui_task_i += 1
 
-      elif task == 'download_tarball_sig':
-        print 'Downloading '+self.paths['url']['tarball_sig']
-        if not self.download('signature', self.paths['url']['tarball_sig'], self.paths['file']['tarball_sig']):
-          self.start_button.set_sensitive(True)
-          break
+    if task == 'download_tarball':
+      print 'Downloading '+self.paths['url']['tarball']
+      self.download('tarball', self.paths['url']['tarball'], self.paths['file']['tarball'])
 
-      elif task == 'verify':
-        print 'Verifying signature'
+    elif task == 'download_tarball_sig':
+      print 'Downloading '+self.paths['url']['tarball_sig']
+      self.download('signature', self.paths['url']['tarball_sig'], self.paths['file']['tarball_sig'])
 
-      elif task == 'extract':
-        print 'Extracting '+self.paths['filename']['tarball']
+    elif task == 'verify':
+      print 'Verifying signature'
+      self.verify()
 
-      elif task == 'run':
-        print 'Running '+self.paths['file']['start']
+    elif task == 'extract':
+      print 'Extracting '+self.paths['filename']['tarball']
+      self.extract()
+
+    elif task == 'run':
+      print 'Running '+self.paths['file']['start']
+      self.run()
+
 
   def download(self, name, url, path):
     # initialize the progress bar
@@ -229,12 +234,12 @@ class TorBrowserLauncher:
     self.dl_bytes_so_far = 0
 
     # set a timer to download more chunks
-    self.timer = gobject.timeout_add(1, self.download_chunk)
+    self.timer = gobject.timeout_add(1, self.download_chunk, name)
 
     # open a file to write to
     self.file_download = open(path, 'w')
 
-  def download_chunk(self):
+  def download_chunk(self, name):
     # download 10kb a time
     chunk = self.dl_response.read(10240)
     self.dl_bytes_so_far += len(chunk)
@@ -242,12 +247,14 @@ class TorBrowserLauncher:
 
     if not chunk:
       self.file_download.close()
+      # next task!
+      self.run_task()
       return False
 
     percent = float(self.dl_bytes_so_far) / self.dl_total_size
     self.progressbar.set_fraction(percent)
     percent = round(percent*100, 2)
-    self.progressbar.set_text("Downloaded %d" % (percent) + '%')
+    self.progressbar.set_text("Downloaded %d%% of %s" % (percent, name))
     
     sys.stdout.write("Downloaded %d of %d bytes (%0.2f%%)\r" % (self.dl_bytes_so_far, self.dl_total_size, percent))
 
@@ -256,6 +263,15 @@ class TorBrowserLauncher:
 
     return True
 
+  def verify(self):
+    self.run_task();
+
+  def extract(self):
+    self.run_task();
+
+  def run(self):
+    self.run_task();
+  
   # exit
   def delete_event(self, widget, event, data=None):
     return False
