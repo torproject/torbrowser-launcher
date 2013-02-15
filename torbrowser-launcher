@@ -24,7 +24,7 @@ class TorBrowserLauncher:
 
         if installed_tbb_version == current_tbb_version:
           # current version is tbb is installed, launch it
-          subprocess.call([self.paths['file']['start']])
+          self.run(False)
           launch_gui = False
         elif installed_tbb_version < self.current_tbb_version:
           # there is a tbb upgrade available
@@ -267,10 +267,13 @@ class TorBrowserLauncher:
     self.run_task();
 
   def extract(self):
+    subprocess.call(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']])
     self.run_task();
 
-  def run(self):
-    self.run_task();
+  def run(self, run_next_task = True):
+    subprocess.Popen([self.paths['file']['start']])
+    if run_next_task:
+      self.run_task();
   
   # exit
   def delete_event(self, widget, event, data=None):
