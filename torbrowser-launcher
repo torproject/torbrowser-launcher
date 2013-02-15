@@ -6,28 +6,6 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-def download_chunk(base):
-  # download 10kb a time
-  chunk = base.dl_response.read(10240)
-  base.dl_bytes_so_far += len(chunk)
-  base.tarball_file.write(chunk)
-
-  if not chunk:
-    base.tarball_file.close()
-    return False
-
-  percent = float(base.dl_bytes_so_far) / base.dl_total_size
-  base.progressbar.set_fraction(percent)
-  percent = round(percent*100, 2)
-  base.progressbar.set_text("Downloaded %d" % (percent) + '%')
-  
-  sys.stdout.write("Downloaded %d of %d bytes (%0.2f%%)\r" % (base.dl_bytes_so_far, base.dl_total_size, percent))
-
-  if base.dl_bytes_so_far >= base.dl_total_size:
-    sys.stdout.write('\n')
-
-  return True
-
 class TorBrowserLauncher:
   def __init__(self, current_tbb_version):
     # initialize the app
@@ -50,14 +28,14 @@ class TorBrowserLauncher:
           launch_gui = False
         elif installed_tbb_version < self.current_tbb_version:
           # there is a tbb upgrade available
-          self.set_gui('task', "Your Tor Browser Launcher is out of date. Click Start to download the\nlatest version from https://www.torproject.org.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
+          self.set_gui('task', "Your Tor Browser Launcher is out of date. Click Start to download the latest version from https://www.torproject.org.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
         else:
           # for some reason the installed tbb is newer than the current version?
-          self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle\nyou have installed is newer than the current version?")
+          self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?")
 
       else:
         # if tbb is installed but the version file doesn't exist, something is wrong
-        self.set_gui('error', "Something is wrong. You have the Tor Browser Bundle\ninstalled, but the version file is missing.")
+        self.set_gui('error', "Something is wrong. You have the Tor Browser Bundle installed, but the version file is missing.")
 
     # not installed
     else:
@@ -67,11 +45,11 @@ class TorBrowserLauncher:
       # are the tarball and sig already downloaded?
       if os.path.isfile(self.paths['file']['tarball']) and os.path.isfile(self.paths['file']['tarball_sig']):
         # start the gui with verify
-        self.set_gui('task', "You already have Tor Browser Bundle downloaded, but\nit isn't installed yet.", ['verify', 'extract', 'run'])
+        self.set_gui('task', "You already have Tor Browser Bundle downloaded, but it isn't installed yet.", ['verify', 'extract', 'run'])
 
       # first run
       else:
-        self.set_gui('task', "The first time you run the Tor Browser Launcher you need to download\nthe Tor Browser Bundle. Click Start to download it now from\nhttps://www.torproject.org/.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
+        self.set_gui('task', "The first time you run the Tor Browser Launcher you need to download the Tor Browser Bundle. Click Start to download it now from https://www.torproject.org/.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
 
     if launch_gui:
       self.build_ui()
@@ -113,8 +91,10 @@ class TorBrowserLauncher:
         'tarball_sig': tbb_data+'/download/'+tarball_filename+'.asc'
       },
       'url': {
-        'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
-        'tarball_sig': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+        #'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
+        #'tarball_sig': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+        'tarball': 'http://localhost/'+tarball_filename,
+        'tarball_sig': 'http://localhost/'+tarball_filename+'.asc'
       },
       'filename': {
         'tarball': tarball_filename,
@@ -133,7 +113,7 @@ class TorBrowserLauncher:
   def set_gui(self, gui, message, tasks):
     self.gui = gui
     self.gui_message = message
-    self.gui_task = tasks
+    self.gui_tasks = tasks
 
   # build the application's UI
   def build_ui(self):
@@ -149,67 +129,143 @@ class TorBrowserLauncher:
     self.box = gtk.VBox(False, 20)
     self.window.add(self.box)
 
-    self.label = gtk.Label("The first time you run the Tor Browser Launcher you need to download the Tor Browser Bundle. Would you like to download it from the following URL now?")
-    self.label.set_line_wrap(True)
-    self.box.pack_start(self.label, True, True, 0)
-    self.label.show()
+    if self.gui == 'error':
+      # labels
+      self.label1 = gtk.Label( self.gui_message ); 
+      self.label1.set_line_wrap(True)
+      self.box.pack_start(self.label1, True, True, 0)
+      self.label1.show()
 
-    self.progressbar = gtk.ProgressBar(adjustment=None)
-    self.progressbar.set_orientation(gtk.PROGRESS_LEFT_TO_RIGHT)
-    self.box.pack_start(self.progressbar, True, True, 0)
+      self.label2 = gtk.Label("You can fix the problem by deleting:\n"+self.paths['dir']['data']+"\n\nHowever, you will lose all your bookmarks and other Tor Browser preferences."); 
+      self.label2.set_line_wrap(True)
+      self.box.pack_start(self.label2, True, True, 0)
+      self.label2.show()
 
-    self.button_box = gtk.HButtonBox()
-    self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
-    self.box.pack_start(self.button_box, True, True, 0)
-    self.button_box.show()
+      # exit button
+      self.exit_button = gtk.Button("Exit")
+      self.exit_button.connect("clicked", self.destroy, None)
+      self.box.add(self.exit_button)
+      self.exit_button.show()
 
-    self.download = gtk.Button("Download")
-    self.download.connect("clicked", self.start_download, None)
-    self.button_box.add(self.download)
-    self.download.show()
+    elif self.gui == 'task':
+      # label
+      self.label = gtk.Label( self.gui_message ); 
+      self.label.set_line_wrap(True)
+      self.box.pack_start(self.label, True, True, 0)
+      self.label.show()
+      
+      # progress bar
+      self.progressbar = gtk.ProgressBar(adjustment=None)
+      self.progressbar.set_orientation(gtk.PROGRESS_LEFT_TO_RIGHT)
+      self.box.pack_start(self.progressbar, True, True, 0)
 
-    self.exit = gtk.Button("Exit")
-    self.exit.connect("clicked", self.destroy, None)
-    self.button_box.add(self.exit)
-    self.exit.show()
+      # button box
+      self.button_box = gtk.HButtonBox()
+      self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
+      self.box.pack_start(self.button_box, True, True, 0)
+      self.button_box.show()
+
+      # start button
+      self.start_button = gtk.Button("Start")
+      self.start_button.connect("clicked", self.start, None)
+      self.button_box.add(self.start_button)
+      self.start_button.show()
+
+      # exit button
+      self.exit_button = gtk.Button("Exit")
+      self.exit_button.connect("clicked", self.destroy, None)
+      self.button_box.add(self.exit_button)
+      self.exit_button.show()
+
+      # statusbar
+      self.statusbar = gtk.Label('')
+      self.statusbar.set_line_wrap(True)
+      self.box.pack_start(self.statusbar, True, True, 0)
 
     self.box.show()
     self.window.show();
 
+  # start button clicked, begin tasks
+  def start(self, widget, data=None):
+    # disable the start button
+    self.start_button.set_sensitive(False)
+    
+    # show the statusbar
+    #self.statusbar.show()
+
+    # loop through tasks
+    for task in self.gui_tasks:
+      if task == 'download_tarball':
+        print 'Downloading '+self.paths['url']['tarball']
+        if not self.download('tarball', self.paths['url']['tarball'], self.paths['file']['tarball']):
+          self.start_button.set_sensitive(True)
+          break
+
+      elif task == 'download_tarball_sig':
+        print 'Downloading '+self.paths['url']['tarball_sig']
+        if not self.download('signature', self.paths['url']['tarball_sig'], self.paths['file']['tarball_sig']):
+          self.start_button.set_sensitive(True)
+          break
+
+      elif task == 'verify':
+        print 'Verifying signature'
+
+      elif task == 'extract':
+        print 'Extracting '+self.paths['filename']['tarball']
+
+      elif task == 'run':
+        print 'Running '+self.paths['file']['start']
+
+  def download(self, name, url, path):
+    # initialize the progress bar
+    self.progressbar.set_fraction(0) 
+    self.progressbar.set_text('Downloading '+name)
+    self.progressbar.show()
+
+    # start the download
+    self.dl_response = urllib2.urlopen(url);
+    self.dl_total_size = self.dl_response.info().getheader('Content-Length').strip()
+    self.dl_total_size = int(self.dl_total_size)
+    self.dl_bytes_so_far = 0
+
+    # set a timer to download more chunks
+    self.timer = gobject.timeout_add(1, self.download_chunk)
+
+    # open a file to write to
+    self.file_download = open(path, 'w')
+
+  def download_chunk(self):
+    # download 10kb a time
+    chunk = self.dl_response.read(10240)
+    self.dl_bytes_so_far += len(chunk)
+    self.file_download.write(chunk)
+
+    if not chunk:
+      self.file_download.close()
+      return False
+
+    percent = float(self.dl_bytes_so_far) / self.dl_total_size
+    self.progressbar.set_fraction(percent)
+    percent = round(percent*100, 2)
+    self.progressbar.set_text("Downloaded %d" % (percent) + '%')
+    
+    sys.stdout.write("Downloaded %d of %d bytes (%0.2f%%)\r" % (self.dl_bytes_so_far, self.dl_total_size, percent))
+
+    if self.dl_bytes_so_far >= self.dl_total_size:
+      sys.stdout.write('\n')
+
+    return True
+
+  # exit
   def delete_event(self, widget, event, data=None):
     return False
-  
   def destroy(self, widget, data=None):
     if self.timer:
       gobject.source_remove(self.timer)
     self.timer = False
 
     gtk.main_quit()
-   
-  def start_download(self, widget, data=None):
-    print 'Starting to download '+self.tarball_url
 
-    # disable the download button
-    self.download.set_sensitive(False)
-
-    # initialize the progress bar
-    self.progressbar.set_fraction(0) 
-    self.progressbar.set_text('Downloaded 0%')
-    self.progressbar.show()
-
-    # start the download
-    self.dl_response = urllib2.urlopen(self.tarball_url);
-    
-    self.dl_total_size = self.dl_response.info().getheader('Content-Length').strip()
-    self.dl_total_size = int(self.dl_total_size)
-    self.dl_bytes_so_far = 0
-
-    # set a timer to download more chunks
-    self.timer = gobject.timeout_add(1, download_chunk, self)
-
-    # open a file to write to
-    self.tarball_file = open(self.tarball_path, 'w')
-      
 if __name__ == "__main__":
   print 'Tor Browser Launcher'
   print 'https://github.com/micahflee/torbrowser-launcher'
