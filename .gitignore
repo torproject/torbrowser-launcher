@@ -1,13 +1,40 @@
-aclocal.m4
-autom4te.cache
-config.log
-config.status
-configure
-hello.desktop
-install-sh
-missing
-Makefile.in
-Makefile
-torbrowser-launcher.desktop
-*.tar.xz
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+deb_dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+MANIFEST
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# vim
 *.swp
