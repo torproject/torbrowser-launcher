@@ -30,59 +30,117 @@ def download_chunk(base):
 
 class TorBrowserLauncher:
   def __init__(self, current_tbb_version):
+    # initialize the app
+    self.current_tbb_version = current_tbb_version
+    self.discover_arch_lang();
+    self.build_paths();
+    self.mkdirs();
+
+    launch_gui = True
+
+    # is TBB already installed?
+    if os.path.isfile(self.paths['file']['start']) and os.access(self.paths['file']['start'], os.X_OK):
+      # does the version file exist?
+      if os.path.isfile(self.paths['file']['version']):
+        installed_tbb_version = open(self.paths['file']['version']).read().strip()
+
+        if installed_tbb_version == current_tbb_version:
+          # current version is tbb is installed, launch it
+          subprocess.call([self.paths['file']['start']])
+          launch_gui = False
+        elif installed_tbb_version < self.current_tbb_version:
+          # there is a tbb upgrade available
+          self.set_gui('task', "Your Tor Browser Launcher is out of date. Click Start to download the\nlatest version from https://www.torproject.org.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
+        else:
+          # for some reason the installed tbb is newer than the current version?
+          self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle\nyou have installed is newer than the current version?")
+
+      else:
+        # if tbb is installed but the version file doesn't exist, something is wrong
+        self.set_gui('error', "Something is wrong. You have the Tor Browser Bundle\ninstalled, but the version file is missing.")
+
+    # not installed
+    else:
+      # save the current version to the file
+      open(self.paths['file']['version'], 'w').write(self.current_tbb_version)
+
+      # are the tarball and sig already downloaded?
+      if os.path.isfile(self.paths['file']['tarball']) and os.path.isfile(self.paths['file']['tarball_sig']):
+        # start the gui with verify
+        self.set_gui('task', "You already have Tor Browser Bundle downloaded, but\nit isn't installed yet.", ['verify', 'extract', 'run'])
+
+      # first run
+      else:
+        self.set_gui('task', "The first time you run the Tor Browser Launcher you need to download\nthe Tor Browser Bundle. Click Start to download it now from\nhttps://www.torproject.org/.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
+
+    if launch_gui:
+      self.build_ui()
+      gtk.main()
+  
+  # discover the architecture and language
+  def discover_arch_lang(self):
     # figure out the architecture
-    architecture = subprocess.check_output(['arch']).strip('\n')
+    self.architecture = subprocess.check_output(['arch']).strip('\n')
 
     # figure out the language
     available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
-    language = locale.getdefaultlocale()[0].replace('_', '-')
-    if language not in available_languages:
-      language = language.split('-')[0]
-      if language not in available_languages:
+    self.language = locale.getdefaultlocale()[0].replace('_', '-')
+    if self.language not in available_languages:
+      self.language = self.language.split('-')[0]
+      if self.language not in available_languages:
         for l in available_languages:
-          if l[0:2] == language:
-            language = l
+          if l[0:2] == self.language:
+            self.language = l
     # if language isn't available, default to english
-    if language not in available_languages:
-      language = 'en-US'
+    if self.language not in available_languages:
+      self.language = 'en-US'
 
-    # make sure local directory structure is setup
-    data_dir = os.getenv('HOME')+'/.torbrowser'
-    download_dir = data_dir+'/download'
-    tbb_dir = data_dir+'/tbb/'+architecture+'/'+language
-    if os.path.exists(download_dir) == False:
-      print 'making '+download_dir
-      os.makedirs(download_dir)
-    if os.path.exists(tbb_dir) == False:
-      print 'making '+tbb_dir
-      os.makedirs(tbb_dir)
+  # build all relevant paths
+  def build_paths(self):
+    tbb_data = os.getenv('HOME')+'/.torbrowser'
+    tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+self.current_tbb_version+'-dev-'+self.language+'.tar.gz'
 
-    # is TBB already installed?
-    tbb_start = tbb_dir+'/start-tor-browser'
-    if os.path.isfile(tbb_start):
-      print 'Launching '+tbb_start
-      subprocess.call([tbb_start])
+    self.paths = {
+      'dir': {
+        'data': tbb_data,
+        'download': tbb_data+'/download',
+        'tbb': tbb_data+'/tbb/'+self.architecture
+      },
+      'file': {
+        'version': tbb_data+'/version',
+        'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
+        'tarball': tbb_data+'/download/'+tarball_filename,
+        'tarball_sig': tbb_data+'/download/'+tarball_filename+'.asc'
+      },
+      'url': {
+        'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
+        'tarball_sig': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+      },
+      'filename': {
+        'tarball': tarball_filename,
+        'tarball_sig': tarball_filename+'.asc'
+      }
+    }
 
-    else:
-      tarball_filename = 'tor-browser-gnu-linux-'+architecture+'-'+current_tbb_version+'-dev-'+language+'.tar.gz'
-      tarball_path = download_dir+'/'+tarball_filename
-      if os.path.exists(tarball_path):
-        # already downloaded
-        print 'Already downloaded'
-      else:
-        # launch downloader
-        #tarball_url = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename
-        tarball_url = 'http://127.0.0.1/'+tarball_filename
+  # create directories that don't exist
+  def mkdirs(self):
+    if os.path.exists(self.paths['dir']['download']) == False:
+      os.makedirs(self.paths['dir']['download'])
+    if os.path.exists(self.paths['dir']['tbb']) == False:
+      os.makedirs(self.paths['dir']['tbb'])
 
+  # there are different GUIs that might appear, this sets which one we want
+  def set_gui(self, gui, message, tasks):
+    self.gui = gui
+    self.gui_message = message
+    self.gui_task = tasks
 
-
-
+  # build the application's UI
+  def build_ui(self):
     self.timer = False
 
-    self.current_tbb_version = current_tbb_version
-
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-    self.window.set_title("Tor Browser Launcher - First Run")
+    self.window.set_title("Tor Browser Launcher")
     self.window.set_border_width(10)
     
     self.window.connect("delete_event", self.delete_event)
@@ -117,7 +175,7 @@ class TorBrowserLauncher:
 
     self.box.show()
     self.window.show();
-  
+
   def delete_event(self, widget, event, data=None):
     return False
   
