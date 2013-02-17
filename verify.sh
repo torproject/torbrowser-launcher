@@ -12,5 +12,5 @@ chmod 700 $GPG_TMP_DIR
 # import erinn's public key
 gpg --homedir $GPG_TMP_DIR --import /usr/share/torbrowser-launcher/erinn.asc
 
-#verify the signature
+# verify the signature
 gpg --homedir $GPG_TMP_DIR --verify $TBB_SIG

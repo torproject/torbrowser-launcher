@@ -266,11 +266,15 @@ class TorBrowserLauncher:
     return True
 
   def verify(self):
-    verify_output = subprocess.check_output([self.paths['file']['verify']])
+    error = False
+
+    verify_output = subprocess.check_output([self.paths['file']['verify'], self.paths['dir']['gpg'], self.paths['file']['tarball_sig']], stderr=subprocess.STDOUT)
     if 'Good signature' in verify_output:
       self.run_task();
-
     else:
+      error = True
+
+    if error:
       self.label = "Signature verification failed!"
 
   def extract(self):
