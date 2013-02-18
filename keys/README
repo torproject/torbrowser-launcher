@@ -1,0 +1,6 @@
+Please visit the Tor web page about verifying signatures:
+
+  https://www.torproject.org/docs/signing-keys.html
+
+All of the keys in this directory are believed to be verified for
+releasing and signing the TBB releases.
