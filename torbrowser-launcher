@@ -119,10 +119,14 @@ class TorBrowserLauncher:
   def build_ui(self):
     self.timer = False
 
+    # allow buttons to have icons
+    settings = gtk.settings_get_default()
+    settings.props.gtk_button_images = True
+
+    # set up the window
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
     self.window.set_title("Tor Browser Launcher")
     self.window.set_border_width(10)
-    
     self.window.connect("delete_event", self.delete_event)
     self.window.connect("destroy", self.destroy)
 
@@ -167,13 +171,19 @@ class TorBrowserLauncher:
       self.button_box.show()
 
       # start button
+      start_image = gtk.Image()
+      start_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
       self.start_button = gtk.Button("Start")
+      self.start_button.set_image(start_image)
       self.start_button.connect("clicked", self.start, None)
       self.button_box.add(self.start_button)
       self.start_button.show()
 
       # exit button
+      exit_image = gtk.Image()
+      exit_image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
       self.exit_button = gtk.Button("Exit")
+      self.exit_button.set_image(exit_image)
       self.exit_button.connect("clicked", self.destroy, None)
       self.button_box.add(self.exit_button)
       self.exit_button.show()
