@@ -345,9 +345,12 @@ class TorBrowserLauncher:
     gtk.main_quit()
 
 if __name__ == "__main__":
+  current_tbl_version = '0.1'
+  current_tbb_version = '2.3.25-2'
+
   print 'Tor Browser Launcher'
+  print 'version %s' % (current_tbl_version)
   print 'https://github.com/micahflee/torbrowser-launcher'
 
-  current_tbb_version = '2.3.25-2'
   app = TorBrowserLauncher(current_tbb_version)
 
