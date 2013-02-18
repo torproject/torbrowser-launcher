@@ -10,9 +10,9 @@ class TorBrowserLauncher:
   def __init__(self, current_tbb_version):
     # initialize the app
     self.current_tbb_version = current_tbb_version
-    self.discover_arch_lang();
-    self.build_paths();
-    self.mkdirs();
+    self.discover_arch_lang()
+    self.build_paths()
+    self.mkdirs()
 
     launch_gui = True
 
@@ -136,12 +136,12 @@ class TorBrowserLauncher:
 
     if self.gui == 'error':
       # labels
-      self.label1 = gtk.Label( self.gui_message ); 
+      self.label1 = gtk.Label( self.gui_message ) 
       self.label1.set_line_wrap(True)
       self.box.pack_start(self.label1, True, True, 0)
       self.label1.show()
 
-      self.label2 = gtk.Label("You can fix the problem by deleting:\n"+self.paths['dir']['data']+"\n\nHowever, you will lose all your bookmarks and other Tor Browser preferences."); 
+      self.label2 = gtk.Label("You can fix the problem by deleting:\n"+self.paths['dir']['data']+"\n\nHowever, you will lose all your bookmarks and other Tor Browser preferences.") 
       self.label2.set_line_wrap(True)
       self.box.pack_start(self.label2, True, True, 0)
       self.label2.show()
@@ -157,7 +157,7 @@ class TorBrowserLauncher:
 
     elif self.gui == 'task':
       # label
-      self.label = gtk.Label( self.gui_message ); 
+      self.label = gtk.Label( self.gui_message ) 
       self.label.set_line_wrap(True)
       self.box.pack_start(self.label, True, True, 0)
       self.label.show()
@@ -193,7 +193,7 @@ class TorBrowserLauncher:
       self.exit_button.show()
 
     self.box.show()
-    self.window.show();
+    self.window.show()
 
   # start button clicked, begin tasks
   def start(self, widget, data=None):
@@ -247,7 +247,7 @@ class TorBrowserLauncher:
     self.progressbar.show()
 
     # start the download
-    self.dl_response = urllib2.urlopen(url);
+    self.dl_response = urllib2.urlopen(url)
     self.dl_total_size = self.dl_response.info().getheader('Content-Length').strip()
     self.dl_total_size = int(self.dl_total_size)
     self.dl_bytes_so_far = 0
@@ -294,7 +294,7 @@ class TorBrowserLauncher:
     output = p.stdout.read()
     
     if 'Good signature' in output:
-      self.run_task();
+      self.run_task()
     else:
       self.progressbar.hide()
       self.label.set_text("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again.")
@@ -311,12 +311,12 @@ class TorBrowserLauncher:
     p = subprocess.Popen(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     self.pulse_until_process_exits(p)
 
-    self.run_task();
+    self.run_task()
 
   def run(self, run_next_task = True):
     subprocess.Popen([self.paths['file']['start']])
     if run_next_task:
-      self.run_task();
+      self.run_task()
 
   # make the progress bar pulse until process p (a Popen object) finishes
   def pulse_until_process_exits(self, p):
