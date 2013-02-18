@@ -31,11 +31,11 @@ class TorBrowserLauncher:
           self.set_gui('task', "Your Tor Browser Launcher is out of date. Click Start to download the latest version from https://www.torproject.org.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
         else:
           # for some reason the installed tbb is newer than the current version?
-          self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?")
+          self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?", [])
 
       else:
         # if tbb is installed but the version file doesn't exist, something is wrong
-        self.set_gui('error', "Something is wrong. You have the Tor Browser Bundle installed, but the version file is missing.")
+        self.set_gui('error', "Something is wrong. You have the Tor Browser Bundle installed, but the version file is missing.", [])
 
     # not installed
     else:
