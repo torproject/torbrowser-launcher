@@ -93,10 +93,8 @@ class TorBrowserLauncher:
         'verify': '/usr/share/torbrowser-launcher/verify.sh'
       },
       'url': {
-        #'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
-        #'tarball_sig': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
-        'tarball': 'http://localhost/'+tarball_filename,
-        'tarball_sig': 'http://localhost/'+tarball_filename+'.asc'
+        'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
+        'tarball_sig': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
       },
       'filename': {
         'tarball': tarball_filename,
