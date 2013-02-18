@@ -222,6 +222,10 @@ class TorBrowserLauncher:
     elif task == 'run':
       print 'Running '+self.paths['file']['start']
       self.run()
+    
+    elif task == 'start_over':
+      print 'Starting download over again'
+      self.start_over()
 
 
   def download(self, name, url, path):
@@ -280,7 +284,11 @@ class TorBrowserLauncher:
     if 'Good signature' in output:
       self.run_task();
     else:
-      self.label = "Signature verification failed!"
+      self.progressbar.hide()
+      self.label.set_text("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again.")
+      self.gui_tasks = ['start_over']
+      self.gui_task_i = 0
+      self.start_button.set_sensitive(True)
 
   def extract(self):
     # initialize the progress bar
@@ -306,6 +314,13 @@ class TorBrowserLauncher:
       # redraw gtk
       while gtk.events_pending():
          gtk.main_iteration(False)
+
+  # start over and download TBB again
+  def start_over(self):
+    self.label.set_text("Downloading Tor Browser Bundle over again.")
+    self.gui_tasks = ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']
+    self.gui_task_i = 0
+    self.start(None)
   
   # exit
   def delete_event(self, widget, event, data=None):
