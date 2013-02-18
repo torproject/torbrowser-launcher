@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, sys, subprocess, locale, urllib2, gobject
+import os, sys, subprocess, locale, urllib2, gobject, time
 
 import pygtk
 pygtk.require('2.0')
@@ -159,8 +159,7 @@ class TorBrowserLauncher:
       # progress bar
       self.progressbar = gtk.ProgressBar(adjustment=None)
       self.progressbar.set_orientation(gtk.PROGRESS_LEFT_TO_RIGHT)
-      self.progressbar.set_pulse_step(0.1)
-      self.progressbar_is_pulsing = False
+      self.progressbar.set_pulse_step(0.01)
       self.box.pack_start(self.progressbar, True, True, 0)
 
       # button box
@@ -267,33 +266,20 @@ class TorBrowserLauncher:
 
     return True
 
-  def progressbar_pulse(self):
-    print 'pulse'
-    if self.progressbar_is_pulsing:
-      self.progressbar.pulse()
-      return True
-    else:
-      return False
-
   def verify(self):
     # initialize the progress bar
     self.progressbar.set_fraction(0) 
     self.progressbar.set_text('Verifying Signature')
     self.progressbar.show()
-    self.progressbar_is_pulsing = True
-    self.timer = gobject.timeout_add(1, self.progressbar_pulse)
 
-    error = False
+    p = subprocess.Popen([self.paths['file']['verify'], self.paths['dir']['gpg'], self.paths['file']['tarball_sig']], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    self.pulse_until_process_exits(p)
 
-    verify_output = subprocess.check_output([self.paths['file']['verify'], self.paths['dir']['gpg'], self.paths['file']['tarball_sig']], stderr=subprocess.STDOUT)
-    if 'Good signature' in verify_output:
-      self.progressbar_is_pulsing = False
+    output = p.stdout.read()
+    
+    if 'Good signature' in output:
       self.run_task();
     else:
-      error = True
-
-    if error:
-      self.progressbar_is_pulsing = False
       self.label = "Signature verification failed!"
 
   def extract(self):
@@ -301,18 +287,25 @@ class TorBrowserLauncher:
     self.progressbar.set_fraction(0) 
     self.progressbar.set_text('Installing')
     self.progressbar.show()
-    self.progressbar_is_pulsing = True
-    self.timer = gobject.timeout_add(1, self.progressbar_pulse)
 
-    subprocess.call(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']])
+    p = subprocess.Popen(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    self.pulse_until_process_exits(p)
 
-    self.progressbar_is_pulsing = False
     self.run_task();
 
   def run(self, run_next_task = True):
     subprocess.Popen([self.paths['file']['start']])
     if run_next_task:
       self.run_task();
+
+  # make the progress bar pulse until process p (a Popen object) finishes
+  def pulse_until_process_exits(self, p):
+    while p.poll() == None:
+      time.sleep(0.01)
+      self.progressbar.pulse()
+      # redraw gtk
+      while gtk.events_pending():
+         gtk.main_iteration(False)
   
   # exit
   def delete_event(self, widget, event, data=None):
