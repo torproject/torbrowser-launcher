@@ -28,7 +28,7 @@ class TorBrowserLauncher:
           launch_gui = False
         elif installed_tbb_version < self.current_tbb_version:
           # there is a tbb upgrade available
-          self.set_gui('task', "Your Tor Browser Launcher is out of date. Click Start to download the latest version from https://www.torproject.org.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
+          self.set_gui('task', "Your Tor Browser is out of date. Click Start to download the latest version from https://www.torproject.org.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
         else:
           # for some reason the installed tbb is newer than the current version?
           self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?", [])
