@@ -248,6 +248,7 @@ class TorBrowserLauncher:
     self.progressbar.set_fraction(0) 
     self.progressbar.set_text('Downloading '+name)
     self.progressbar.show()
+    self.refresh_gtk()
 
     # start the download
     self.dl_response = urllib2.urlopen(url)
@@ -277,6 +278,7 @@ class TorBrowserLauncher:
     self.progressbar.set_fraction(percent)
     percent = round(percent*100, 2)
     self.progressbar.set_text("Downloaded %d%% of %s" % (percent, name))
+    self.refresh_gtk()
     
     sys.stdout.write("Downloaded %d of %d bytes (%0.2f%%)\r" % (self.dl_bytes_so_far, self.dl_total_size, percent))
 
@@ -326,9 +328,7 @@ class TorBrowserLauncher:
     while p.poll() == None:
       time.sleep(0.01)
       self.progressbar.pulse()
-      # redraw gtk
-      while gtk.events_pending():
-         gtk.main_iteration(False)
+      self.refresh_gtk()
 
   # start over and download TBB again
   def start_over(self):
@@ -337,6 +337,11 @@ class TorBrowserLauncher:
     self.gui_task_i = 0
     self.start(None)
   
+  # refresh gtk
+  def refresh_gtk(self):
+    while gtk.events_pending():
+       gtk.main_iteration(False)
+
   # exit
   def delete_event(self, widget, event, data=None):
     return False
