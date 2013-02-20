@@ -1,3 +1,3 @@
 include img/*
 include keys/*
-torbrowser.desktop
+include torbrowser.desktop
