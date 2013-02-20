@@ -120,8 +120,11 @@ class TorBrowserLauncher:
     self.timer = False
 
     # allow buttons to have icons
-    settings = gtk.settings_get_default()
-    settings.props.gtk_button_images = True
+    try:
+      settings = gtk.settings_get_default()
+      settings.props.gtk_button_images = True
+    except:
+      pass
 
     # set up the window
     self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
