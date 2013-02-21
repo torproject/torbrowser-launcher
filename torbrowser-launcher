@@ -28,7 +28,12 @@ class TorBrowserLauncher:
           launch_gui = False
         elif installed_tbb_version < self.current_tbb_version:
           # there is a tbb upgrade available
-          self.set_gui('task', "Your Tor Browser is out of date. Click Start to download the latest version from https://www.torproject.org.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
+          self.set_gui('task', "Your Tor Browser is out of date.", 
+            ['download_tarball', 
+             'download_tarball_sig', 
+             'verify', 
+             'extract', 
+             'run'])
         else:
           # for some reason the installed tbb is newer than the current version?
           self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?", [])
@@ -45,11 +50,19 @@ class TorBrowserLauncher:
       # are the tarball and sig already downloaded?
       if os.path.isfile(self.paths['file']['tarball']) and os.path.isfile(self.paths['file']['tarball_sig']):
         # start the gui with verify
-        self.set_gui('task', "You already have Tor Browser Bundle downloaded, but it isn't installed yet.", ['verify', 'extract', 'run'])
+        self.set_gui('task', "Installing Tor Browser.", 
+          ['verify', 
+           'extract', 
+           'run'])
 
       # first run
       else:
-        self.set_gui('task', "The first time you run the Tor Browser Launcher you need to download the Tor Browser Bundle. Click Start to download it now from https://www.torproject.org/.", ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run'])
+        self.set_gui('task', "Downloading and installing Tor Browser.", 
+          ['download_tarball', 
+           'download_tarball_sig', 
+           'verify', 
+           'extract', 
+           'run'])
 
     if launch_gui:
       self.build_ui()
@@ -97,8 +110,10 @@ class TorBrowserLauncher:
         'verify': '/usr/share/torbrowser-launcher/verify.sh'
       },
       'url': {
-        'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
-        'tarball_sig': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+        #'tarball': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename,
+        #'tarball_sig': 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+        'tarball': 'http://localhost/'+tarball_filename,
+        'tarball_sig': 'http://localhost/'+tarball_filename+'.asc'
       },
       'filename': {
         'tarball': tarball_filename,
@@ -114,10 +129,11 @@ class TorBrowserLauncher:
       os.makedirs(self.paths['dir']['tbb'])
 
   # there are different GUIs that might appear, this sets which one we want
-  def set_gui(self, gui, message, tasks):
+  def set_gui(self, gui, message, tasks, autostart=True):
     self.gui = gui
     self.gui_message = message
     self.gui_tasks = tasks
+    self.gui_autostart = autostart
 
   # build the application's UI
   def build_ui(self):
@@ -188,7 +204,8 @@ class TorBrowserLauncher:
       self.start_button.set_image(start_image)
       self.start_button.connect("clicked", self.start, None)
       self.button_box.add(self.start_button)
-      self.start_button.show()
+      if not self.gui_autostart:
+        self.start_button.show()
 
       # exit button
       exit_image = gtk.Image()
@@ -201,6 +218,9 @@ class TorBrowserLauncher:
 
     self.box.show()
     self.window.show()
+
+    if self.gui_autostart:
+      self.start(None)
 
   # start button clicked, begin tasks
   def start(self, widget, data=None):
@@ -309,6 +329,7 @@ class TorBrowserLauncher:
       self.label.set_text("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again.")
       self.gui_tasks = ['start_over']
       self.gui_task_i = 0
+      self.start_button.show()
       self.start_button.set_sensitive(True)
 
   def extract(self):
