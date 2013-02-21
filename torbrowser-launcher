@@ -232,6 +232,8 @@ class TorBrowserLauncher:
     
   # run the next task in the task list
   def run_task(self):
+    self.refresh_gtk()
+
     if self.gui_task_i >= len(self.gui_tasks):
       self.destroy(False)
       return
