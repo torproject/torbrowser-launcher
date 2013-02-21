@@ -62,16 +62,20 @@ class TorBrowserLauncher:
 
     # figure out the language
     available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
-    self.language = locale.getdefaultlocale()[0].replace('_', '-')
-    if self.language not in available_languages:
-      self.language = self.language.split('-')[0]
-      if self.language not in available_languages:
-        for l in available_languages:
-          if l[0:2] == self.language:
-            self.language = l
-    # if language isn't available, default to english
-    if self.language not in available_languages:
+    default_locale = locale.getdefaultlocale()[0]
+    if default_locale == None:
       self.language = 'en-US'
+    else:
+      self.language = default_locale.replace('_', '-')
+      if self.language not in available_languages:
+        self.language = self.language.split('-')[0]
+        if self.language not in available_languages:
+          for l in available_languages:
+            if l[0:2] == self.language:
+              self.language = l
+      # if language isn't available, default to english
+      if self.language not in available_languages:
+        self.language = 'en-US'
 
   # build all relevant paths
   def build_paths(self):
