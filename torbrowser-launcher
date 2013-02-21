@@ -58,7 +58,7 @@ class TorBrowserLauncher:
   # discover the architecture and language
   def discover_arch_lang(self):
     # figure out the architecture
-    self.architecture = subprocess.Popen(['arch'], stdout=subprocess.PIPE, stderr=None).stdout.read().strip('\n')
+    self.architecture = subprocess.Popen(['uname', '-m'], stdout=subprocess.PIPE, stderr=None).stdout.read().strip('\n')
 
     # figure out the language
     available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
