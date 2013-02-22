@@ -1,10 +1,19 @@
 #!/usr/bin/env python
 
-import os, sys, subprocess, locale, urllib2, gobject, time
+from twisted.internet import gtk2reactor
+gtk2reactor.install()
+from twisted.internet import reactor
 
 import pygtk
 pygtk.require('2.0')
 import gtk
+
+import os, sys, subprocess, locale, urllib2, gobject, time
+
+from twisted.web.client import Agent, ResponseDone
+from twisted.web.http_headers import Headers
+from twisted.internet.protocol import Protocol
+
 
 class TorBrowserLauncher:
   def __init__(self, current_tbb_version):
@@ -66,7 +75,8 @@ class TorBrowserLauncher:
 
     if launch_gui:
       self.build_ui()
-      gtk.main()
+      #gtk.main()
+      reactor.run()
   
   # discover the architecture and language
   def discover_arch_lang(self):
@@ -267,6 +277,41 @@ class TorBrowserLauncher:
       print 'Starting download over again'
       self.start_over()
 
+  def response_received(self, response):
+    class FileDownloader(Protocol):
+      def __init__(self, file, total, progress, done_cb):
+        self.file = file
+        self.total = total
+        self.so_far = 0
+        self.progress = progress
+        self.all_done = done_cb
+
+      def dataReceived(self, bytes):
+        self.file.write(bytes)
+        self.so_far += len(bytes)
+        percent = float(self.so_far) / float(self.total)
+        self.progress.set_fraction(percent)
+        self.progress.set_text('Downloaded %2.1f%%' % (percent * 100.0))
+
+      def connectionLost(self, reason):
+        print 'Finished receiving body:', reason.getErrorMessage()
+        self.all_done(reason)
+
+    dl = FileDownloader(self.file_download, response.length, self.progressbar, self.response_finished)
+    response.deliverBody(dl)
+
+
+  def response_finished(self, msg):
+    print dir(msg)
+    if msg.check(ResponseDone):
+      self.file_download.close()
+      # next task!
+      self.run_task()
+
+    else:
+      print "FINISHED", msg
+      ## FIXME handle errors
+
 
   def download(self, name, url, path):
     # initialize the progress bar
@@ -275,17 +320,13 @@ class TorBrowserLauncher:
     self.progressbar.show()
     self.refresh_gtk()
 
-    # start the download
-    self.dl_response = urllib2.urlopen(url)
-    self.dl_total_size = self.dl_response.info().getheader('Content-Length').strip()
-    self.dl_total_size = int(self.dl_total_size)
-    self.dl_bytes_so_far = 0
+    agent = Agent(reactor)
+    d = agent.request('GET', url,
+                      Headers({'User-Agent': ['torbrowser-launcher']}),
+                      None)
 
-    # set a timer to download more chunks
-    self.timer = gobject.timeout_add(1, self.download_chunk, name)
-
-    # open a file to write to
     self.file_download = open(path, 'w')
+    d.addCallback(self.response_received)
 
   def download_chunk(self, name):
     # download 10kb a time
