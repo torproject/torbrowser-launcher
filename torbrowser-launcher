@@ -12,7 +12,6 @@ class TorBrowserLauncher:
     self.discover_arch_lang()
     self.build_paths()
     self.mkdirs()
-    self.clear_ui()
 
     # allow buttons to have icons
     try:
@@ -44,6 +43,15 @@ class TorBrowserLauncher:
       self.set_gui('error', "Error loading settings. Delete ~/.torbrowser and try again.", [])
 
     if launch_gui:
+      # set up the window
+      self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+      self.window.set_title("Tor Browser")
+      self.window.set_position(gtk.WIN_POS_CENTER)
+      self.window.set_border_width(10)
+      self.window.connect("delete_event", self.delete_event)
+      self.window.connect("destroy", self.destroy)
+
+      # build the rest of the UI
       self.build_ui()
       gtk.main()
 
@@ -159,9 +167,14 @@ class TorBrowserLauncher:
 
   # set all gtk variables to False
   def clear_ui(self):
+    if self.timer:
+      gobject.source_remove(self.timer)
     self.timer = False
-    self.window = False
+
+    if self.box:
+      self.box.destroy()
     self.box = False
+
     self.label1 = False
     self.label2 = False
     self.label = False
@@ -172,14 +185,6 @@ class TorBrowserLauncher:
 
   # build the application's UI
   def build_ui(self):
-    # set up the window
-    self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-    self.window.set_title("Tor Browser")
-    self.window.set_position(gtk.WIN_POS_CENTER)
-    self.window.set_border_width(10)
-    self.window.connect("delete_event", self.delete_event)
-    self.window.connect("destroy", self.destroy)
-
     self.box = gtk.VBox(False, 20)
     self.window.add(self.box)
 
@@ -251,7 +256,8 @@ class TorBrowserLauncher:
   # start button clicked, begin tasks
   def start(self, widget, data=None):
     # disable the start button
-    self.start_button.set_sensitive(False)
+    if self.start_button:
+      self.start_button.set_sensitive(False)
 
     # start running tasks
     self.gui_task_i = 0
@@ -374,7 +380,6 @@ class TorBrowserLauncher:
       self.set_gui('error', "Error checking for updates.", [])
 
     # now start over
-    self.window.destroy()
     self.clear_ui()
     self.build_ui()
 
