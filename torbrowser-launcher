@@ -425,7 +425,8 @@ class TorBrowserLauncher:
       gobject.source_remove(self.timer)
     self.timer = False
 
-    gtk.main_quit()
+    self.file_download.close()
+    reactor.stop()
 
 if __name__ == "__main__":
   current_tbl_version = '0.1'
