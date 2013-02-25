@@ -293,7 +293,7 @@ class TorBrowserLauncher:
         self.progress.set_fraction(percent)
         amount = float(self.so_far)
         units = "bytes"
-        for (size, unit) in [(1000000, "MB"), (1000, "KB")]:
+        for (size, unit) in [(1024 * 1024, "MiB"), (1024, "KiB")]:
           if amount > size:
             units = unit
             amount = amount / float(size)
