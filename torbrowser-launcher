@@ -281,7 +281,7 @@ class TorBrowserLauncher:
       self.download('update check', self.paths['url']['update_check'], self.paths['file']['update_check'])
     
     if task == 'attempt_update':
-      print 'Attempting to update'
+      print 'Checking to see if update it needed'
       self.attempt_update()
 
     elif task == 'download_tarball':
@@ -412,6 +412,10 @@ class TorBrowserLauncher:
 
     p = subprocess.Popen(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     self.pulse_until_process_exits(p)
+
+    # installation is finished, so save installed_version
+    self.settings['installed_version'] = self.settings['latest_version']
+    self.save_settings()
 
     self.run_task()
 
