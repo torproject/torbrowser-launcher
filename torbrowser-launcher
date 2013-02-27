@@ -59,11 +59,11 @@ class TorBrowserLauncher:
   def start_launcher(self):
     # is TBB already installed?
     if os.path.isfile(self.paths['file']['start']) and os.access(self.paths['file']['start'], os.X_OK):
-      if self.settings.installed_version == self.settings.latest_version:
+      if self.settings['installed_version'] == self.settings['latest_version']:
         # current version of tbb is installed, launch it
         self.run(False)
         launch_gui = False
-      elif self.settings.installed_version < self.settings.latest_version:
+      elif self.settings['installed_version'] < self.settings['latest_version']:
         # there is a tbb upgrade available
         self.set_gui('task', "Your Tor Browser is out of date.", 
           ['download_tarball', 
@@ -163,6 +163,7 @@ class TorBrowserLauncher:
     self.gui = gui
     self.gui_message = message
     self.gui_tasks = tasks
+    self.gui_task_i = 0
     self.gui_autostart = autostart
 
   # set all gtk variables to False
@@ -260,7 +261,6 @@ class TorBrowserLauncher:
       self.start_button.set_sensitive(False)
 
     # start running tasks
-    self.gui_task_i = 0
     self.run_task()
     
   # run the next task in the task list
@@ -359,25 +359,25 @@ class TorBrowserLauncher:
       versions = json.load(open(self.paths['file']['update_check']))
       latest_version = None
 
-      end = '-Linux-%s' % self.architecture
+      end = '-Linux'
       for version in versions:
         if str(version).find(end) != -1:
-          latest_version = version
+          latest_version = str(version)
 
       if latest_version:
-        self.settings.latest_version = latest_version[:-len(end)]
-        self.settings.last_update_check_timestamp = int(time.time())
+        self.settings['latest_version'] = latest_version[:-len(end)]
+        self.settings['last_update_check_timestamp'] = int(time.time())
         self.save_settings()
         self.build_paths(self.settings['latest_version'])
         self.start_launcher()
 
       else:
         # failed to find the latest version
-        self.set_gui('error', "Error checking for updates.", [])
+        self.set_gui('error', "Error checking for updates.", [], False)
     
     except:
       # not a valid JSON object
-      self.set_gui('error', "Error checking for updates.", [])
+      self.set_gui('error', "Error checking for updates.", [], False)
 
     # now start over
     self.clear_ui()
@@ -468,10 +468,6 @@ class TorBrowserLauncher:
   def delete_event(self, widget, event, data=None):
     return False
   def destroy(self, widget, data=None):
-    if self.timer:
-      gobject.source_remove(self.timer)
-    self.timer = False
-
     gtk.main_quit()
 
 if __name__ == "__main__":
