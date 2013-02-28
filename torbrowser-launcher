@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+.view-twitterator-follow-eff .views-row .views-field-field-tweet {
 
 import os, sys, subprocess, locale, urllib2, gobject, time, pickle, json
 
@@ -20,7 +21,7 @@ class TorBrowserLauncher:
     except:
       pass
 
-    launch_gui = True
+    self.launch_gui = True
 
     # load settings
     if self.load_settings():
@@ -31,18 +32,20 @@ class TorBrowserLauncher:
       current_timestamp = int(time.time())
       if current_timestamp - self.settings['last_update_check_timestamp'] >= 86400:
         # check for update
+        print 'Checking for update'
         self.set_gui('task', "Checking for Tor Browser update.", 
           ['download_update_check', 
            'attempt_update'])
 
       else:
         # no need to check for update
+        print 'Checked for update within 24 hours, skipping'
         self.start_launcher()
 
     else:
       self.set_gui('error', "Error loading settings. Delete ~/.torbrowser and try again.", [])
 
-    if launch_gui:
+    if self.launch_gui:
       # set up the window
       self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
       self.window.set_title("Tor Browser")
@@ -62,7 +65,7 @@ class TorBrowserLauncher:
       if self.settings['installed_version'] == self.settings['latest_version']:
         # current version of tbb is installed, launch it
         self.run(False)
-        launch_gui = False
+        self.launch_gui = False
       elif self.settings['installed_version'] < self.settings['latest_version']:
         # there is a tbb upgrade available
         self.set_gui('task', "Your Tor Browser is out of date.", 
