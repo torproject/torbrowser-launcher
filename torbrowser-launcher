@@ -35,9 +35,11 @@ class VerifyTorProjectCert(ClientContextFactory):
 class TorBrowserLauncher:
     def __init__(self):
         # initialize the app
+        self.set_gui(None, '', [])
         self.discover_arch_lang()
         self.build_paths()
-        self.mkdirs()
+        self.mkdir(self.paths['dir']['download'])
+        self.mkdir(self.paths['dir']['tbb'])
 
         # allow buttons to have icons
         try:
@@ -48,27 +50,29 @@ class TorBrowserLauncher:
 
         self.launch_gui = True
 
-        # load settings
-        if self.load_settings():
-            self.build_paths(self.settings['latest_version'])
+        # if we haven't already hit an error
+        if self.gui != 'error':
+            # load settings
+            if self.load_settings():
+                self.build_paths(self.settings['latest_version'])
 
-            # how long was it since the last update check?
-            # 86400 seconds = 24 hours
-            current_timestamp = int(time.time())
-            if current_timestamp - self.settings['last_update_check_timestamp'] >= 86400:
-                # check for update
-                print 'Checking for update'
-                self.set_gui('task', "Checking for Tor Browser update.", 
-                    ['download_update_check', 
-                     'attempt_update'])
+                # how long was it since the last update check?
+                # 86400 seconds = 24 hours
+                current_timestamp = int(time.time())
+                if current_timestamp - self.settings['last_update_check_timestamp'] >= 86400:
+                    # check for update
+                    print 'Checking for update'
+                    self.set_gui('task', "Checking for Tor Browser update.", 
+                        ['download_update_check', 
+                         'attempt_update'])
+
+                else:
+                    # no need to check for update
+                    print 'Checked for update within 24 hours, skipping'
+                    self.start_launcher()
 
             else:
-                # no need to check for update
-                print 'Checked for update within 24 hours, skipping'
-                self.start_launcher()
-
-        else:
-            self.set_gui('error', "Error loading settings. Delete ~/.torbrowser and try again.", [])
+                self.set_gui('error', "Error loading settings. Delete ~/.torbrowser and try again.", [])
 
         if self.launch_gui:
             # set up the window
@@ -147,7 +151,18 @@ class TorBrowserLauncher:
 
     # build all relevant paths
     def build_paths(self, tbb_version = None):
-        tbb_data = os.getenv('HOME')+'/.torbrowser'
+        homedir = os.getenv('HOME')
+        if not homedir:
+            homedir = '/tmp/.torbrowser-'+os.getenv('USER')
+            if os.path.exists(homedir) == False:
+                try:
+                    os.mkdir(homedir, 0700)
+                except:
+                    self.set_gui('error', "Error creating %s" % homedir, [], False)
+        if not os.access(homedir, os.W_OK):
+            self.set_gui('error', "%s is not writable" % homedir, [], False)
+
+        tbb_data = '%s/.torbrowser' % homedir
 
         if tbb_version:
             tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+tbb_version+'-dev-'+self.language+'.tar.gz'
@@ -180,12 +195,15 @@ class TorBrowserLauncher:
                 'filename': {}
             }
 
-    # create directories that don't exist
-    def mkdirs(self):
-        if os.path.exists(self.paths['dir']['download']) == False:
-            os.makedirs(self.paths['dir']['download'])
-        if os.path.exists(self.paths['dir']['tbb']) == False:
-            os.makedirs(self.paths['dir']['tbb'])
+    # create a directory
+    def mkdir(self, path):
+        try:
+            if os.path.exists(path) == False:
+                os.makedirs(path, 0700)
+        except:
+            self.set_gui('error', "Cannot create directory %s" % path, [], False)
+        if not os.access(path, os.W_OK):
+            self.set_gui('error', "%s is not writable" % path, [], False)
 
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
@@ -197,7 +215,7 @@ class TorBrowserLauncher:
 
     # set all gtk variables to False
     def clear_ui(self):
-        if self.box:
+        if hasattr(self, 'box'):
             self.box.destroy()
         self.box = False
 
@@ -512,7 +530,8 @@ class TorBrowserLauncher:
     def delete_event(self, widget, event, data=None):
         return False
     def destroy(self, widget, data=None):
-        self.file_download.close()
+        if hasattr(self, 'file_download'):
+            self.file_download.close()
         reactor.stop()
 
 if __name__ == "__main__":
