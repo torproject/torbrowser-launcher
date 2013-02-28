@@ -1,11 +1,36 @@
 #!/usr/bin/env python
-.view-twitterator-follow-eff .views-row .views-field-field-tweet {
-
-import os, sys, subprocess, locale, urllib2, gobject, time, pickle, json
+from twisted.internet import gtk2reactor
+gtk2reactor.install()
+from twisted.internet import reactor
 
 import pygtk
 pygtk.require('2.0')
 import gtk
+
+import os, sys, subprocess, locale, urllib2, gobject, time, pickle, json
+
+from twisted.web.client import Agent, ResponseDone
+from twisted.web.http_headers import Headers
+from twisted.internet.protocol import Protocol
+from twisted.internet.ssl import ClientContextFactory
+
+from OpenSSL.SSL import Context, VERIFY_PEER, VERIFY_FAIL_IF_NO_PEER_CERT
+from OpenSSL.crypto import load_certificate, FILETYPE_PEM
+
+class VerifyTorProjectCert(ClientContextFactory):
+
+    def __init__(self, torproject_pem):
+        self.torproject_ca = load_certificate(FILETYPE_PEM, open(torproject_pem, 'r').read())
+
+    def getContext(self, host, port):
+        ctx = ClientContextFactory.getContext(self)
+        ctx.set_verify_depth(0)
+        ctx.set_verify(VERIFY_PEER | VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
+        return ctx
+
+    def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
+        return cert.digest('sha256') == self.torproject_ca.digest('sha256')
+
 
 class TorBrowserLauncher:
   def __init__(self):
@@ -56,7 +81,7 @@ class TorBrowserLauncher:
 
       # build the rest of the UI
       self.build_ui()
-      gtk.main()
+      reactor.run()
 
   # download or run TBB
   def start_launcher(self):
@@ -96,7 +121,7 @@ class TorBrowserLauncher:
            'verify', 
            'extract', 
            'run'])
-
+ 
   # discover the architecture and language
   def discover_arch_lang(self):
     # figure out the architecture
@@ -146,7 +171,8 @@ class TorBrowserLauncher:
           'version': tbb_data+'/version',
           'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
           'update_check': tbb_data+'/download/RecommendedTBBVersions',
-          'verify': '/usr/share/torbrowser-launcher/verify.sh'
+          'verify': '/usr/share/torbrowser-launcher/verify.sh',
+          'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem'
         },
         'url': {
           'update_check': 'https://check.torproject.org/RecommendedTBBVersions'
@@ -171,10 +197,6 @@ class TorBrowserLauncher:
 
   # set all gtk variables to False
   def clear_ui(self):
-    if self.timer:
-      gobject.source_remove(self.timer)
-    self.timer = False
-
     if self.box:
       self.box.destroy()
     self.box = False
@@ -311,6 +333,52 @@ class TorBrowserLauncher:
       print 'Starting download over again'
       self.start_over()
 
+  def response_received(self, response):
+    class FileDownloader(Protocol):
+      def __init__(self, file, total, progress, done_cb):
+        self.file = file
+        self.total = total
+        self.so_far = 0
+        self.progress = progress
+        self.all_done = done_cb
+
+      def dataReceived(self, bytes):
+        self.file.write(bytes)
+        self.so_far += len(bytes)
+        percent = float(self.so_far) / float(self.total)
+        self.progress.set_fraction(percent)
+        amount = float(self.so_far)
+        units = "bytes"
+        for (size, unit) in [(1024 * 1024, "MiB"), (1024, "KiB")]:
+          if amount > size:
+            units = unit
+            amount = amount / float(size)
+            break
+
+        self.progress.set_text('Downloaded %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units))
+
+      def connectionLost(self, reason):
+        print 'Finished receiving body:', reason.getErrorMessage()
+        self.all_done(reason)
+
+    dl = FileDownloader(self.file_download, response.length, self.progressbar, self.response_finished)
+    response.deliverBody(dl)
+
+
+  def response_finished(self, msg):
+    if msg.check(ResponseDone):
+      self.file_download.close()
+      # next task!
+      self.run_task()
+
+    else:
+      print "FINISHED", msg
+      ## FIXME handle errors
+
+
+  def error(self, f):
+      print "FAIL", f
+
 
   def download(self, name, url, path):
     # initialize the progress bar
@@ -319,17 +387,13 @@ class TorBrowserLauncher:
     self.progressbar.show()
     self.refresh_gtk()
 
-    # start the download
-    self.dl_response = urllib2.urlopen(url)
-    self.dl_total_size = self.dl_response.info().getheader('Content-Length').strip()
-    self.dl_total_size = int(self.dl_total_size)
-    self.dl_bytes_so_far = 0
+    agent = Agent(reactor, VerifyTorProjectCert(self.paths['file']['torproject_pem']))
+    d = agent.request('GET', url,
+                      Headers({'User-Agent': ['torbrowser-launcher']}),
+                      None)
 
-    # set a timer to download more chunks
-    self.timer = gobject.timeout_add(1, self.download_chunk, name)
-
-    # open a file to write to
     self.file_download = open(path, 'w')
+    d.addCallback(self.response_received).addErrback(self.error)
 
   def download_chunk(self, name):
     # download 10kb a time
@@ -475,7 +539,8 @@ class TorBrowserLauncher:
   def delete_event(self, widget, event, data=None):
     return False
   def destroy(self, widget, data=None):
-    gtk.main_quit()
+    self.file_download.close()
+    reactor.stop()
 
 if __name__ == "__main__":
   tor_browser_launcher_version = '0.1'
