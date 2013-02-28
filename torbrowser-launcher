@@ -201,8 +201,6 @@ class TorBrowserLauncher:
             self.box.destroy()
         self.box = False
 
-        self.label1 = False
-        self.label2 = False
         self.label = False
         self.progressbar = False
         self.button_box = False
@@ -216,15 +214,15 @@ class TorBrowserLauncher:
 
         if self.gui == 'error':
             # labels
-            self.label1 = gtk.Label( self.gui_message ) 
-            self.label1.set_line_wrap(True)
-            self.box.pack_start(self.label1, True, True, 0)
-            self.label1.show()
+            self.label = gtk.Label( self.gui_message ) 
+            self.label.set_line_wrap(True)
+            self.box.pack_start(self.label, True, True, 0)
+            self.label.show()
 
-            self.label2 = gtk.Label("You can fix the problem by deleting:\n"+self.paths['dir']['data']+"\n\nHowever, you will lose all your bookmarks and other Tor Browser preferences.") 
-            self.label2.set_line_wrap(True)
-            self.box.pack_start(self.label2, True, True, 0)
-            self.label2.show()
+            #self.label2 = gtk.Label("You can fix the problem by deleting:\n"+self.paths['dir']['data']+"\n\nHowever, you will lose all your bookmarks and other Tor Browser preferences.") 
+            #self.label2.set_line_wrap(True)
+            #self.box.pack_start(self.label2, True, True, 0)
+            #self.label2.show()
 
             # exit button
             exit_image = gtk.Image()
@@ -364,7 +362,6 @@ class TorBrowserLauncher:
         dl = FileDownloader(self.file_download, response.length, self.progressbar, self.response_finished)
         response.deliverBody(dl)
 
-
     def response_finished(self, msg):
         if msg.check(ResponseDone):
             self.file_download.close()
@@ -375,10 +372,11 @@ class TorBrowserLauncher:
             print "FINISHED", msg
             ## FIXME handle errors
 
-
-    def error(self, f):
-        print "FAIL", f
-
+    def download_error(self, f):
+        print "Download error", f
+        self.set_gui('error', "Error starting download:\n\n%s\n\nAre you connected to the internet?" % f.value, [], False)
+        self.clear_ui()
+        self.build_ui()
 
     def download(self, name, url, path):
         # initialize the progress bar
@@ -393,32 +391,7 @@ class TorBrowserLauncher:
                           None)
 
         self.file_download = open(path, 'w')
-        d.addCallback(self.response_received).addErrback(self.error)
-
-    def download_chunk(self, name):
-        # download 10kb a time
-        chunk = self.dl_response.read(10240)
-        self.dl_bytes_so_far += len(chunk)
-        self.file_download.write(chunk)
-
-        if not chunk:
-            self.file_download.close()
-            # next task!
-            self.run_task()
-            return False
-
-        percent = float(self.dl_bytes_so_far) / self.dl_total_size
-        self.progressbar.set_fraction(percent)
-        percent = round(percent*100, 2)
-        self.progressbar.set_text("Downloaded %d%% of %s" % (percent, name))
-        self.refresh_gtk()
-        
-        sys.stdout.write("Downloaded %d of %d bytes (%0.2f%%)\r" % (self.dl_bytes_so_far, self.dl_total_size, percent))
-
-        if self.dl_bytes_so_far >= self.dl_total_size:
-            sys.stdout.write('\n')
-
-        return True
+        d.addCallback(self.response_received).addErrback(self.download_error)
 
     def attempt_update(self):
         # load the update check file
