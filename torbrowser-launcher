@@ -13,6 +13,23 @@ import os, sys, subprocess, locale, urllib2, gobject, time
 from twisted.web.client import Agent, ResponseDone
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
+from twisted.internet.ssl import ClientContextFactory
+
+from OpenSSL.SSL import Context, VERIFY_PEER, VERIFY_FAIL_IF_NO_PEER_CERT
+from OpenSSL.crypto import load_certificate, FILETYPE_PEM
+
+class VerifyTorProjectCert(ClientContextFactory):
+
+    torproject_ca = load_certificate(FILETYPE_PEM, open('torproject.pem', 'r').read())
+
+    def getContext(self, host, port):
+        ctx = ClientContextFactory.getContext(self)
+        ctx.set_verify_depth(0)
+        ctx.set_verify(VERIFY_PEER | VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
+        return ctx
+
+    def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
+        return cert.digest('sha256') == self.torproject_ca.digest('sha256')
 
 
 class TorBrowserLauncher:
@@ -321,6 +338,10 @@ class TorBrowserLauncher:
       ## FIXME handle errors
 
 
+  def error(self, f):
+      print "FAIL", f
+
+
   def download(self, name, url, path):
     # initialize the progress bar
     self.progressbar.set_fraction(0) 
@@ -328,13 +349,13 @@ class TorBrowserLauncher:
     self.progressbar.show()
     self.refresh_gtk()
 
-    agent = Agent(reactor)
+    agent = Agent(reactor, VerifyTorProjectCert())
     d = agent.request('GET', url,
                       Headers({'User-Agent': ['torbrowser-launcher']}),
                       None)
 
     self.file_download = open(path, 'w')
-    d.addCallback(self.response_received)
+    d.addCallback(self.response_received).addErrback(self.error)
 
   def download_chunk(self, name):
     # download 10kb a time
