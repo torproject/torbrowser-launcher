@@ -92,7 +92,6 @@ class TorBrowserLauncher:
 
     if launch_gui:
       self.build_ui()
-      #gtk.main()
       reactor.run()
   
   # discover the architecture and language
@@ -327,7 +326,6 @@ class TorBrowserLauncher:
 
 
   def response_finished(self, msg):
-    print dir(msg)
     if msg.check(ResponseDone):
       self.file_download.close()
       # next task!
