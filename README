@@ -25,40 +25,27 @@ Dependencies
 You need to have stdeb installed. If you're using Debian or Ubuntu you can
 install it like this:
 
-  sudo apt-get install python-stdeb
+  apt-get install python-stdeb
 
-Here are other things you might need:
+Also install the torbrowser-launcher dependencies:
 
-  sudo apt-get install build-essential dpkg-dev debhelper devscripts fakeroot \
-                       cdbs
+  apt-get install tor python-gtk2 gnupg python-twisted
 
 Building
 --------
 
-First build a source distribution:
+To build a Debian source package:
 
-  python setup.py sdist
+  python setup.py --command-packages=stdeb.command sdist_dsc
 
-Turn it into a Debian source package:
+To build a Debian binary package:
 
-  cd dist
-  py2dsc torbrowser-launcher-0.1.tar.gz
-
-Turn it into a Debian binary package:
-
-  cd deb_dist/torbrowser-launcher-0.1
-  dpkg-buildpackage -rfakeroot -uc -us
-
-Or, to combine all those in one command:
-
-  python setup.py sdist; cd dist; py2dsc torbrowser-launcher-0.1.tar.gz; \
-  cddeb_dist/torbrowser-launcher-0.1; dpkg-buildpackage -rfakeroot -uc -us; \
-  cd ..
+  python setup.py --command-packages=stdeb.command bdist_deb
 
 Installing
 ----------
 
-Once you've made a .deb, you can install it like this:
+Once you've made a .deb, you can install by running this as root:
 
-  sudo dpkg -i python-torbrowser-launcher_0.1_all.deb
+  dpkg -i deb_dist/torbrowser-launcher_VERSION_all.deb
 
