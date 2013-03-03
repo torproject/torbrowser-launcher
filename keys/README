@@ -4,6 +4,3 @@ Please visit the Tor web page about verifying signatures:
 
 All of the keys in this directory are believed to be verified for
 releasing and signing the TBB releases.
-
-torproject.pem is the https://www.torproject.org cert used for
-certificate pinning.

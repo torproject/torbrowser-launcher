@@ -40,6 +40,7 @@ class TorBrowserLauncher:
         self.build_paths()
         self.mkdir(self.paths['dir']['download'])
         self.mkdir(self.paths['dir']['tbb'])
+        self.init_gnupg()
 
         # allow buttons to have icons
         try:
@@ -85,7 +86,6 @@ class TorBrowserLauncher:
 
             # build the rest of the UI
             self.build_ui()
-            reactor.run()
 
     # download or run TBB
     def start_launcher(self):
@@ -179,15 +179,16 @@ class TorBrowserLauncher:
                     'data': tbb_data,
                     'download': tbb_data+'/download',
                     'tbb': tbb_data+'/tbb/'+self.architecture,
-                    'gpg': tbb_data+'/gpgtmp'
+                    'gnupg_homedir': tbb_data+'/gnupg_homedir'
                 },
                 'file': {
                     'settings': tbb_data+'/settings',
                     'version': tbb_data+'/version',
                     'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
                     'update_check': tbb_data+'/download/RecommendedTBBVersions',
-                    'verify': '/usr/share/torbrowser-launcher/verify.sh',
-                    'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem'
+                    'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem',
+                    'erinn_key': '/usr/share/torbrowser-launcher/erinn.asc',
+                    'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc'
                 },
                 'url': {
                     'update_check': 'https://check.torproject.org/RecommendedTBBVersions'
@@ -200,10 +201,27 @@ class TorBrowserLauncher:
         try:
             if os.path.exists(path) == False:
                 os.makedirs(path, 0700)
+                return True
         except:
             self.set_gui('error', "Cannot create directory %s" % path, [], False)
+            return False
         if not os.access(path, os.W_OK):
             self.set_gui('error', "%s is not writable" % path, [], False)
+            return False
+        return True
+
+    # if gnupg_homedir isn't set up, set it up
+    def init_gnupg(self):
+        if not os.path.exists(self.paths['dir']['gnupg_homedir']):
+            print 'Creating GnuPG homedir', self.paths['dir']['gnupg_homedir']
+            if self.mkdir(self.paths['dir']['gnupg_homedir']):
+                # import keys
+                print 'Importing keys'
+                p1 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['erinn_key']])
+                p2 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['sebastian_key']])
+                # wait for keys to import before moving on
+                p1.wait()
+                p2.wait()
 
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
@@ -293,7 +311,7 @@ class TorBrowserLauncher:
         self.window.show()
 
         if self.gui_autostart:
-          self.start(None)
+            self.start(None)
 
     # start button clicked, begin tasks
     def start(self, widget, data=None):
@@ -410,6 +428,9 @@ class TorBrowserLauncher:
 
         self.file_download = open(path, 'w')
         d.addCallback(self.response_received).addErrback(self.download_error)
+        
+        if not reactor.running:
+            reactor.run()
 
     def attempt_update(self):
         # load the update check file
@@ -447,20 +468,18 @@ class TorBrowserLauncher:
         self.progressbar.set_text('Verifying Signature')
         self.progressbar.show()
 
-        p = subprocess.Popen([self.paths['file']['verify'], self.paths['dir']['gpg'], self.paths['file']['tarball_sig']], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--verify', self.paths['file']['tarball_sig']])
         self.pulse_until_process_exits(p)
-
-        output = p.stdout.read()
         
-        if 'Good signature' in output:
+        if p.returncode == 0:
             self.run_task()
         else:
-            self.progressbar.hide()
-            self.label.set_text("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again.")
-            self.gui_tasks = ['start_over']
-            self.gui_task_i = 0
-            self.start_button.show()
-            self.start_button.set_sensitive(True)
+            self.set_gui('task', "SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again.", ['start_over'], False)
+            self.clear_ui()
+            self.build_ui()
+
+            if not reactor.running:
+                reactor.run()
 
     def extract(self):
         # initialize the progress bar
@@ -532,7 +551,8 @@ class TorBrowserLauncher:
     def destroy(self, widget, data=None):
         if hasattr(self, 'file_download'):
             self.file_download.close()
-        reactor.stop()
+        if reactor.running:
+            reactor.stop()
 
 if __name__ == "__main__":
     tor_browser_launcher_version = '0.1'
