@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+import gettext
+gettext.install('torbrowser-launcher')
+
 from twisted.internet import gtk2reactor
 gtk2reactor.install()
 from twisted.internet import reactor
@@ -63,22 +67,22 @@ class TorBrowserLauncher:
                 if current_timestamp - self.settings['last_update_check_timestamp'] >= 86400:
                     # check for update
                     print 'Checking for update'
-                    self.set_gui('task', "Checking for Tor Browser update.", 
+                    self.set_gui('task', _("Checking for Tor Browser update."), 
                         ['download_update_check', 
                          'attempt_update'])
 
                 else:
                     # no need to check for update
-                    print 'Checked for update within 24 hours, skipping'
+                    print _('Checked for update within 24 hours, skipping')
                     self.start_launcher()
 
             else:
-                self.set_gui('error', "Error loading settings. Delete ~/.torbrowser and try again.", [])
+                self.set_gui('error', _("Error loading settings. Delete ~/.torbrowser and try again."), [])
 
         if self.launch_gui:
             # set up the window
             self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-            self.window.set_title("Tor Browser")
+            self.window.set_title(_("Tor Browser"))
             self.window.set_icon_from_file(self.paths['file']['icon'])
             self.window.set_position(gtk.WIN_POS_CENTER)
             self.window.set_border_width(10)
@@ -98,7 +102,7 @@ class TorBrowserLauncher:
           self.launch_gui = False
         elif self.settings['installed_version'] < self.settings['latest_version']:
           # there is a tbb upgrade available
-          self.set_gui('task', "Your Tor Browser is out of date.", 
+          self.set_gui('task', _("Your Tor Browser is out of date."), 
             ['download_tarball', 
              'download_tarball_sig', 
              'verify', 
@@ -106,21 +110,21 @@ class TorBrowserLauncher:
              'run'])
         else:
           # for some reason the installed tbb is newer than the current version?
-          self.set_gui('error', "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?", [])
+          self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
 
       # not installed
       else:
           # are the tarball and sig already downloaded?
           if os.path.isfile(self.paths['file']['tarball']) and os.path.isfile(self.paths['file']['tarball_sig']):
               # start the gui with verify
-              self.set_gui('task', "Installing Tor Browser.", 
+              self.set_gui('task', _("Installing Tor Browser."), 
                   ['verify', 
                    'extract', 
                    'run'])
 
           # first run
           else:
-              self.set_gui('task', "Downloading and installing Tor Browser.", 
+              self.set_gui('task', _("Downloading and installing Tor Browser."), 
                   ['download_tarball', 
                    'download_tarball_sig', 
                    'verify', 
@@ -159,9 +163,9 @@ class TorBrowserLauncher:
                 try:
                     os.mkdir(homedir, 0700)
                 except:
-                    self.set_gui('error', "Error creating %s" % homedir, [], False)
+                    self.set_gui('error', _("Error creating {0}").format(homedir), [], False)
         if not os.access(homedir, os.W_OK):
-            self.set_gui('error', "%s is not writable" % homedir, [], False)
+            self.set_gui('error', _("{0} is not writable").format(homedir), [], False)
 
         tbb_data = '%s/.torbrowser' % homedir
 
@@ -205,20 +209,20 @@ class TorBrowserLauncher:
                 os.makedirs(path, 0700)
                 return True
         except:
-            self.set_gui('error', "Cannot create directory %s" % path, [], False)
+            self.set_gui('error', _("Cannot create directory {0}").format(path), [], False)
             return False
         if not os.access(path, os.W_OK):
-            self.set_gui('error', "%s is not writable" % path, [], False)
+            self.set_gui('error', _("{0} is not writable").format(path), [], False)
             return False
         return True
 
     # if gnupg_homedir isn't set up, set it up
     def init_gnupg(self):
         if not os.path.exists(self.paths['dir']['gnupg_homedir']):
-            print 'Creating GnuPG homedir', self.paths['dir']['gnupg_homedir']
+            print _('Creating GnuPG homedir'), self.paths['dir']['gnupg_homedir']
             if self.mkdir(self.paths['dir']['gnupg_homedir']):
                 # import keys
-                print 'Importing keys'
+                print _('Importing keys')
                 p1 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['erinn_key']])
                 p2 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['sebastian_key']])
                 # wait for keys to import before moving on
@@ -338,35 +342,35 @@ class TorBrowserLauncher:
         self.gui_task_i += 1
 
         if task == 'download_update_check':
-            print 'Downloading '+self.paths['url']['update_check']
+            print _('Downloading'), self.paths['url']['update_check']
             self.download('update check', self.paths['url']['update_check'], self.paths['file']['update_check'])
         
         if task == 'attempt_update':
-            print 'Checking to see if update it needed'
+            print _('Checking to see if update it needed')
             self.attempt_update()
 
         elif task == 'download_tarball':
-            print 'Downloading '+self.paths['url']['tarball']
+            print _('Downloading'), self.paths['url']['tarball']
             self.download('tarball', self.paths['url']['tarball'], self.paths['file']['tarball'])
 
         elif task == 'download_tarball_sig':
-            print 'Downloading '+self.paths['url']['tarball_sig']
+            print _('Downloading'), +self.paths['url']['tarball_sig']
             self.download('signature', self.paths['url']['tarball_sig'], self.paths['file']['tarball_sig'])
 
         elif task == 'verify':
-            print 'Verifying signature'
+            print _('Verifying signature')
             self.verify()
 
         elif task == 'extract':
-            print 'Extracting '+self.paths['filename']['tarball']
+            print _('Extracting'), self.paths['filename']['tarball']
             self.extract()
 
         elif task == 'run':
-            print 'Running '+self.paths['file']['start']
+            print _('Running'), self.paths['file']['start']
             self.run()
         
         elif task == 'start_over':
-            print 'Starting download over again'
+            print _('Starting download over again')
             self.start_over()
 
     def response_received(self, response):
@@ -391,10 +395,10 @@ class TorBrowserLauncher:
                         amount = amount / float(size)
                         break
 
-                self.progress.set_text('Downloaded %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units))
+                self.progress.set_text(_('Downloaded')+('%2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units)))
 
             def connectionLost(self, reason):
-                print 'Finished receiving body:', reason.getErrorMessage()
+                print _('Finished receiving body:'), reason.getErrorMessage()
                 self.all_done(reason)
 
         dl = FileDownloader(self.file_download, response.length, self.progressbar, self.response_finished)
@@ -411,15 +415,15 @@ class TorBrowserLauncher:
             ## FIXME handle errors
 
     def download_error(self, f):
-        print "Download error", f
-        self.set_gui('error', "Error starting download:\n\n%s\n\nAre you connected to the internet?" % f.value, [], False)
+        print _("Download error"), f
+        self.set_gui('error', _("Error starting download") + ":\n\n"+f.value+"\n\n" + _("Are you connected to the internet?"), [], False)
         self.clear_ui()
         self.build_ui()
 
     def download(self, name, url, path):
         # initialize the progress bar
         self.progressbar.set_fraction(0) 
-        self.progressbar.set_text('Downloading '+name)
+        self.progressbar.set_text(_('Downloading {0}').format(name))
         self.progressbar.show()
         self.refresh_gtk()
 
@@ -454,11 +458,11 @@ class TorBrowserLauncher:
 
             else:
                 # failed to find the latest version
-                self.set_gui('error', "Error checking for updates.", [], False)
+                self.set_gui('error', _("Error checking for updates."), [], False)
         
         except:
             # not a valid JSON object
-            self.set_gui('error', "Error checking for updates.", [], False)
+            self.set_gui('error', _("Error checking for updates."), [], False)
 
         # now start over
         self.clear_ui()
@@ -467,7 +471,7 @@ class TorBrowserLauncher:
     def verify(self):
         # initialize the progress bar
         self.progressbar.set_fraction(0) 
-        self.progressbar.set_text('Verifying Signature')
+        self.progressbar.set_text(_('Verifying Signature'))
         self.progressbar.show()
 
         p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--verify', self.paths['file']['tarball_sig']])
@@ -476,7 +480,7 @@ class TorBrowserLauncher:
         if p.returncode == 0:
             self.run_task()
         else:
-            self.set_gui('task', "SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again.", ['start_over'], False)
+            self.set_gui('task', _("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again."), ['start_over'], False)
             self.clear_ui()
             self.build_ui()
 
@@ -486,7 +490,7 @@ class TorBrowserLauncher:
     def extract(self):
         # initialize the progress bar
         self.progressbar.set_fraction(0) 
-        self.progressbar.set_text('Installing')
+        self.progressbar.set_text(_('Installing'))
         self.progressbar.show()
 
         p = subprocess.Popen(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -512,7 +516,7 @@ class TorBrowserLauncher:
 
     # start over and download TBB again
     def start_over(self):
-        self.label.set_text("Downloading Tor Browser Bundle over again.")
+        self.label.set_text(_("Downloading Tor Browser Bundle over again."))
         self.gui_tasks = ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']
         self.gui_task_i = 0
         self.start(None)
@@ -559,8 +563,8 @@ class TorBrowserLauncher:
 if __name__ == "__main__":
     tor_browser_launcher_version = '0.1'
 
-    print 'Tor Browser Launcher'
-    print 'version %s' % (tor_browser_launcher_version)
+    print _('Tor Browser Launcher')
+    print _('version {0}').format(tor_browser_launcher_version)
     print 'https://github.com/micahflee/torbrowser-launcher'
 
     app = TorBrowserLauncher()
