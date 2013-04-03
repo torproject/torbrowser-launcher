@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import gettext
-gettext.install('torbrowser-launcher')
+gettext.install('torbrowser-launcher', '/usr/share/torbrowser-launcher/locale')
 
 from twisted.internet import gtk2reactor
 gtk2reactor.install()

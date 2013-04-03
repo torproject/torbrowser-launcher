@@ -1,0 +1,148 @@
+# Tor Browser Launcher
+# Copyright (C) 2013 Micah Lee <micahflee@riseup.net>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"POT-Creation-Date: 2013-04-03 10:49+PDT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: torbrowser-launcher:70
+msgid "Checking for Tor Browser update."
+msgstr ""
+
+#: torbrowser-launcher:76
+msgid "Checked for update within 24 hours, skipping"
+msgstr ""
+
+#: torbrowser-launcher:80
+msgid "Error loading settings. Delete ~/.torbrowser and try again."
+msgstr ""
+
+#: torbrowser-launcher:85
+msgid "Tor Browser"
+msgstr ""
+
+#: torbrowser-launcher:105
+msgid "Your Tor Browser is out of date."
+msgstr ""
+
+#: torbrowser-launcher:113
+msgid "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"
+msgstr ""
+
+#: torbrowser-launcher:120
+msgid "Installing Tor Browser."
+msgstr ""
+
+#: torbrowser-launcher:127
+msgid "Downloading and installing Tor Browser."
+msgstr ""
+
+#: torbrowser-launcher:166
+msgid "Error creating {0}"
+msgstr ""
+
+#: torbrowser-launcher:168 torbrowser-launcher:215
+msgid "{0} is not writable"
+msgstr ""
+
+#: torbrowser-launcher:212
+msgid "Cannot create directory {0}"
+msgstr ""
+
+#: torbrowser-launcher:222
+msgid "Creating GnuPG homedir"
+msgstr ""
+
+#: torbrowser-launcher:225
+msgid "Importing keys"
+msgstr ""
+
+#: torbrowser-launcher:345 torbrowser-launcher:353 torbrowser-launcher:357
+msgid "Downloading"
+msgstr ""
+
+#: torbrowser-launcher:349
+msgid "Checking to see if update it needed"
+msgstr ""
+
+#: torbrowser-launcher:361
+msgid "Verifying signature"
+msgstr ""
+
+#: torbrowser-launcher:365
+msgid "Extracting"
+msgstr ""
+
+#: torbrowser-launcher:369
+msgid "Running"
+msgstr ""
+
+#: torbrowser-launcher:373
+msgid "Starting download over again"
+msgstr ""
+
+#: torbrowser-launcher:398
+msgid "Downloaded"
+msgstr ""
+
+#: torbrowser-launcher:401
+msgid "Finished receiving body:"
+msgstr ""
+
+#: torbrowser-launcher:418
+msgid "Download error"
+msgstr ""
+
+#: torbrowser-launcher:419
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+
+#: torbrowser-launcher:426
+msgid "Downloading {0}"
+msgstr ""
+
+#: torbrowser-launcher:461 torbrowser-launcher:465
+msgid "Error checking for updates."
+msgstr ""
+
+#: torbrowser-launcher:474
+msgid "Verifying Signature"
+msgstr ""
+
+#: torbrowser-launcher:483
+msgid ""
+"SIGNATURE VERIFICATION FAILED!\n"
+"\n"
+"You might be under attack, or there might just be a networking problem. Click Start try the download again."
+msgstr ""
+
+#: torbrowser-launcher:493
+msgid "Installing"
+msgstr ""
+
+#: torbrowser-launcher:519
+msgid "Downloading Tor Browser Bundle over again."
+msgstr ""
+
+#: torbrowser-launcher:566
+msgid "Tor Browser Launcher"
+msgstr ""
+
+#: torbrowser-launcher:567
+msgid "version {0}"
+msgstr ""
+

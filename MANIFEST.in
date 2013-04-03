@@ -1,3 +1,4 @@
+include locale/*
 include img/*
 include keys/*
 include torbrowser.desktop
