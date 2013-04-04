@@ -395,7 +395,7 @@ class TorBrowserLauncher:
                         amount = amount / float(size)
                         break
 
-                self.progress.set_text(_('Downloaded')+('%2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units)))
+                self.progress.set_text(_('Downloaded')+(' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units)))
 
             def connectionLost(self, reason):
                 print _('Finished receiving body:'), reason.getErrorMessage()
