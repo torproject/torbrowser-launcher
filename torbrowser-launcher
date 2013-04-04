@@ -11,7 +11,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-import os, sys, subprocess, locale, urllib2, gobject, time, pickle, json
+import os, sys, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile
 
 from twisted.web.client import Agent, ResponseDone
 from twisted.web.http_headers import Headers
@@ -354,7 +354,7 @@ class TorBrowserLauncher:
             self.download('tarball', self.paths['url']['tarball'], self.paths['file']['tarball'])
 
         elif task == 'download_tarball_sig':
-            print _('Downloading'), +self.paths['url']['tarball_sig']
+            print _('Downloading'), self.paths['url']['tarball_sig']
             self.download('signature', self.paths['url']['tarball_sig'], self.paths['file']['tarball_sig'])
 
         elif task == 'verify':
@@ -492,9 +492,16 @@ class TorBrowserLauncher:
         self.progressbar.set_fraction(0) 
         self.progressbar.set_text(_('Installing'))
         self.progressbar.show()
+        self.refresh_gtk()
 
-        p = subprocess.Popen(['tar', '-xf', self.paths['file']['tarball'], '-C', self.paths['dir']['tbb']], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        self.pulse_until_process_exits(p)
+        # make sure this file is a tarfile
+        if tarfile.is_tarfile(self.paths['file']['tarball']):
+          tf = tarfile.open(self.paths['file']['tarball'])
+          tf.extractall(self.paths['dir']['tbb'])
+        else:
+            self.set_gui('task', _("Tor Browser Launcher doesn't understand the file format of {0}"), ['start_over'], False)
+            self.clear_ui()
+            self.build_ui()
 
         # installation is finished, so save installed_version
         self.settings['installed_version'] = self.settings['latest_version']
