@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# clean up from last time
-rm -rf ~/.torbrowser
+# to clean up from last time, run this:
+# rm -rf ~/.torbrowser
 
 # build binary package
 python setup.py --command-packages=stdeb.command bdist_deb
