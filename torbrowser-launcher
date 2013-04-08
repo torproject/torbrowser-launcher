@@ -11,7 +11,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-import os, sys, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile
+import os, sys, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile, psutil
 
 from twisted.web.client import Agent, ResponseDone
 from twisted.web.http_headers import Headers
@@ -60,6 +60,24 @@ class TorBrowserLauncher:
             # load settings
             if self.load_settings():
                 self.build_paths(self.settings['latest_version'])
+
+                # is tbb already running and we just need to open a new firefox?
+                if self.settings['installed_version']:
+                    vidalia_pid = None
+                    firefox_pid = None
+                    for p in psutil.process_iter():
+                        try:
+                            if p.exe == self.paths['file']['vidalia_bin']:
+                                vidalia_pid = p.exe
+                            if p.exe == self.paths['file']['firefox_bin']:
+                                firefox_pid = p.exe
+                        except:
+                            pass
+
+                    if vidalia_pid and not firefox_pid:
+                        print _('Vidalia is already open, but firefox is closed. Launching new firefox.')
+                        subprocess.Popen([self.paths['file']['firefox_bin'], '-no-remote', '-profile', self.paths['file']['firefox_profile']])
+                        return
 
                 # how long was it since the last update check?
                 # 86400 seconds = 24 hours
@@ -190,6 +208,9 @@ class TorBrowserLauncher:
                     'settings': tbb_data+'/settings',
                     'version': tbb_data+'/version',
                     'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
+                    'vidalia_bin': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
+                    'firefox_bin': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
+                    'firefox_profile': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                     'update_check': tbb_data+'/download/RecommendedTBBVersions',
                     'icon': '/usr/share/pixmaps/torbrowser80.xpm',
                     'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem',

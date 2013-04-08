@@ -29,7 +29,7 @@ install it like this:
 
 Also install the torbrowser-launcher dependencies:
 
-  apt-get install tor python-gtk2 gnupg python-twisted
+  apt-get install tor python-gtk2 python-psutil gnupg python-twisted
 
 Building
 --------
