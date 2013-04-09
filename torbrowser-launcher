@@ -68,15 +68,38 @@ class TorBrowserLauncher:
                     for p in psutil.process_iter():
                         try:
                             if p.exe == self.paths['file']['vidalia_bin']:
-                                vidalia_pid = p.exe
+                                vidalia_pid = p.pid
                             if p.exe == self.paths['file']['firefox_bin']:
-                                firefox_pid = p.exe
+                                firefox_pid = p.pid
                         except:
                             pass
 
                     if vidalia_pid and not firefox_pid:
-                        print _('Vidalia is already open, but firefox is closed. Launching new firefox.')
+                        print _('Vidalia is already open, but Firefox is closed. Launching new Firefox.')
                         subprocess.Popen([self.paths['file']['firefox_bin'], '-no-remote', '-profile', self.paths['file']['firefox_profile']])
+                        return
+                    elif vidalia_pid and firefox_pid:
+                        print _('Vidalia and Firefox are already open, bringing them to focus')
+
+                        # figure out the window ids of vidalia and firefox
+                        vidalia_win_id = None
+                        firefox_win_id = None
+                        p = subprocess.Popen(['wmctrl', '-l', '-p'], stdout=subprocess.PIPE)
+                        for line in p.stdout.readlines():
+                            line_split = line.split()
+                            win_id = line_split[0]
+                            win_pid = int(line_split[2])
+                            if win_pid == vidalia_pid:
+                                vidalia_win_id = win_id
+                            if win_pid == firefox_pid:
+                                firefox_win_id = win_id
+
+                        # bring firefox to front, then vidalia
+                        if firefox_win_id:
+                            subprocess.call(['wmctrl', '-i', '-a', firefox_win_id])
+                        if vidalia_win_id:
+                            subprocess.call(['wmctrl', '-i', '-a', vidalia_win_id])
+
                         return
 
                 # how long was it since the last update check?
