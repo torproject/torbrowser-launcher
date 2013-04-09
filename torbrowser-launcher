@@ -67,10 +67,21 @@ class TorBrowserLauncher:
                     firefox_pid = None
                     for p in psutil.process_iter():
                         try:
-                            if p.exe == self.paths['file']['vidalia_bin']:
+                            exe = None
+
+                            # old versions of psutil don't have exe
+                            if hasattr(p, 'exe'):
+                                exe = p.exe
+                            # need to rely on cmdline instead
+                            else:
+                                if len(p.cmdline) > 0:
+                                    exe = p.cmdline[0]
+                            
+                            if exe == self.paths['file']['vidalia_bin'] or exe == './App/vidalia':
                                 vidalia_pid = p.pid
-                            if p.exe == self.paths['file']['firefox_bin']:
+                            if exe == self.paths['file']['firefox_bin']:
                                 firefox_pid = p.pid
+
                         except:
                             pass
 
