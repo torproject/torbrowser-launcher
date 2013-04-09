@@ -30,8 +30,13 @@ Also install the torbrowser-launcher dependencies:
 
   apt-get install python-gtk2 python-psutil python-twisted wmctrl gnupg
 
-Building
---------
+Building and Installing
+-----------------------
+
+If you're using a Debian-based distribution, you can build a .deb and install it
+in one step by running:
+
+  ./build_and_install.sh
 
 To build a Debian source package:
 
@@ -40,9 +45,6 @@ To build a Debian source package:
 To build a Debian binary package:
 
   python setup.py --command-packages=stdeb.command bdist_deb
-
-Installing
-----------
 
 Once you've made a .deb, you can install by running this as root:
 
