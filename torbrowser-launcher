@@ -279,9 +279,8 @@ class TorBrowserLauncher:
                 # import keys
                 print _('Importing keys')
                 p1 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['erinn_key']])
-                p2 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['sebastian_key']])
-                # wait for keys to import before moving on
                 p1.wait()
+                p2 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['sebastian_key']])
                 p2.wait()
 
     # there are different GUIs that might appear, this sets which one we want
