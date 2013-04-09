@@ -623,9 +623,10 @@ class TorBrowserLauncher:
             reactor.stop()
 
 if __name__ == "__main__":
-    tor_browser_launcher_version = '0.1'
+    tor_browser_launcher_version = '0.1-alpha'
 
     print _('Tor Browser Launcher')
+    print _('By Micah Lee, licensed under GPLv3')
     print _('version {0}').format(tor_browser_launcher_version)
     print 'https://github.com/micahflee/torbrowser-launcher'
 
