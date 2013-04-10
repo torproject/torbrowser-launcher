@@ -1,12 +1,12 @@
 from distutils.core import setup
 
 setup(name='torbrowser-launcher',
-      version='0.1-alpha',
+      version='0.0.1',
       author='Micah Lee',
       author_email='micahflee@riseup.net',
       url='https://www.github.com/micahflee/torbrowser-launcher',
       platforms=['GNU/Linux'],
-      license='GPLv3',
+      license='BSD',
 
       description='A program to help you download, keep updated, and run the Tor Browser Bundle',
       long_description="""
