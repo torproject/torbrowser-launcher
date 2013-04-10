@@ -10,12 +10,22 @@ distribution's package manager and it handles everything else, including:
 * Verifying the TBB's [GnuPG signature](http://www.gnupg.org/gph/en/manual/x135.html)
 * Adding a "Tor Browser" application launcher to your desktop environment's menu
 
-When you first launch Tor Browser Launcher, it will download TBB from
-https://www.torproject.org/ and extract it in ```~/.torproject```, and then execute
-it. When you run it after that it will just execute TBB.
+Tor Browser Launcher isn't in any Debian repositories yet, but it will be soon.
 
-Building a Debian package
-=========================
+Quick Start
+-----------
+
+If you're using a Debian-based distro like Debian, Ubuntu, or Linux Mint, the
+following instructions will install dependencies, clone this repo, build a .deb, and
+install it with dpkg.
+
+    sudo apt-get install python-stdeb python-gtk2 python-psutil python-twisted wmctrl gnupg
+    git clone https://github.com/micahflee/torbrowser-launcher.git
+    cd torbrowser-launcher
+    ./build_and_install.sh
+
+Building
+========
 
 Dependencies
 ------------
@@ -29,13 +39,8 @@ Also install the ```torbrowser-launcher``` dependencies:
 
     apt-get install python-gtk2 python-psutil python-twisted wmctrl gnupg
 
-Building and Installing
------------------------
-
-If you're using a Debian-based distribution, you can build a ```.deb``` and install it
-in one step by running:
-
-    ./build_and_install.sh
+Debian packages
+---------------
 
 To build a Debian source package:
 
