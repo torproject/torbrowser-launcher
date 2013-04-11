@@ -82,62 +82,35 @@ class TorBrowserLauncher:
 
         self.launch_gui = True
 
+        # is torbrowser-launcher already running?
+        tbl_pid = self.get_pid(self.paths['file']['tbl_bin'], True)
+        if tbl_pid:
+            print _('Tor Browser Launcher is already running (pid {0}), bringing to front').format(tbl_pid)
+            self.bring_window_to_front(tbl_pid)
+            return;
+
         # if we haven't already hit an error
         if self.gui != 'error':
             # load settings
             if self.load_settings():
                 self.build_paths(self.settings['latest_version'])
 
-                # is tbb already running and we just need to open a new firefox?
+                # is vidalia already running and we just need to open a new firefox?
                 if self.settings['installed_version']:
-                    vidalia_pid = None
-                    firefox_pid = None
-                    for p in psutil.process_iter():
-                        try:
-                            exe = None
-
-                            # old versions of psutil don't have exe
-                            if hasattr(p, 'exe'):
-                                exe = p.exe
-                            # need to rely on cmdline instead
-                            else:
-                                if len(p.cmdline) > 0:
-                                    exe = p.cmdline[0]
-                            
-                            if exe == self.paths['file']['vidalia_bin'] or exe == './App/vidalia':
-                                vidalia_pid = p.pid
-                            if exe == self.paths['file']['firefox_bin']:
-                                firefox_pid = p.pid
-
-                        except:
-                            pass
+                    vidalia_pid = self.get_pid('./App/vidalia')
+                    firefox_pid = self.get_pid(self.paths['file']['firefox_bin'])
 
                     if vidalia_pid and not firefox_pid:
                         print _('Vidalia is already open, but Firefox is closed. Launching new Firefox.')
+                        self.bring_window_to_front(vidalia_pid)
                         subprocess.Popen([self.paths['file']['firefox_bin'], '-no-remote', '-profile', self.paths['file']['firefox_profile']])
                         return
                     elif vidalia_pid and firefox_pid:
                         print _('Vidalia and Firefox are already open, bringing them to focus')
 
-                        # figure out the window ids of vidalia and firefox
-                        vidalia_win_id = None
-                        firefox_win_id = None
-                        p = subprocess.Popen(['wmctrl', '-l', '-p'], stdout=subprocess.PIPE)
-                        for line in p.stdout.readlines():
-                            line_split = line.split()
-                            win_id = line_split[0]
-                            win_pid = int(line_split[2])
-                            if win_pid == vidalia_pid:
-                                vidalia_win_id = win_id
-                            if win_pid == firefox_pid:
-                                firefox_win_id = win_id
-
                         # bring firefox to front, then vidalia
-                        if firefox_win_id:
-                            subprocess.call(['wmctrl', '-i', '-a', firefox_win_id])
-                        if vidalia_win_id:
-                            subprocess.call(['wmctrl', '-i', '-a', vidalia_win_id])
-
+                        self.bring_window_to_front(firefox_pid)
+                        self.bring_window_to_front(vidalia_pid)
                         return
 
                 # how long was it since the last update check?
@@ -266,6 +239,7 @@ class TorBrowserLauncher:
                     'gnupg_homedir': tbb_data+'/gnupg_homedir'
                 },
                 'file': {
+                    'tbl_bin': '/usr/bin/torbrowser-launcher',
                     'settings': tbb_data+'/settings',
                     'version': tbb_data+'/version',
                     'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
@@ -638,6 +612,46 @@ class TorBrowserLauncher:
     def refresh_gtk(self):
         while gtk.events_pending():
             gtk.main_iteration(False)
+
+    # get the process id of a program
+    def get_pid(self, bin_path, python = False):
+        pid = None
+
+        for p in psutil.process_iter():
+            try:
+                if p.pid != os.getpid():
+                    exe = None
+                    if python:
+                        if len(p.cmdline) > 1:
+                            if 'python' in p.cmdline[0]:
+                                exe = p.cmdline[1]
+                    else:
+                        if len(p.cmdline) > 0:
+                            exe = p.cmdline[0]
+                    
+                    if exe == bin_path:
+                        pid = p.pid
+
+            except:
+                pass
+
+        return pid
+
+    # bring program's x window to front
+    def bring_window_to_front(self, pid):
+        # figure out the window id
+        win_id = None
+        p = subprocess.Popen(['wmctrl', '-l', '-p'], stdout=subprocess.PIPE)
+        for line in p.stdout.readlines():
+            line_split = line.split()
+            cur_win_id = line_split[0]
+            cur_win_pid = int(line_split[2])
+            if cur_win_pid == pid:
+                win_id = cur_win_id
+
+        # bring to front
+        if win_id:
+            subprocess.call(['wmctrl', '-i', '-a', win_id])
 
     # exit
     def delete_event(self, widget, event, data=None):
