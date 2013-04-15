@@ -62,11 +62,12 @@ class VerifyTorProjectCert(ClientContextFactory):
     def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
         return cert.digest('sha256') == self.torproject_ca.digest('sha256')
 
+class TBLCommon:
 
-class TorBrowserLauncher:
     def __init__(self):
+        print _('Initializing Tor Browser Launcher')
+        
         # initialize the app
-        self.set_gui(None, '', [])
         self.discover_arch_lang()
         self.build_paths()
         self.mkdir(self.paths['dir']['download'])
@@ -80,109 +81,6 @@ class TorBrowserLauncher:
         except:
             pass
 
-        self.launch_gui = True
-
-        # is torbrowser-launcher already running?
-        tbl_pid = self.get_pid(self.paths['file']['tbl_bin'], True)
-        if tbl_pid:
-            print _('Tor Browser Launcher is already running (pid {0}), bringing to front').format(tbl_pid)
-            self.bring_window_to_front(tbl_pid)
-            return;
-
-        # if we haven't already hit an error
-        if self.gui != 'error':
-            # load settings
-            if self.load_settings():
-                self.build_paths(self.settings['latest_version'])
-
-                # is vidalia already running and we just need to open a new firefox?
-                if self.settings['installed_version']:
-                    vidalia_pid = self.get_pid('./App/vidalia')
-                    firefox_pid = self.get_pid(self.paths['file']['firefox_bin'])
-
-                    if vidalia_pid and not firefox_pid:
-                        print _('Vidalia is already open, but Firefox is closed. Launching new Firefox.')
-                        self.bring_window_to_front(vidalia_pid)
-                        subprocess.Popen([self.paths['file']['firefox_bin'], '-no-remote', '-profile', self.paths['file']['firefox_profile']])
-                        return
-                    elif vidalia_pid and firefox_pid:
-                        print _('Vidalia and Firefox are already open, bringing them to focus')
-
-                        # bring firefox to front, then vidalia
-                        self.bring_window_to_front(firefox_pid)
-                        self.bring_window_to_front(vidalia_pid)
-                        return
-
-                # how long was it since the last update check?
-                # 86400 seconds = 24 hours
-                current_timestamp = int(time.time())
-                if current_timestamp - self.settings['last_update_check_timestamp'] >= 86400:
-                    # check for update
-                    print 'Checking for update'
-                    self.set_gui('task', _("Checking for Tor Browser update."), 
-                        ['download_update_check', 
-                         'attempt_update'])
-
-                else:
-                    # no need to check for update
-                    print _('Checked for update within 24 hours, skipping')
-                    self.start_launcher()
-
-            else:
-                self.set_gui('error', _("Error loading settings. Delete ~/.torbrowser and try again."), [])
-
-        if self.launch_gui:
-            # set up the window
-            self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-            self.window.set_title(_("Tor Browser"))
-            self.window.set_icon_from_file(self.paths['file']['icon'])
-            self.window.set_position(gtk.WIN_POS_CENTER)
-            self.window.set_border_width(10)
-            self.window.connect("delete_event", self.delete_event)
-            self.window.connect("destroy", self.destroy)
-
-            # build the rest of the UI
-            self.build_ui()
-
-    # download or run TBB
-    def start_launcher(self):
-      # is TBB already installed?
-      if os.path.isfile(self.paths['file']['start']) and os.access(self.paths['file']['start'], os.X_OK):
-        if self.settings['installed_version'] == self.settings['latest_version']:
-          # current version of tbb is installed, launch it
-          self.run(False)
-          self.launch_gui = False
-        elif self.settings['installed_version'] < self.settings['latest_version']:
-          # there is a tbb upgrade available
-          self.set_gui('task', _("Your Tor Browser is out of date."), 
-            ['download_tarball', 
-             'download_tarball_sig', 
-             'verify', 
-             'extract', 
-             'run'])
-        else:
-          # for some reason the installed tbb is newer than the current version?
-          self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
-
-      # not installed
-      else:
-          # are the tarball and sig already downloaded?
-          if os.path.isfile(self.paths['file']['tarball']) and os.path.isfile(self.paths['file']['tarball_sig']):
-              # start the gui with verify
-              self.set_gui('task', _("Installing Tor Browser."), 
-                  ['verify', 
-                   'extract', 
-                   'run'])
-
-          # first run
-          else:
-              self.set_gui('task', _("Downloading and installing Tor Browser."), 
-                  ['download_tarball', 
-                   'download_tarball_sig', 
-                   'verify', 
-                   'extract', 
-                   'run'])
-   
     # discover the architecture and language
     def discover_arch_lang(self):
         # figure out the architecture
@@ -284,6 +182,178 @@ class TorBrowserLauncher:
                 p2 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['sebastian_key']])
                 p2.wait()
 
+    # load settings
+    def load_settings(self):
+        if os.path.isfile(self.paths['file']['settings']):
+            self.settings = pickle.load(open(self.paths['file']['settings']))
+            # sanity checks
+            if not 'installed_version' in self.settings:
+                return False
+            if not 'latest_version' in self.settings:
+                return False
+            if not 'last_update_check_timestamp' in self.settings:
+                return False
+        else:
+            self.settings = {
+                'installed_version': False,
+                'latest_version': '0',
+                'last_update_check_timestamp': 0
+            }
+            self.save_settings()
+        return True
+
+    # save settings
+    def save_settings(self):
+        pickle.dump(self.settings, open(self.paths['file']['settings'], 'w'))
+        return True
+
+    # get the process id of a program
+    def get_pid(self, bin_path, python = False):
+        pid = None
+
+        for p in psutil.process_iter():
+            try:
+                if p.pid != os.getpid():
+                    exe = None
+                    if python:
+                        if len(p.cmdline) > 1:
+                            if 'python' in p.cmdline[0]:
+                                exe = p.cmdline[1]
+                    else:
+                        if len(p.cmdline) > 0:
+                            exe = p.cmdline[0]
+                    
+                    if exe == bin_path:
+                        pid = p.pid
+
+            except:
+                pass
+
+        return pid
+
+    # bring program's x window to front
+    def bring_window_to_front(self, pid):
+        # figure out the window id
+        win_id = None
+        p = subprocess.Popen(['wmctrl', '-l', '-p'], stdout=subprocess.PIPE)
+        for line in p.stdout.readlines():
+            line_split = line.split()
+            cur_win_id = line_split[0]
+            cur_win_pid = int(line_split[2])
+            if cur_win_pid == pid:
+                win_id = cur_win_id
+
+        # bring to front
+        if win_id:
+            subprocess.call(['wmctrl', '-i', '-a', win_id])
+
+class TBLSettings:
+    def __init__(self, common):
+        print _('Starting settings dialog')
+        self.common = common
+
+class TBLLauncher:
+    def __init__(self, common):
+        print _('Starting launcher dialog')
+        self.common = common
+
+        self.set_gui(None, '', [])
+        self.launch_gui = True
+
+        # if we haven't already hit an error
+        if self.gui != 'error':
+            # load settings
+            if self.common.load_settings():
+                self.common.build_paths(self.common.settings['latest_version'])
+
+                # is vidalia already running and we just need to open a new firefox?
+                if self.common.settings['installed_version']:
+                    vidalia_pid = self.common.get_pid('./App/vidalia')
+                    firefox_pid = self.common.get_pid(self.common.paths['file']['firefox_bin'])
+
+                    if vidalia_pid and not firefox_pid:
+                        print _('Vidalia is already open, but Firefox is closed. Launching new Firefox.')
+                        self.common.bring_window_to_front(vidalia_pid)
+                        subprocess.Popen([self.common.paths['file']['firefox_bin'], '-no-remote', '-profile', self.common.paths['file']['firefox_profile']])
+                        return
+                    elif vidalia_pid and firefox_pid:
+                        print _('Vidalia and Firefox are already open, bringing them to focus')
+
+                        # bring firefox to front, then vidalia
+                        self.common.bring_window_to_front(firefox_pid)
+                        self.common.bring_window_to_front(vidalia_pid)
+                        return
+
+                # how long was it since the last update check?
+                # 86400 seconds = 24 hours
+                current_timestamp = int(time.time())
+                if current_timestamp - self.common.settings['last_update_check_timestamp'] >= 86400:
+                    # check for update
+                    print 'Checking for update'
+                    self.set_gui('task', _("Checking for Tor Browser update."), 
+                        ['download_update_check', 
+                         'attempt_update'])
+
+                else:
+                    # no need to check for update
+                    print _('Checked for update within 24 hours, skipping')
+                    self.start_launcher()
+
+            else:
+                self.set_gui('error', _("Error loading settings. Delete ~/.torbrowser and try again."), [])
+
+        if self.launch_gui:
+            # set up the window
+            self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+            self.window.set_title(_("Tor Browser"))
+            self.window.set_icon_from_file(self.common.paths['file']['icon'])
+            self.window.set_position(gtk.WIN_POS_CENTER)
+            self.window.set_border_width(10)
+            self.window.connect("delete_event", self.delete_event)
+            self.window.connect("destroy", self.destroy)
+
+            # build the rest of the UI
+            self.build_ui()
+
+    # download or run TBB
+    def start_launcher(self):
+      # is TBB already installed?
+      if os.path.isfile(self.common.paths['file']['start']) and os.access(self.common.paths['file']['start'], os.X_OK):
+        if self.common.settings['installed_version'] == self.common.settings['latest_version']:
+          # current version of tbb is installed, launch it
+          self.run(False)
+          self.launch_gui = False
+        elif self.common.settings['installed_version'] < self.common.settings['latest_version']:
+          # there is a tbb upgrade available
+          self.set_gui('task', _("Your Tor Browser is out of date."), 
+            ['download_tarball', 
+             'download_tarball_sig', 
+             'verify', 
+             'extract', 
+             'run'])
+        else:
+          # for some reason the installed tbb is newer than the current version?
+          self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
+
+      # not installed
+      else:
+          # are the tarball and sig already downloaded?
+          if os.path.isfile(self.common.paths['file']['tarball']) and os.path.isfile(self.common.paths['file']['tarball_sig']):
+              # start the gui with verify
+              self.set_gui('task', _("Installing Tor Browser."), 
+                  ['verify', 
+                   'extract', 
+                   'run'])
+
+          # first run
+          else:
+              self.set_gui('task', _("Downloading and installing Tor Browser."), 
+                  ['download_tarball', 
+                   'download_tarball_sig', 
+                   'verify', 
+                   'extract', 
+                   'run'])
+   
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
         self.gui = gui
@@ -315,11 +385,6 @@ class TorBrowserLauncher:
             self.label.set_line_wrap(True)
             self.box.pack_start(self.label, True, True, 0)
             self.label.show()
-
-            #self.label2 = gtk.Label("You can fix the problem by deleting:\n"+self.paths['dir']['data']+"\n\nHowever, you will lose all your bookmarks and other Tor Browser preferences.") 
-            #self.label2.set_line_wrap(True)
-            #self.box.pack_start(self.label2, True, True, 0)
-            #self.label2.show()
 
             # exit button
             exit_image = gtk.Image()
@@ -397,31 +462,31 @@ class TorBrowserLauncher:
         self.gui_task_i += 1
 
         if task == 'download_update_check':
-            print _('Downloading'), self.paths['url']['update_check']
-            self.download('update check', self.paths['url']['update_check'], self.paths['file']['update_check'])
+            print _('Downloading'), self.common.paths['url']['update_check']
+            self.download('update check', self.common.paths['url']['update_check'], self.common.paths['file']['update_check'])
         
         if task == 'attempt_update':
             print _('Checking to see if update it needed')
             self.attempt_update()
 
         elif task == 'download_tarball':
-            print _('Downloading'), self.paths['url']['tarball']
-            self.download('tarball', self.paths['url']['tarball'], self.paths['file']['tarball'])
+            print _('Downloading'), self.common.paths['url']['tarball']
+            self.download('tarball', self.common.paths['url']['tarball'], self.common.paths['file']['tarball'])
 
         elif task == 'download_tarball_sig':
-            print _('Downloading'), self.paths['url']['tarball_sig']
-            self.download('signature', self.paths['url']['tarball_sig'], self.paths['file']['tarball_sig'])
+            print _('Downloading'), self.common.paths['url']['tarball_sig']
+            self.download('signature', self.common.paths['url']['tarball_sig'], self.common.paths['file']['tarball_sig'])
 
         elif task == 'verify':
             print _('Verifying signature')
             self.verify()
 
         elif task == 'extract':
-            print _('Extracting'), self.paths['filename']['tarball']
+            print _('Extracting'), self.common.paths['filename']['tarball']
             self.extract()
 
         elif task == 'run':
-            print _('Running'), self.paths['file']['start']
+            print _('Running'), self.common.paths['file']['start']
             self.run()
         
         elif task == 'start_over':
@@ -482,7 +547,7 @@ class TorBrowserLauncher:
         self.progressbar.show()
         self.refresh_gtk()
 
-        agent = Agent(reactor, VerifyTorProjectCert(self.paths['file']['torproject_pem']))
+        agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['file']['torproject_pem']))
         d = agent.request('GET', url,
                           Headers({'User-Agent': ['torbrowser-launcher']}),
                           None)
@@ -496,7 +561,7 @@ class TorBrowserLauncher:
     def attempt_update(self):
         # load the update check file
         try:
-            versions = json.load(open(self.paths['file']['update_check']))
+            versions = json.load(open(self.common.paths['file']['update_check']))
             latest_version = None
 
             end = '-Linux'
@@ -505,10 +570,10 @@ class TorBrowserLauncher:
                     latest_version = str(version)
 
             if latest_version:
-                self.settings['latest_version'] = latest_version[:-len(end)]
-                self.settings['last_update_check_timestamp'] = int(time.time())
-                self.save_settings()
-                self.build_paths(self.settings['latest_version'])
+                self.common.settings['latest_version'] = latest_version[:-len(end)]
+                self.common.settings['last_update_check_timestamp'] = int(time.time())
+                self.common.save_settings()
+                self.common.build_paths(self.common.settings['latest_version'])
                 self.start_launcher()
 
             else:
@@ -529,7 +594,7 @@ class TorBrowserLauncher:
         self.progressbar.set_text(_('Verifying Signature'))
         self.progressbar.show()
 
-        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--verify', self.paths['file']['tarball_sig']])
+        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['dir']['gnupg_homedir'], '--verify', self.common.paths['file']['tarball_sig']])
         self.pulse_until_process_exits(p)
         
         if p.returncode == 0:
@@ -550,22 +615,22 @@ class TorBrowserLauncher:
         self.refresh_gtk()
 
         # make sure this file is a tarfile
-        if tarfile.is_tarfile(self.paths['file']['tarball']):
-          tf = tarfile.open(self.paths['file']['tarball'])
-          tf.extractall(self.paths['dir']['tbb'])
+        if tarfile.is_tarfile(self.common.paths['file']['tarball']):
+          tf = tarfile.open(self.common.paths['file']['tarball'])
+          tf.extractall(self.common.paths['dir']['tbb'])
         else:
             self.set_gui('task', _("Tor Browser Launcher doesn't understand the file format of {0}"), ['start_over'], False)
             self.clear_ui()
             self.build_ui()
 
         # installation is finished, so save installed_version
-        self.settings['installed_version'] = self.settings['latest_version']
-        self.save_settings()
+        self.common.settings['installed_version'] = self.common.settings['latest_version']
+        self.common.save_settings()
 
         self.run_task()
 
     def run(self, run_next_task = True):
-        subprocess.Popen([self.paths['file']['start']])
+        subprocess.Popen([self.common.paths['file']['start']])
         if run_next_task:
             self.run_task()
 
@@ -582,76 +647,11 @@ class TorBrowserLauncher:
         self.gui_tasks = ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']
         self.gui_task_i = 0
         self.start(None)
-
-    # load settings
-    def load_settings(self):
-        if os.path.isfile(self.paths['file']['settings']):
-            self.settings = pickle.load(open(self.paths['file']['settings']))
-            # sanity checks
-            if not 'installed_version' in self.settings:
-                return False
-            if not 'latest_version' in self.settings:
-                return False
-            if not 'last_update_check_timestamp' in self.settings:
-                return False
-        else:
-            self.settings = {
-                'installed_version': False,
-                'latest_version': '0',
-                'last_update_check_timestamp': 0
-            }
-            self.save_settings()
-        return True
-
-    # save settings
-    def save_settings(self):
-        pickle.dump(self.settings, open(self.paths['file']['settings'], 'w'))
-        return True
-    
+   
     # refresh gtk
     def refresh_gtk(self):
         while gtk.events_pending():
             gtk.main_iteration(False)
-
-    # get the process id of a program
-    def get_pid(self, bin_path, python = False):
-        pid = None
-
-        for p in psutil.process_iter():
-            try:
-                if p.pid != os.getpid():
-                    exe = None
-                    if python:
-                        if len(p.cmdline) > 1:
-                            if 'python' in p.cmdline[0]:
-                                exe = p.cmdline[1]
-                    else:
-                        if len(p.cmdline) > 0:
-                            exe = p.cmdline[0]
-                    
-                    if exe == bin_path:
-                        pid = p.pid
-
-            except:
-                pass
-
-        return pid
-
-    # bring program's x window to front
-    def bring_window_to_front(self, pid):
-        # figure out the window id
-        win_id = None
-        p = subprocess.Popen(['wmctrl', '-l', '-p'], stdout=subprocess.PIPE)
-        for line in p.stdout.readlines():
-            line_split = line.split()
-            cur_win_id = line_split[0]
-            cur_win_pid = int(line_split[2])
-            if cur_win_pid == pid:
-                win_id = cur_win_id
-
-        # bring to front
-        if win_id:
-            subprocess.call(['wmctrl', '-i', '-a', win_id])
 
     # exit
     def delete_event(self, widget, event, data=None):
@@ -670,5 +670,20 @@ if __name__ == "__main__":
     print _('version {0}').format(tor_browser_launcher_version)
     print 'https://github.com/micahflee/torbrowser-launcher'
 
-    app = TorBrowserLauncher()
+    common = TBLCommon()
+
+    # is torbrowser-launcher already running?
+    tbl_pid = common.get_pid(common.paths['file']['tbl_bin'], True)
+    if tbl_pid:
+        print _('Tor Browser Launcher is already running (pid {0}), bringing to front').format(tbl_pid)
+        common.bring_window_to_front(tbl_pid)
+        sys.exit()
+
+    if '-settings' in sys.argv:
+        # settings mode
+        app = TBLSettings(common)
+
+    else:
+        # launcher mode
+        app = TBLLauncher(common)
 
