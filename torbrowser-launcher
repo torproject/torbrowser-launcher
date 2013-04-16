@@ -148,7 +148,8 @@ class TBLCommon:
                     'icon': '/usr/share/pixmaps/torbrowser80.xpm',
                     'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem',
                     'erinn_key': '/usr/share/torbrowser-launcher/erinn.asc',
-                    'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc'
+                    'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc',
+                    'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc'
                 },
                 'url': {
                     'update_check': 'https://check.torproject.org/RecommendedTBBVersions'
@@ -181,6 +182,8 @@ class TBLCommon:
                 p1.wait()
                 p2 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['sebastian_key']])
                 p2.wait()
+                p3 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['alexandre_key']])
+                p3.wait()
 
     # load settings
     def load_settings(self):
