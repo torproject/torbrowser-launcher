@@ -48,6 +48,6 @@ Tor Browser Launcher will get updated each time a new version of TBB is released
       scripts=['torbrowser-launcher'],
       data_files=[('/usr/share/applications', ['torbrowser.desktop']),
                   ('/usr/share/pixmaps', ['img/torbrowser32.xpm', 'img/torbrowser80.xpm']),
-                  ('/usr/share/torbrowser-launcher', ['keys/erinn.asc', 'keys/sebastian.asc', 'torproject.pem']),
+                  ('/usr/share/torbrowser-launcher', ['keys/erinn.asc', 'keys/sebastian.asc', 'keys/alexandre.asc', 'torproject.pem']),
                   ('/usr/share/torbrowser-launcher/locale/en', ['locale/en/messages.pot'])]
       )
