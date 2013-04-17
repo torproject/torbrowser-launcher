@@ -74,6 +74,12 @@ class TBLCommon:
         self.mkdir(self.paths['dir']['tbb'])
         self.init_gnupg()
 
+        self.available_versions = {
+            'tbl_stable': _('Tor Browser Bundle - stable'), 
+            'tbl_alpha': _('Tor Browser Bundle - alpha'), 
+            'obs_tbl': _('Obsfproxy Tor Browser Bundle')
+        }
+
         # allow buttons to have icons
         try:
             settings = gtk.settings_get_default()
@@ -198,6 +204,7 @@ class TBLCommon:
                 return False
         else:
             self.settings = {
+                'preferred_version': 'tbl_stable',
                 'installed_version': False,
                 'latest_version': '0',
                 'last_update_check_timestamp': 0
@@ -292,12 +299,11 @@ class TBLSettings:
         self.pref_ver_box.pack_start(self.pref_ver_label, True, True, 0)
         self.pref_ver_label.show()
 
-        options = [
-            _('Tor Browser Bundle - stable'), 
-            _('Tor Browser Bundle - alpha'), 
-            _('Obsfproxy Tor Browser Bundle - stable'), 
-            _('Obsfproxy Tor Browser Bundle - alpha')
-        ]
+        options = []
+        for i in self.common.available_versions:
+            options.append(self.common.available_versions[i])
+        options.sort()
+
         self.pref_ver = gtk.combo_box_new_text()
         for option in options:
             self.pref_ver.append_text(option)
@@ -441,7 +447,7 @@ class TBLLauncher:
                     self.start_launcher()
 
             else:
-                self.set_gui('error', _("Error loading settings. Delete ~/.torbrowser and try again."), [])
+                self.set_gui('error', _("Error loading settings. Delete {0} and try again.").format(self.common.paths['file']['settings']), [])
 
         if self.launch_gui:
             # set up the window
