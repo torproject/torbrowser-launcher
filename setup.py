@@ -29,7 +29,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 from distutils.core import setup
 
 setup(name='torbrowser-launcher',
-      version='0.0.1',
+      version='0.0.2',
       author='Micah Lee',
       author_email='micahflee@riseup.net',
       url='https://www.github.com/micahflee/torbrowser-launcher',
