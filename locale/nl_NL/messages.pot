@@ -1,0 +1,156 @@
+# Tor Browser Launcher
+# Copyright (C) 2013 Lazlo Westerhof <hello@lazlo.me>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"POT-Creation-Date: 2013-04-03 10:49+PDT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: torbrowser-launcher:70
+msgid "Checking for Tor Browser update."
+msgstr "Controleren voor Tor Browser updates."
+
+#: torbrowser-launcher:76
+msgid "Checked for update within 24 hours, skipping"
+msgstr "Afgelopen 24 uur gecontrolleerd op updates, controleren overslaan."
+
+#: torbrowser-launcher:80
+msgid "Error loading settings. Delete ~/.torbrowser and try again."
+msgstr "Fout bij het laden van instellingen. Verwijder ~/.torbrowser en probeer opnieuw."
+
+#: torbrowser-launcher:85
+msgid "Tor Browser"
+msgstr "Tor Browser"
+
+#: torbrowser-launcher:105
+msgid "Your Tor Browser is out of date."
+msgstr "Uw Tor Browser is verouderd."
+
+#: torbrowser-launcher:113
+msgid "Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"
+msgstr "Er gaat iets fout. De geinstalleerde Tor Browser Bundle versie is nieuwer dan de huidige versie?"
+
+#: torbrowser-launcher:120
+msgid "Installing Tor Browser."
+msgstr "Tor Browser installeren."
+
+#: torbrowser-launcher:127
+msgid "Downloading and installing Tor Browser."
+msgstr "Tor Browser installeren en downloaden."
+
+#: torbrowser-launcher:166
+msgid "Error creating {0}"
+msgstr "Fout bij maken van {0}"
+
+#: torbrowser-launcher:168 torbrowser-launcher:215
+msgid "{0} is not writable"
+msgstr "{0} is niet schrijfbaar"
+
+#: torbrowser-launcher:212
+msgid "Cannot create directory {0}"
+msgstr "Kan map niet maken: {0}"
+
+#: torbrowser-launcher:222
+msgid "Creating GnuPG homedir"
+msgstr "Aanmeken GnuPG map"
+
+#: torbrowser-launcher:225
+msgid "Importing keys"
+msgstr "Sleutels importeren"
+
+#: torbrowser-launcher:345 torbrowser-launcher:353 torbrowser-launcher:357
+msgid "Downloading"
+msgstr "Bezig met downloaden"
+
+#: torbrowser-launcher:349
+msgid "Checking to see if update it needed"
+msgstr "Controleren voor updates"
+
+#: torbrowser-launcher:361
+msgid "Verifying signature"
+msgstr "Handtekening verifiëren"
+
+#: torbrowser-launcher:365
+msgid "Extracting"
+msgstr "Uitpakken"
+
+#: torbrowser-launcher:369
+msgid "Running"
+msgstr "Uitvoeren"
+
+#: torbrowser-launcher:373
+msgid "Starting download over again"
+msgstr "Download opnieuw starten"
+
+#: torbrowser-launcher:398
+msgid "Downloaded"
+msgstr "Gedownload"
+
+#: torbrowser-launcher:401
+msgid "Finished receiving body:"
+msgstr "Klaar met ontvangen body:"
+
+#: torbrowser-launcher:418
+msgid "Download error"
+msgstr "Download fout"
+
+#: torbrowser-launcher:419
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"Fout bij het downloaden:\n"
+"\n"
+"{0}\n"
+"\n"
+"Bent u verbonden met het internet?"
+
+#: torbrowser-launcher:426
+msgid "Downloading {0}"
+msgstr "Bezig met downloaden {0}"
+
+#: torbrowser-launcher:461 torbrowser-launcher:465
+msgid "Error checking for updates."
+msgstr "Fout bij het zoeken naar updates"
+
+#: torbrowser-launcher:474
+msgid "Verifying Signature"
+msgstr "Handtekening verifiëren"
+
+#: torbrowser-launcher:483
+msgid ""
+"SIGNATURE VERIFICATION FAILED!\n"
+"\n"
+"You might be under attack, or there might just be a networking problem. Click Start try the download again."
+msgstr ""
+"HANDTEKENING VERIFICATIE MISLUKT!\n"
+"\n"
+"U wordt misschien aangevallen of gewoon een netwerk probleem. Klik op Start om het downloaden nogmaals te proberen."
+
+#: torbrowser-launcher:493
+msgid "Installing"
+msgstr "Installeren"
+
+#: torbrowser-launcher:519
+msgid "Downloading Tor Browser Bundle over again."
+msgstr "Tor Browser Bundle opnieuw aan het downloaden."
+
+#: torbrowser-launcher:566
+msgid "Tor Browser Launcher"
+msgstr "Tor Browser Starter"
+
+#: torbrowser-launcher:567
+msgid "version {0}"
+msgstr "versie {0}"
+
