@@ -64,26 +64,29 @@ class VerifyTorProjectCert(ClientContextFactory):
 
 class TBLCommon:
 
-    def __init__(self):
+    def __init__(self, tbl_version):
         print _('Initializing Tor Browser Launcher')
+        self.tbl_version = tbl_version
         
         # initialize the app
         self.discover_arch_lang()
         self.build_paths()
-        self.mkdir(self.paths['dir']['download'])
-        self.mkdir(self.paths['dir']['tbb'])
+        self.mkdir(self.paths['data_dir'])
+        self.load_settings()
+        self.mkdir(self.paths['download_dir'])
+        self.mkdir(self.paths['tbb'][self.settings['preferred']]['dir'])
         self.init_gnupg()
 
         self.available_versions = {
-            'tbl_stable': _('Tor Browser Bundle - stable'), 
-            'tbl_alpha': _('Tor Browser Bundle - alpha'), 
-            'obs_tbl': _('Obsfproxy Tor Browser Bundle')
+            'tbb_stable': _('Tor Browser Bundle - stable'), 
+            'tbb_alpha': _('Tor Browser Bundle - alpha'), 
+            'obs_tbb': _('Obsfproxy Tor Browser Bundle')
         }
 
         # allow buttons to have icons
         try:
-            settings = gtk.settings_get_default()
-            settings.props.gtk_button_images = True
+            gtk_settings = gtk.settings_get_default()
+            gtk_settings.props.gtk_button_images = True
         except:
             pass
 
@@ -127,40 +130,50 @@ class TBLCommon:
 
         if tbb_version:
             tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+tbb_version+'-dev-'+self.language+'.tar.gz'
-            self.paths['file']['tarball'] = tbb_data+'/download/'+tarball_filename
-            self.paths['file']['tarball_sig'] = tbb_data+'/download/'+tarball_filename+'.asc'
-            self.paths['url']['tarball'] = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename
-            self.paths['url']['tarball_sig'] = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
-            self.paths['filename']['tarball'] = tarball_filename
-            self.paths['filename']['tarball_sig'] = tarball_filename+'.asc'
+            self.paths['tarball_file'] = tbb_data+'/download/'+tarball_filename
+            self.paths['tarball_sig_file'] = tbb_data+'/download/'+tarball_filename+'.asc'
+            self.paths['tarball_url'] = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename
+            self.paths['tarball_sig_url'] = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+            self.paths['tarball_filename'] = tarball_filename
+            self.paths['tarball_sig_filename'] = tarball_filename+'.asc'
 
         else:
             self.paths = {
-                'dir': {
-                    'data': tbb_data,
-                    'download': tbb_data+'/download',
-                    'tbb': tbb_data+'/tbb/'+self.architecture,
-                    'gnupg_homedir': tbb_data+'/gnupg_homedir'
-                },
-                'file': {
-                    'tbl_bin': '/usr/bin/torbrowser-launcher',
-                    'settings': tbb_data+'/settings',
-                    'version': tbb_data+'/version',
-                    'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                    'vidalia_bin': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
-                    'firefox_bin': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
-                    'firefox_profile': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
-                    'update_check': tbb_data+'/download/RecommendedTBBVersions',
-                    'icon': '/usr/share/pixmaps/torbrowser80.xpm',
-                    'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem',
-                    'erinn_key': '/usr/share/torbrowser-launcher/erinn.asc',
-                    'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc',
-                    'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc'
-                },
-                'url': {
-                    'update_check': 'https://check.torproject.org/RecommendedTBBVersions'
-                },
-                'filename': {}
+                'tbl_bin': '/usr/bin/torbrowser-launcher',
+                'icon_file': '/usr/share/pixmaps/torbrowser80.xpm',
+                'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem',
+                'erinn_key': '/usr/share/torbrowser-launcher/erinn.asc',
+                'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc',
+                'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc',
+                'data_dir': tbb_data,
+                'download_dir': tbb_data+'/download',
+                'gnupg_homedir': tbb_data+'/gnupg_homedir',
+                'settings_file': tbb_data+'/settings',
+                'update_check_url': 'https://check.torproject.org/RecommendedTBBVersions',
+                'update_check_file': tbb_data+'/download/RecommendedTBBVersions',
+                'tbb': {
+                    'tbb_stable': {
+                        'dir': tbb_data+'/tbb/stable/'+self.architecture,
+                        'start': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
+                        'vidalia_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
+                        'firefox_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
+                        'firefox_profile': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
+                    },
+                    'tbb_alpha': {
+                        'dir': tbb_data+'/tbb/alpha/'+self.architecture,
+                        'start': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
+                        'vidalia_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
+                        'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
+                        'firefox_profile': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
+                    },
+                    'obs_tbb': {
+                        'dir': tbb_data+'/tbb/obs/'+self.architecture,
+                        'start': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
+                        'vidalia_bin': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
+                        'firefox_bin': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
+                        'firefox_profile': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
+                    }
+                }
             }
 
     # create a directory
@@ -170,51 +183,105 @@ class TBLCommon:
                 os.makedirs(path, 0700)
                 return True
         except:
-            self.set_gui('error', _("Cannot create directory {0}").format(path), [], False)
+            print _("Cannot create directory {0}").format(path)
             return False
         if not os.access(path, os.W_OK):
-            self.set_gui('error', _("{0} is not writable").format(path), [], False)
+            print _("{0} is not writable").format(path)
             return False
         return True
 
     # if gnupg_homedir isn't set up, set it up
     def init_gnupg(self):
-        if not os.path.exists(self.paths['dir']['gnupg_homedir']):
-            print _('Creating GnuPG homedir'), self.paths['dir']['gnupg_homedir']
-            if self.mkdir(self.paths['dir']['gnupg_homedir']):
+        if not os.path.exists(self.paths['gnupg_homedir']):
+            print _('Creating GnuPG homedir'), self.paths['gnupg_homedir']
+            if self.mkdir(self.paths['gnupg_homedir']):
                 # import keys
                 print _('Importing keys')
-                p1 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['erinn_key']])
-                p1.wait()
-                p2 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['sebastian_key']])
-                p2.wait()
-                p3 = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['dir']['gnupg_homedir'], '--import', self.paths['file']['alexandre_key']])
-                p3.wait()
+                subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key']]).wait()
+                subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['sebastian_key']]).wait()
+                subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['alexandre_key']]).wait()
 
     # load settings
     def load_settings(self):
-        if os.path.isfile(self.paths['file']['settings']):
-            self.settings = pickle.load(open(self.paths['file']['settings']))
-            # sanity checks
-            if not 'installed_version' in self.settings:
-                return False
-            if not 'latest_version' in self.settings:
-                return False
-            if not 'last_update_check_timestamp' in self.settings:
-                return False
+        default_settings = {
+            'tbl_version': self.tbl_version,
+            'preferred': 'tbb_stable',
+            'installed_version': {
+                'tbb_stable': False,
+                'tbb_alpha': False,
+                'obs_tbb': False
+            },
+            'latest_version': {
+                'tbb_stable': '0',
+                'tbb_alpha': '0',
+                'obs_tbb': '0',
+            },
+            'update_over_tor': True,
+            'check_for_updates': False,
+            'last_update_check_timestamp': 0
+        }
+
+        if os.path.isfile(self.paths['settings_file']):
+            settings = pickle.load(open(self.paths['settings_file']))
+
+            # what version settings is this?
+            if not 'tbl_version' in settings:
+                settings['tbl_version'] = '0.0.1'
+
+            # sanity checks for current version
+            if settings['tbl_version'] == self.tbl_version:
+                good_settings = True
+                if not 'preferred' in settings:
+                    good_settings = False
+                if not 'installed_version' in settings:
+                    good_settings = False
+                if not 'tbb_stable' in settings['installed_version']:
+                    good_settings = False
+                if not 'tbb_alpha' in settings['installed_version']:
+                    good_settings = False
+                if not 'obs_tbb' in settings['installed_version']:
+                    good_settings = False
+                if not 'latest_version' in settings:
+                    good_settings = False
+                if not 'tbb_stable' in settings['latest_version']:
+                    good_settings = False
+                if not 'tbb_alpha' in settings['latest_version']:
+                    good_settings = False
+                if not 'obs_tbb' in settings['latest_version']:
+                    good_settings = False
+                if not 'update_over_tor' in settings:
+                    good_settings = False
+                if not 'check_for_updates' in settings:
+                    good_settings = False
+                if not 'last_update_check_timestamp' in settings:
+                    good_settings = False
+
+                if good_settings:
+                    self.settings = settings
+                else:
+                    setting.settings = default_settings
+
+            # settings migrations for previous versions
+            elif settings['tbl_version'] == '0.0.1':
+                self.settings = default_settings
+                self.settings['installed_version']['tbb_alpha'] = settings['installed_version']
+                self.save_settings()
+
+                # move tbb alpha
+                self.mkdir(self.paths['tbb']['tbb_alpha']['dir'])
+                # todo: move already-installed TBB alpha to new location
+                if os.path.exists(self.paths['data_dir']+'/tbb/x86_64'):
+                    pass
+                if os.path.exists(self.paths['data_dir']+'/tbb/i686'):
+                    pass
+
         else:
-            self.settings = {
-                'preferred_version': 'tbl_stable',
-                'installed_version': False,
-                'latest_version': '0',
-                'last_update_check_timestamp': 0
-            }
+            self.settings = default_settings
             self.save_settings()
-        return True
 
     # save settings
     def save_settings(self):
-        pickle.dump(self.settings, open(self.paths['file']['settings'], 'w'))
+        pickle.dump(self.settings, open(self.paths['settings_file'], 'w'))
         return True
 
     # get the process id of a program
@@ -261,12 +328,11 @@ class TBLSettings:
     def __init__(self, common):
         print _('Starting settings dialog')
         self.common = common
-        self.common.load_settings()
 
         # set up the window
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title(_("Tor Browser Launcher Settings"))
-        self.window.set_icon_from_file(self.common.paths['file']['icon'])
+        self.window.set_icon_from_file(self.common.paths['icon_file'])
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_border_width(10)
         self.window.connect("delete_event", self.delete_event)
@@ -312,7 +378,7 @@ class TBLSettings:
         self.pref_ver.show()
 
         # download over tor
-        self.tor_update_checkbox = gtk.CheckButton(_("Check for and download updates over Tor"))
+        self.tor_update_checkbox = gtk.CheckButton(_("Download updates over Tor (recommended)"))
         self.settings_box.pack_start(self.tor_update_checkbox, True, True, 0)
         self.tor_update_checkbox.show()
 
@@ -380,7 +446,7 @@ class TBLSettings:
     # save and launch
     def save_launch(self, widget, data=None):
         self.save()
-        p = subprocess.Popen([self.common.paths['file']['tbl_bin']])
+        p = subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     # save and exit
@@ -404,56 +470,57 @@ class TBLLauncher:
         print _('Starting launcher dialog')
         self.common = common
 
+        # init launcher
         self.set_gui(None, '', [])
         self.launch_gui = True
+        self.common.build_paths(self.common.settings['latest_version'][self.common.settings['preferred']])
 
-        # if we haven't already hit an error
-        if self.gui != 'error':
-            # load settings
-            if self.common.load_settings():
-                self.common.build_paths(self.common.settings['latest_version'])
+        # is vidalia already running and we just need to open a new firefox?
+        if self.common.settings['installed_version']:
+            vidalia_pid = self.common.get_pid('./App/vidalia')
+            firefox_pid = self.common.get_pid(self.common.paths['tbb'][self.common.settings['preferred']]['firefox_bin'])
 
-                # is vidalia already running and we just need to open a new firefox?
-                if self.common.settings['installed_version']:
-                    vidalia_pid = self.common.get_pid('./App/vidalia')
-                    firefox_pid = self.common.get_pid(self.common.paths['file']['firefox_bin'])
+            if vidalia_pid and not firefox_pid:
+                print _('Vidalia is already open, but Firefox is closed. Launching new Firefox.')
+                self.common.bring_window_to_front(vidalia_pid)
+                subprocess.Popen([self.common.paths['tbb'][self.common.settings['preferred']]['firefox_bin'], '-no-remote', '-profile', self.common.paths['tbb'][self.common.settings['preferred']]['firefox_profile']])
+                return
+            elif vidalia_pid and firefox_pid:
+                print _('Vidalia and Firefox are already open, bringing them to focus')
 
-                    if vidalia_pid and not firefox_pid:
-                        print _('Vidalia is already open, but Firefox is closed. Launching new Firefox.')
-                        self.common.bring_window_to_front(vidalia_pid)
-                        subprocess.Popen([self.common.paths['file']['firefox_bin'], '-no-remote', '-profile', self.common.paths['file']['firefox_profile']])
-                        return
-                    elif vidalia_pid and firefox_pid:
-                        print _('Vidalia and Firefox are already open, bringing them to focus')
+                # bring firefox to front, then vidalia
+                self.common.bring_window_to_front(firefox_pid)
+                self.common.bring_window_to_front(vidalia_pid)
+                return
 
-                        # bring firefox to front, then vidalia
-                        self.common.bring_window_to_front(firefox_pid)
-                        self.common.bring_window_to_front(vidalia_pid)
-                        return
+        # check for updates?
+        check_for_updates = False
+        if self.common.settings['check_for_updates']:
+            check_for_updates = True
 
-                # how long was it since the last update check?
-                # 86400 seconds = 24 hours
-                current_timestamp = int(time.time())
-                if current_timestamp - self.common.settings['last_update_check_timestamp'] >= 86400:
-                    # check for update
-                    print 'Checking for update'
-                    self.set_gui('task', _("Checking for Tor Browser update."), 
-                        ['download_update_check', 
-                         'attempt_update'])
+        if not check_for_updates:
+            # how long was it since the last update check?
+            # 86400 seconds = 24 hours
+            current_timestamp = int(time.time())
+            if current_timestamp - self.common.settings['last_update_check_timestamp'] >= 86400:
+                check_for_updates = True
 
-                else:
-                    # no need to check for update
-                    print _('Checked for update within 24 hours, skipping')
-                    self.start_launcher()
-
-            else:
-                self.set_gui('error', _("Error loading settings. Delete {0} and try again.").format(self.common.paths['file']['settings']), [])
+        if check_for_updates:
+            # check for update
+            print 'Checking for update'
+            self.set_gui('task', _("Checking for Tor Browser update."), 
+                ['download_update_check', 
+                 'attempt_update'])
+        else:
+            # no need to check for update
+            print _('Checked for update within 24 hours, skipping')
+            self.start_launcher()
 
         if self.launch_gui:
             # set up the window
             self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
             self.window.set_title(_("Tor Browser"))
-            self.window.set_icon_from_file(self.common.paths['file']['icon'])
+            self.window.set_icon_from_file(self.common.paths['icon_file'])
             self.window.set_position(gtk.WIN_POS_CENTER)
             self.window.set_border_width(10)
             self.window.connect("delete_event", self.delete_event)
@@ -465,12 +532,12 @@ class TBLLauncher:
     # download or run TBB
     def start_launcher(self):
       # is TBB already installed?
-      if os.path.isfile(self.common.paths['file']['start']) and os.access(self.common.paths['file']['start'], os.X_OK):
-        if self.common.settings['installed_version'] == self.common.settings['latest_version']:
+      if os.path.isfile(self.common.paths['tbb'][self.common.settings['preferred']]['start']) and os.access(self.common.paths['tbb'][self.common.settings['preferred']]['start'], os.X_OK):
+        if self.common.settings['installed_version'] == self.common.settings['latest_version'][self.common.settings['preferred']]:
           # current version of tbb is installed, launch it
           self.run(False)
           self.launch_gui = False
-        elif self.common.settings['installed_version'] < self.common.settings['latest_version']:
+        elif self.common.settings['installed_version'] < self.common.settings['latest_version'][self.common.settings['preferred']]:
           # there is a tbb upgrade available
           self.set_gui('task', _("Your Tor Browser is out of date."), 
             ['download_tarball', 
@@ -485,7 +552,7 @@ class TBLLauncher:
       # not installed
       else:
           # are the tarball and sig already downloaded?
-          if os.path.isfile(self.common.paths['file']['tarball']) and os.path.isfile(self.common.paths['file']['tarball_sig']):
+          if os.path.isfile(self.common.paths['tarball_file']) and os.path.isfile(self.common.paths['tarball_sig_file']):
               # start the gui with verify
               self.set_gui('task', _("Installing Tor Browser."), 
                   ['verify', 
@@ -511,7 +578,7 @@ class TBLLauncher:
 
     # set all gtk variables to False
     def clear_ui(self):
-        if hasattr(self, 'box'):
+        if hasattr(self, 'box') and hasattr(self.box, 'destroy'):
             self.box.destroy()
         self.box = False
 
@@ -523,6 +590,8 @@ class TBLLauncher:
 
     # build the application's UI
     def build_ui(self):
+        self.clear_ui()
+
         self.box = gtk.VBox(False, 20)
         self.window.add(self.box)
 
@@ -609,31 +678,31 @@ class TBLLauncher:
         self.gui_task_i += 1
 
         if task == 'download_update_check':
-            print _('Downloading'), self.common.paths['url']['update_check']
-            self.download('update check', self.common.paths['url']['update_check'], self.common.paths['file']['update_check'])
+            print _('Downloading'), self.common.paths['update_check_url']
+            self.download('update check', self.common.paths['update_check_url'], self.common.paths['update_check_file'])
         
         if task == 'attempt_update':
             print _('Checking to see if update it needed')
             self.attempt_update()
 
         elif task == 'download_tarball':
-            print _('Downloading'), self.common.paths['url']['tarball']
-            self.download('tarball', self.common.paths['url']['tarball'], self.common.paths['file']['tarball'])
+            print _('Downloading'), self.common.paths['tarball_url']
+            self.download('tarball', self.common.paths['tarball_url'], self.common.paths['tarball_file'])
 
         elif task == 'download_tarball_sig':
-            print _('Downloading'), self.common.paths['url']['tarball_sig']
-            self.download('signature', self.common.paths['url']['tarball_sig'], self.common.paths['file']['tarball_sig'])
+            print _('Downloading'), self.common.paths['tarball_sig_url']
+            self.download('signature', self.common.paths['tarball_sig_url'], self.common.paths['tarball_sig_file'])
 
         elif task == 'verify':
             print _('Verifying signature')
             self.verify()
 
         elif task == 'extract':
-            print _('Extracting'), self.common.paths['filename']['tarball']
+            print _('Extracting'), self.common.paths['tarball_filename']
             self.extract()
 
         elif task == 'run':
-            print _('Running'), self.common.paths['file']['start']
+            print _('Running'), self.common.paths['tbb'][self.common.settings['preferred']]['start']
             self.run()
         
         elif task == 'start_over':
@@ -694,7 +763,7 @@ class TBLLauncher:
         self.progressbar.show()
         self.refresh_gtk()
 
-        agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['file']['torproject_pem']))
+        agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']))
         d = agent.request('GET', url,
                           Headers({'User-Agent': ['torbrowser-launcher']}),
                           None)
@@ -708,7 +777,7 @@ class TBLLauncher:
     def attempt_update(self):
         # load the update check file
         try:
-            versions = json.load(open(self.common.paths['file']['update_check']))
+            versions = json.load(open(self.common.paths['update_check_file']))
             latest_version = None
 
             end = '-Linux'
@@ -717,10 +786,11 @@ class TBLLauncher:
                     latest_version = str(version)
 
             if latest_version:
-                self.common.settings['latest_version'] = latest_version[:-len(end)]
+                self.common.settings['latest_version'][self.common.settings['preferred']] = latest_version[:-len(end)]
                 self.common.settings['last_update_check_timestamp'] = int(time.time())
+                self.common.settings['check_for_updates'] = False
                 self.common.save_settings()
-                self.common.build_paths(self.common.settings['latest_version'])
+                self.common.build_paths(self.common.settings['latest_version'][self.common.settings['preferred']])
                 self.start_launcher()
 
             else:
@@ -741,7 +811,7 @@ class TBLLauncher:
         self.progressbar.set_text(_('Verifying Signature'))
         self.progressbar.show()
 
-        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['dir']['gnupg_homedir'], '--verify', self.common.paths['file']['tarball_sig']])
+        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['tarball_sig_file']])
         self.pulse_until_process_exits(p)
         
         if p.returncode == 0:
@@ -762,9 +832,9 @@ class TBLLauncher:
         self.refresh_gtk()
 
         # make sure this file is a tarfile
-        if tarfile.is_tarfile(self.common.paths['file']['tarball']):
-          tf = tarfile.open(self.common.paths['file']['tarball'])
-          tf.extractall(self.common.paths['dir']['tbb'])
+        if tarfile.is_tarfile(self.common.paths['tarball_file']):
+          tf = tarfile.open(self.common.paths['tarball_file'])
+          tf.extractall(self.common.paths['tbb'][self.common.settings['preferred']]['dir'])
         else:
             self.set_gui('task', _("Tor Browser Launcher doesn't understand the file format of {0}"), ['start_over'], False)
             self.clear_ui()
@@ -777,7 +847,7 @@ class TBLLauncher:
         self.run_task()
 
     def run(self, run_next_task = True):
-        subprocess.Popen([self.common.paths['file']['start']])
+        subprocess.Popen([self.common.paths['tbb'][self.common.settings['preferred']]['start']])
         if run_next_task:
             self.run_task()
 
@@ -817,10 +887,10 @@ if __name__ == "__main__":
     print _('version {0}').format(tor_browser_launcher_version)
     print 'https://github.com/micahflee/torbrowser-launcher'
 
-    common = TBLCommon()
+    common = TBLCommon(tor_browser_launcher_version)
 
     # is torbrowser-launcher already running?
-    tbl_pid = common.get_pid(common.paths['file']['tbl_bin'], True)
+    tbl_pid = common.get_pid(common.paths['tbl_bin'], True)
     if tbl_pid:
         print _('Tor Browser Launcher is already running (pid {0}), bringing to front').format(tbl_pid)
         common.bring_window_to_front(tbl_pid)
