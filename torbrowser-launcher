@@ -78,9 +78,12 @@ class TBLCommon:
         self.init_gnupg()
 
         self.available_versions = {
-            'tbb_stable': _('Tor Browser Bundle - stable'), 
-            'tbb_alpha': _('Tor Browser Bundle - alpha'), 
-            'obs_tbb': _('Obsfproxy Tor Browser Bundle')
+            'stable': _('Tor Browser Bundle - stable'), 
+            'alpha': _('Tor Browser Bundle - alpha')
+            # commenting out obs bundle until I have a reliable way to find latest version. related bugs:
+            # https://trac.torproject.org/projects/tor/ticket/8644
+            # https://trac.torproject.org/projects/tor/ticket/8645
+            #'obs': _('Obsfproxy Tor Browser Bundle') 
         }
 
         # allow buttons to have icons
@@ -152,21 +155,21 @@ class TBLCommon:
                 'update_check_url': 'https://check.torproject.org/RecommendedTBBVersions',
                 'update_check_file': tbb_data+'/download/RecommendedTBBVersions',
                 'tbb': {
-                    'tbb_stable': {
+                    'stable': {
                         'dir': tbb_data+'/tbb/stable/'+self.architecture,
                         'start': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
                         'vidalia_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
                         'firefox_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
                         'firefox_profile': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                     },
-                    'tbb_alpha': {
+                    'alpha': {
                         'dir': tbb_data+'/tbb/alpha/'+self.architecture,
                         'start': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
                         'vidalia_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
                         'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
                         'firefox_profile': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                     },
-                    'obs_tbb': {
+                    'obs': {
                         'dir': tbb_data+'/tbb/obs/'+self.architecture,
                         'start': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
                         'vidalia_bin': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
@@ -205,16 +208,16 @@ class TBLCommon:
     def load_settings(self):
         default_settings = {
             'tbl_version': self.tbl_version,
-            'preferred': 'tbb_stable',
+            'preferred': 'stable',
             'installed_version': {
-                'tbb_stable': False,
-                'tbb_alpha': False,
-                'obs_tbb': False
+                'stable': False,
+                'alpha': False,
+                'obs': False
             },
             'latest_version': {
-                'tbb_stable': '0',
-                'tbb_alpha': '0',
-                'obs_tbb': '0',
+                'stable': '0',
+                'alpha': '0',
+                'obs': '0',
             },
             'update_over_tor': True,
             'check_for_updates': False,
@@ -235,19 +238,19 @@ class TBLCommon:
                     good_settings = False
                 if not 'installed_version' in settings:
                     good_settings = False
-                if not 'tbb_stable' in settings['installed_version']:
+                if not 'stable' in settings['installed_version']:
                     good_settings = False
-                if not 'tbb_alpha' in settings['installed_version']:
+                if not 'alpha' in settings['installed_version']:
                     good_settings = False
-                if not 'obs_tbb' in settings['installed_version']:
+                if not 'obs' in settings['installed_version']:
                     good_settings = False
                 if not 'latest_version' in settings:
                     good_settings = False
-                if not 'tbb_stable' in settings['latest_version']:
+                if not 'stable' in settings['latest_version']:
                     good_settings = False
-                if not 'tbb_alpha' in settings['latest_version']:
+                if not 'alpha' in settings['latest_version']:
                     good_settings = False
-                if not 'obs_tbb' in settings['latest_version']:
+                if not 'obs' in settings['latest_version']:
                     good_settings = False
                 if not 'update_over_tor' in settings:
                     good_settings = False
@@ -259,16 +262,16 @@ class TBLCommon:
                 if good_settings:
                     self.settings = settings
                 else:
-                    setting.settings = default_settings
+                    self.settings = default_settings
 
             # settings migrations for previous versions
             elif settings['tbl_version'] == '0.0.1':
                 self.settings = default_settings
-                self.settings['installed_version']['tbb_alpha'] = settings['installed_version']
+                self.settings['installed_version']['alpha'] = settings['installed_version']
                 self.save_settings()
 
                 # move tbb alpha
-                self.mkdir(self.paths['tbb']['tbb_alpha']['dir'])
+                self.mkdir(self.paths['tbb']['alpha']['dir'])
                 # todo: move already-installed TBB alpha to new location
                 if os.path.exists(self.paths['data_dir']+'/tbb/x86_64'):
                     pass
@@ -532,12 +535,13 @@ class TBLLauncher:
     # download or run TBB
     def start_launcher(self):
       # is TBB already installed?
-      if os.path.isfile(self.common.paths['tbb'][self.common.settings['preferred']]['start']) and os.access(self.common.paths['tbb'][self.common.settings['preferred']]['start'], os.X_OK):
-        if self.common.settings['installed_version'] == self.common.settings['latest_version'][self.common.settings['preferred']]:
+      start = self.common.paths['tbb'][self.common.settings['preferred']]['start']
+      if os.path.isfile(start) and os.access(start, os.X_OK):
+        if self.common.settings['installed_version'][self.common.settings['preferred']] == self.common.settings['latest_version'][self.common.settings['preferred']]:
           # current version of tbb is installed, launch it
           self.run(False)
           self.launch_gui = False
-        elif self.common.settings['installed_version'] < self.common.settings['latest_version'][self.common.settings['preferred']]:
+        elif self.common.settings['installed_version'][self.common.settings['preferred']] < self.common.settings['latest_version'][self.common.settings['preferred']]:
           # there is a tbb upgrade available
           self.set_gui('task', _("Your Tor Browser is out of date."), 
             ['download_tarball', 
@@ -778,15 +782,31 @@ class TBLLauncher:
         # load the update check file
         try:
             versions = json.load(open(self.common.paths['update_check_file']))
-            latest_version = None
+            latest_stable = None
+            latest_alpha = None
+            latest_obs = None
 
-            end = '-Linux'
+            # filter linux versions
+            valid_versions = []
             for version in versions:
-                if str(version).find(end) != -1:
-                    latest_version = str(version)
+                if str(version).find('-Linux') != -1:
+                    valid_versions.append(str(version))
+            # find alpha
+            for version in valid_versions:
+                if version.find('alpha') != -1:
+                    latest_alpha = valid_versions
+                    valid_versions.remove(latest_alpha)
+            # find stable (whatever is left after alpha)
+            if len(valid_versions):
+                latest_stable = valid_versions[0]
 
-            if latest_version:
-                self.common.settings['latest_version'][self.common.settings['preferred']] = latest_version[:-len(end)]
+            if latest_stable or latest_alpha or latest_obs:
+                if latest_stable:
+                    self.common.settings['latest_version']['stable'] = latest_stable[:-len('-Linux')]
+                if latest_alpha:
+                    self.common.settings['latest_version']['alpha'] = latest_stable[:-len('-Linux')]
+                if latest_obs:
+                    self.common.settings['latest_version']['obs'] = latest_stable[:-len('-Linux')]
                 self.common.settings['last_update_check_timestamp'] = int(time.time())
                 self.common.settings['check_for_updates'] = False
                 self.common.save_settings()
