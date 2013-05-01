@@ -359,40 +359,51 @@ class TBLSettings:
         self.labels_box.show()
 
         # preferred version
-        self.pref_ver_box = gtk.HBox(False, 10)
-        self.settings_box.pack_start(self.pref_ver_box, True, True, 0)
-        self.pref_ver_box.show()
+        self.preferred_box = gtk.HBox(False, 10)
+        self.settings_box.pack_start(self.preferred_box, True, True, 0)
+        self.preferred_box.show()
 
-        self.pref_ver_label = gtk.Label(_('I prefer'))
-        self.pref_ver_label.set_line_wrap(True)
-        self.pref_ver_box.pack_start(self.pref_ver_label, True, True, 0)
-        self.pref_ver_label.show()
+        self.preferred_label = gtk.Label(_('I prefer'))
+        self.preferred_label.set_line_wrap(True)
+        self.preferred_box.pack_start(self.preferred_label, True, True, 0)
+        self.preferred_label.show()
 
-        options = []
+        self.preferred_options = []
         for i in self.common.available_versions:
-            options.append(self.common.available_versions[i])
-        options.sort()
+            self.preferred_options.append(self.common.available_versions[i])
+        self.preferred_options.sort()
 
-        self.pref_ver = gtk.combo_box_new_text()
-        for option in options:
-            self.pref_ver.append_text(option)
-        self.pref_ver.set_active(0)
-        self.pref_ver_box.pack_start(self.pref_ver, True, True, 0)
-        self.pref_ver.show()
+        self.preferred = gtk.combo_box_new_text()
+        for option in self.preferred_options:
+            self.preferred.append_text(option)
+        if self.common.settings['preferred'] in self.common.available_versions:
+            self.preferred.set_active( self.preferred_options.index(self.common.available_versions[self.common.settings['preferred']]) )
+        else:
+            self.preferred.set_active(0)
+        self.preferred_box.pack_start(self.preferred, True, True, 0)
+        self.preferred.show()
 
         # download over tor
         self.tor_update_checkbox = gtk.CheckButton(_("Download updates over Tor (recommended)"))
         self.settings_box.pack_start(self.tor_update_checkbox, True, True, 0)
+        if self.common.settings['update_over_tor']:
+            self.tor_update_checkbox.set_active(True) 
+        else:
+            self.tor_update_checkbox.set_active(False) 
         self.tor_update_checkbox.show()
 
         # check for updates
         self.update_checkbox = gtk.CheckButton(_("Check for updates next launch"))
         self.settings_box.pack_start(self.update_checkbox, True, True, 0)
+        if self.common.settings['check_for_updates']:
+            self.update_checkbox.set_active(True) 
+        else:
+            self.update_checkbox.set_active(False) 
         self.update_checkbox.show()
 
         # labels
-        if(self.common.settings['installed_version']):
-            self.label1 = gtk.Label(_('Installed version:\n{0}').format(self.common.settings['installed_version']))
+        if(self.common.settings['installed_version'][self.common.settings['preferred']]):
+            self.label1 = gtk.Label(_('Installed version:\n{0}').format(self.common.settings['installed_version'][self.common.settings['preferred']]))
         else:
             self.label1 = gtk.Label(_('Not installed'))
         self.label1.set_line_wrap(True)
@@ -459,7 +470,21 @@ class TBLSettings:
 
     # save settings
     def save(self):
-        pass
+        # figure out the selected preferred option
+        preferred = None
+        selected = self.preferred_options[self.preferred.get_active()]
+        for i in self.common.available_versions:
+            if self.common.available_versions[i] == selected:
+                preferred = i
+        if preferred:
+            self.common.settings['preferred'] = preferred
+
+        # checkbox options
+        self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
+        self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
+
+        # save them
+        self.common.save_settings()
 
     # exit
     def delete_event(self, widget, event, data=None):
@@ -804,9 +829,9 @@ class TBLLauncher:
                 if latest_stable:
                     self.common.settings['latest_version']['stable'] = latest_stable[:-len('-Linux')]
                 if latest_alpha:
-                    self.common.settings['latest_version']['alpha'] = latest_stable[:-len('-Linux')]
+                    self.common.settings['latest_version']['alpha'] = latest_alpha[:-len('-Linux')]
                 if latest_obs:
-                    self.common.settings['latest_version']['obs'] = latest_stable[:-len('-Linux')]
+                    self.common.settings['latest_version']['obs'] = latest_obs[:-len('-Linux')]
                 self.common.settings['last_update_check_timestamp'] = int(time.time())
                 self.common.settings['check_for_updates'] = False
                 self.common.save_settings()
