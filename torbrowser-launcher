@@ -794,7 +794,7 @@ class TBLLauncher:
             # find alpha
             for version in valid_versions:
                 if version.find('alpha') != -1:
-                    latest_alpha = valid_versions
+                    latest_alpha = version
                     valid_versions.remove(latest_alpha)
             # find stable (whatever is left after alpha)
             if len(valid_versions):
