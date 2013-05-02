@@ -80,10 +80,6 @@ class TBLCommon:
         self.available_versions = {
             'stable': _('Tor Browser Bundle - stable'), 
             'alpha': _('Tor Browser Bundle - alpha')
-            # commenting out obs bundle until I have a reliable way to find latest version. related bugs:
-            # https://trac.torproject.org/projects/tor/ticket/8644
-            # https://trac.torproject.org/projects/tor/ticket/8645
-            #'obs': _('Obsfproxy Tor Browser Bundle') 
         }
 
         # allow buttons to have icons
@@ -168,13 +164,6 @@ class TBLCommon:
                         'vidalia_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
                         'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
                         'firefox_profile': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
-                    },
-                    'obs': {
-                        'dir': tbb_data+'/tbb/obs/'+self.architecture,
-                        'start': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                        'vidalia_bin': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
-                        'firefox_bin': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
-                        'firefox_profile': tbb_data+'/tbb/obs/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                     }
                 }
             }
@@ -211,13 +200,11 @@ class TBLCommon:
             'preferred': 'stable',
             'installed_version': {
                 'stable': False,
-                'alpha': False,
-                'obs': False
+                'alpha': False
             },
             'latest_version': {
                 'stable': '0',
-                'alpha': '0',
-                'obs': '0',
+                'alpha': '0'
             },
             'update_over_tor': True,
             'check_for_updates': False,
@@ -242,15 +229,11 @@ class TBLCommon:
                     good_settings = False
                 if not 'alpha' in settings['installed_version']:
                     good_settings = False
-                if not 'obs' in settings['installed_version']:
-                    good_settings = False
                 if not 'latest_version' in settings:
                     good_settings = False
                 if not 'stable' in settings['latest_version']:
                     good_settings = False
                 if not 'alpha' in settings['latest_version']:
-                    good_settings = False
-                if not 'obs' in settings['latest_version']:
                     good_settings = False
                 if not 'update_over_tor' in settings:
                     good_settings = False
@@ -809,7 +792,6 @@ class TBLLauncher:
             versions = json.load(open(self.common.paths['update_check_file']))
             latest_stable = None
             latest_alpha = None
-            latest_obs = None
 
             # filter linux versions
             valid_versions = []
@@ -825,13 +807,11 @@ class TBLLauncher:
             if len(valid_versions):
                 latest_stable = valid_versions[0]
 
-            if latest_stable or latest_alpha or latest_obs:
+            if latest_stable or latest_alpha:
                 if latest_stable:
                     self.common.settings['latest_version']['stable'] = latest_stable[:-len('-Linux')]
                 if latest_alpha:
                     self.common.settings['latest_version']['alpha'] = latest_alpha[:-len('-Linux')]
-                if latest_obs:
-                    self.common.settings['latest_version']['obs'] = latest_obs[:-len('-Linux')]
                 self.common.settings['last_update_check_timestamp'] = int(time.time())
                 self.common.settings['check_for_updates'] = False
                 self.common.save_settings()
