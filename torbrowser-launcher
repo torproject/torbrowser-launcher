@@ -552,8 +552,8 @@ class TBLLauncher:
         elif self.common.settings['installed_version'][self.common.settings['preferred']] < self.common.settings['latest_version'][self.common.settings['preferred']]:
           # there is a tbb upgrade available
           self.set_gui('task', _("Your Tor Browser is out of date."), 
-            ['download_tarball', 
-             'download_tarball_sig', 
+            ['download_tarball_sig', 
+             'download_tarball', 
              'verify', 
              'extract', 
              'run'])
@@ -574,8 +574,8 @@ class TBLLauncher:
           # first run
           else:
               self.set_gui('task', _("Downloading and installing Tor Browser."), 
-                  ['download_tarball', 
-                   'download_tarball_sig', 
+                  ['download_tarball_sig', 
+                   'download_tarball', 
                    'verify', 
                    'extract', 
                    'run'])
