@@ -27,6 +27,14 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from distutils.core import setup
+import os
+
+def file_list(path):
+    files = []
+    for filename in os.listdir(path):
+        if os.path.isfile(path+'/'+filename):
+            files.append(path+'/'+filename)
+    return files
 
 setup(name='torbrowser-launcher',
       version='0.0.2',
@@ -49,5 +57,15 @@ Tor Browser Launcher will get updated each time a new version of TBB is released
       data_files=[('/usr/share/applications', ['torbrowser.desktop', 'torbrowser-settings.desktop']),
                   ('/usr/share/pixmaps', ['img/torbrowser32.xpm', 'img/torbrowser80.xpm']),
                   ('/usr/share/torbrowser-launcher', ['keys/erinn.asc', 'keys/sebastian.asc', 'keys/alexandre.asc', 'torproject.pem']),
-                  ('/usr/share/torbrowser-launcher/locale/en', ['locale/en/messages.pot'])]
+                  ('/usr/share/torbrowser-launcher/locale/en', ['locale/en/messages.pot']),
+
+                  # unpackaged third party libraries
+                  ('/usr/share/torbrowser-launcher/lib/txsocksx', file_list('lib/txsocksx-0.0.2/txsocksx')),
+                  ('/usr/share/torbrowser-launcher/lib', ['lib/Parsley-1.1/parsley.py']),
+                  ('/usr/share/torbrowser-launcher/lib/ometa', file_list('lib/Parsley-1.1/ometa')),
+                  ('/usr/share/torbrowser-launcher/lib/ometa/_generated', file_list('lib/Parsley-1.1/ometa/_generated')),
+                  ('/usr/share/torbrowser-launcher/lib/ometa/test', file_list('lib/Parsley-1.1/ometa/test')),
+                  ('/usr/share/torbrowser-launcher/lib/terml', file_list('lib/Parsley-1.1/terml')),
+                  ('/usr/share/torbrowser-launcher/lib/terml/_generated', file_list('lib/Parsley-1.1/terml/_generated')),
+                  ('/usr/share/torbrowser-launcher/lib/terml/test', file_list('lib/Parsley-1.1/terml/test'))]
       )

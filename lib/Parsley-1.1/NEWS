@@ -1,0 +1,69 @@
+1.1.0 (2013-03-03):
+ - The 'spaces' rule has been provided under the alias 'ws'; 'spaces'
+   is now the deprecated name.
+ - Single quotes can now be used around multiple characters to match
+   them consecutively. For example, 'abc' is equivalent 'a' 'b' 'c'.
+ - The 'token' rule is thus deprecated as well, since "token('foo')"
+   is more typing than "ws 'foo'".
+ - Hex escapes can now be used in literals for matching bytes.
+ - 'makeGrammar' now takes an 'unwrap' argument, to get a grammar
+   class suitable for subclassing.
+ - 'makeGrammar' also takes an 'extends' argument that can be either a
+   regular python class or a wrapped Parsley grammar, for simple
+   subclassing.
+ - 'repeat' expressions now work for 0 repetitions properly.
+ - ometa.runtime.TIMING flag added for enabling debug output of
+   grammar load times.
+ - OMeta version 1 parser moved to ometa.compat.
+ - Twine removed.
+ - Various bugfixes around error reporting.
+ - Parsley no longer loads its internal grammars at import time. The
+   'stage' script in bin/ is used to regenerate the compiled versions
+   after modification.
+ - Experimental tree transformer grammars, with special syntax for
+   destructuring terms and creating string templates, have been added.
+
+1.0.0 (2012-10-01):
+ - PyMeta is now Parsley.
+ - A new public API has been added in the 'parsley' module.
+ - Grammars now use the OMeta 2 syntax by default. Compatibility is
+   available via ometa.grammar.OMeta1.
+ - A generic AST-handling library has been added, 'terml'.
+ - Grammars now parse to term trees instead of nested lists. The code
+   generator has accordingly been greatly simplified.
+ - A grammar interpreter has been added, which parses by evaluating
+   the grammar term tree directly instead of generating a class.
+ - A push parser has been added which accepts data in arbitrary
+   chunks, maintaining state while waiting for more input.
+
+0.4.0 (2010-05-15):
+ - Builders now work from a grammar AST, rather than being driven by
+   the grammar parser directly.
+ - All parse operations now carry error information, including what
+   was expected to be parsed and where.
+  * Consequently, ParseError now has a 'formatError' method that takes
+    the input string and returns a human-readable description the
+    parse failure.
+ - New example: TermL parser, in examples/terml.
+ - New script, bin/generate_parser. Takes a file containing a PyMeta
+   grammar as input and writes a Python module file.
+
+ - A couple bugfixes:
+ #248643 subclassed grammars don't inherit base namespace
+ #564135 makeGrammar error handling for nonsensical grammars is broken
+
+
+0.3.0 (2008-07-12):
+ - Input stream now implemented like the Javascript version, with immutable
+   position objects.
+
+0.2.0 (2008-04-17):
+ - Grammars generate Python source instead of ASTs.
+ - OMeta now has a "metagrammarClass" attribute, to ease extension of
+   the metagrammar.
+
+0.1.1 (2008-03-27):
+ - Fixed a bug in 'super'.
+
+0.1 (2008-03-26):
+ - Initial release.
