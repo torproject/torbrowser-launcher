@@ -54,6 +54,11 @@ from txsocksx.client import SOCKS5ClientEndpoint
 from OpenSSL.SSL import Context, VERIFY_PEER, VERIFY_FAIL_IF_NO_PEER_CERT
 from OpenSSL.crypto import load_certificate, FILETYPE_PEM
 
+class TryStableException(Exception):
+    pass
+class DownloadErrorException(Exception):
+    pass
+
 class VerifyTorProjectCert(ClientContextFactory):
 
     def __init__(self, torproject_pem):
@@ -613,12 +618,28 @@ class TBLLauncher:
         self.box = gtk.VBox(False, 20)
         self.window.add(self.box)
 
-        if self.gui == 'error':
+        if self.gui == 'error' or self.gui == 'error_try_stable':
             # labels
             self.label = gtk.Label( self.gui_message ) 
             self.label.set_line_wrap(True)
             self.box.pack_start(self.label, True, True, 0)
             self.label.show()
+
+            # button box
+            self.button_box = gtk.HButtonBox()
+            self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
+            self.box.pack_start(self.button_box, True, True, 0)
+            self.button_box.show()
+
+            if self.gui == 'error_try_stable':
+                # yes button
+                yes_image = gtk.Image()
+                yes_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
+                self.yes_button = gtk.Button("Yes")
+                self.yes_button.set_image(yes_image)
+                self.yes_button.connect("clicked", self.try_stable, None)
+                self.button_box.add(self.yes_button)
+                self.yes_button.show()
 
             # exit button
             exit_image = gtk.Image()
@@ -626,7 +647,7 @@ class TBLLauncher:
             self.exit_button = gtk.Button("Exit")
             self.exit_button.set_image(exit_image)
             self.exit_button.connect("clicked", self.destroy, None)
-            self.box.add(self.exit_button)
+            self.button_box.add(self.exit_button)
             self.exit_button.show()
 
         elif self.gui == 'task':
@@ -729,12 +750,24 @@ class TBLLauncher:
 
     def response_received(self, response):
         class FileDownloader(Protocol):
-            def __init__(self, file, total, progress, done_cb):
+            def __init__(self, language, file, total, progress, done_cb):
                 self.file = file
                 self.total = total
                 self.so_far = 0
                 self.progress = progress
                 self.all_done = done_cb
+
+                if response.code != 200:
+                    try_stable = False
+                    if response.code == 404:
+                        if common.settings['preferred'] == 'alpha' and language != 'en-US':
+                            try_stable = True
+                    
+                    if try_stable:
+                        print 'about to raise TryStableException'
+                        raise TryStableException(_("It looks like the alpha version of Tor Browser Bundle isn't available for your language. Would you like to try the stable version instead?"))
+                    else:
+                        raise DownloadErrorException(_("Error with download: {0} {1}").format(response.code, response.phrase))
 
             def dataReceived(self, bytes):
                 self.file.write(bytes)
@@ -755,8 +788,8 @@ class TBLLauncher:
                 print _('Finished receiving body:'), reason.getErrorMessage()
                 self.all_done(reason)
 
-        dl = FileDownloader(self.file_download, response.length, self.progressbar, self.response_finished)
-        response.deliverBody(dl)
+        dl = FileDownloader(self.common.language, self.file_download, response.length, self.progressbar, self.response_finished)
+        response.deliverBody(dl) 
 
     def response_finished(self, msg):
         if msg.check(ResponseDone):
@@ -769,9 +802,19 @@ class TBLLauncher:
             ## FIXME handle errors
 
     def download_error(self, f):
-        print _("Download error"), f
-        self.set_gui('error', _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(f.value), [], False)
-        self.clear_ui()
+        print _("Download error:"), f.value
+
+        if isinstance(f.value, TryStableException):
+            f.trap(TryStableException)
+            self.set_gui('error_try_stable', str(f.value), [], False)
+        
+        elif isinstance(f.value, DownloadErrorException):
+            f.trap(DownloadErrorException)
+            self.set_gui('error', str(f.value), [], False)
+
+        else:
+            self.set_gui('error', _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(f.value), [], False)
+        
         self.build_ui()
 
     def download(self, name, url, path):
@@ -791,6 +834,13 @@ class TBLLauncher:
         
         if not reactor.running:
             reactor.run()
+
+    def try_stable(self, widget, data=None):
+        # change preferred to stable and relaunch TBL
+        self.common.settings['preferred'] = 'stable'
+        self.common.save_settings()
+        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        self.destroy(False)
 
     def attempt_update(self):
         # load the update check file
