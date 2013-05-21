@@ -43,7 +43,7 @@ import gtk
 
 import os, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile, psutil
 
-from twisted.web.client import Agent, ResponseDone
+from twisted.web.client import Agent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
 from twisted.internet.ssl import ClientContextFactory
@@ -51,8 +51,7 @@ from twisted.internet.endpoints import TCP4ClientEndpoint
 
 from txsocksx.client import SOCKS5ClientEndpoint
 
-from OpenSSL.SSL import Context, VERIFY_PEER, VERIFY_FAIL_IF_NO_PEER_CERT
-from OpenSSL.crypto import load_certificate, FILETYPE_PEM
+import OpenSSL
 
 class TryStableException(Exception):
     pass
@@ -62,12 +61,12 @@ class DownloadErrorException(Exception):
 class VerifyTorProjectCert(ClientContextFactory):
 
     def __init__(self, torproject_pem):
-        self.torproject_ca = load_certificate(FILETYPE_PEM, open(torproject_pem, 'r').read())
+        self.torproject_ca = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, open(torproject_pem, 'r').read())
 
     def getContext(self, host, port):
         ctx = ClientContextFactory.getContext(self)
         ctx.set_verify_depth(0)
-        ctx.set_verify(VERIFY_PEER | VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
+        ctx.set_verify(OpenSSL.SSL.VERIFY_PEER | OpenSSL.SSL.VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
         return ctx
 
     def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
@@ -618,7 +617,7 @@ class TBLLauncher:
         self.box = gtk.VBox(False, 20)
         self.window.add(self.box)
 
-        if self.gui == 'error' or self.gui == 'error_try_stable':
+        if self.gui == 'error' or self.gui == 'error_try_stable' or self.gui == 'error_try_tor':
             # labels
             self.label = gtk.Label( self.gui_message ) 
             self.label.set_line_wrap(True)
@@ -631,13 +630,16 @@ class TBLLauncher:
             self.box.pack_start(self.button_box, True, True, 0)
             self.button_box.show()
 
-            if self.gui == 'error_try_stable':
+            if self.gui != 'error':
                 # yes button
                 yes_image = gtk.Image()
                 yes_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
                 self.yes_button = gtk.Button("Yes")
                 self.yes_button.set_image(yes_image)
-                self.yes_button.connect("clicked", self.try_stable, None)
+                if self.gui == 'error_try_stable':
+                    self.yes_button.connect("clicked", self.try_stable, None)
+                elif self.gui == 'error_try_tor':
+                    self.yes_button.connect("clicked", self.try_tor, None)
                 self.button_box.add(self.yes_button)
                 self.yes_button.show()
 
@@ -802,7 +804,7 @@ class TBLLauncher:
             ## FIXME handle errors
 
     def download_error(self, f):
-        print _("Download error:"), f.value
+        print _("Download error:"), f.value, type(f.value)
 
         if isinstance(f.value, TryStableException):
             f.trap(TryStableException)
@@ -811,6 +813,15 @@ class TBLLauncher:
         elif isinstance(f.value, DownloadErrorException):
             f.trap(DownloadErrorException)
             self.set_gui('error', str(f.value), [], False)
+
+        elif isinstance(f.value, ResponseFailed):
+            for reason in f.value.reasons:
+                if isinstance(reason.value, OpenSSL.SSL.Error):
+                    # TODO: add the ability to report attack by posting bug to trac.torproject.org
+                    if not self.common.settings['update_over_tor']:
+                        self.set_gui('error_try_tor', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack. Try the download again using Tor?'), [], False)
+                    else:
+                        self.set_gui('error', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack.'), [], False)
 
         else:
             self.set_gui('error', _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(f.value), [], False)
@@ -838,6 +849,13 @@ class TBLLauncher:
     def try_stable(self, widget, data=None):
         # change preferred to stable and relaunch TBL
         self.common.settings['preferred'] = 'stable'
+        self.common.save_settings()
+        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        self.destroy(False)
+
+    def try_tor(self, widget, data=None):
+        # set update_over_tor to true and relaunch TBL
+        self.common.settings['update_over_tor'] = True
         self.common.save_settings()
         p = subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
@@ -898,6 +916,7 @@ class TBLLauncher:
         if p.returncode == 0:
             self.run_task()
         else:
+            # TODO: add the ability to report attack by posting bug to trac.torproject.org
             self.set_gui('task', _("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again."), ['start_over'], False)
             self.clear_ui()
             self.build_ui()
