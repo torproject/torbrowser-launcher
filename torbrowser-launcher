@@ -43,17 +43,20 @@ import gtk
 
 import os, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile, psutil
 
-from twisted.web.client import Agent, ResponseDone, ResponseFailed
+from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
 from twisted.internet.ssl import ClientContextFactory
 from twisted.internet.endpoints import TCP4ClientEndpoint
+from twisted.internet.error import DNSLookupError
 
 from txsocksx.client import SOCKS5ClientEndpoint
 
 import OpenSSL
 
 class TryStableException(Exception):
+    pass
+class TryDefaultMirrorException(Exception):
     pass
 class DownloadErrorException(Exception):
     pass
@@ -77,20 +80,22 @@ class TBLCommon:
     def __init__(self, tbl_version):
         print _('Initializing Tor Browser Launcher')
         self.tbl_version = tbl_version
-        
-        # initialize the app
-        self.discover_arch_lang()
-        self.build_paths()
-        self.mkdir(self.paths['data_dir'])
-        self.load_settings()
-        self.mkdir(self.paths['download_dir'])
-        self.mkdir(self.paths['tbb'][self.settings['preferred']]['dir'])
-        self.init_gnupg()
 
+        # initialize the app
         self.available_versions = {
             'stable': _('Tor Browser Bundle - stable'), 
             'alpha': _('Tor Browser Bundle - alpha')
         }
+        self.default_mirror = 'https://www.torproject.org/dist/'
+        
+        self.discover_arch_lang()
+        self.build_paths()
+        self.mkdir(self.paths['data_dir'])
+        self.load_mirrors()
+        self.load_settings()
+        self.mkdir(self.paths['download_dir'])
+        self.mkdir(self.paths['tbb'][self.settings['preferred']]['dir'])
+        self.init_gnupg()
 
         # allow buttons to have icons
         try:
@@ -141,8 +146,8 @@ class TBLCommon:
             tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+tbb_version+'-dev-'+self.language+'.tar.gz'
             self.paths['tarball_file'] = tbb_data+'/download/'+tarball_filename
             self.paths['tarball_sig_file'] = tbb_data+'/download/'+tarball_filename+'.asc'
-            self.paths['tarball_url'] = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename
-            self.paths['tarball_sig_url'] = 'https://www.torproject.org/dist/torbrowser/linux/'+tarball_filename+'.asc'
+            self.paths['tarball_url'] = '{0}torbrowser/linux/'+tarball_filename # {0} will be replaced with the mirror
+            self.paths['tarball_sig_url'] = '{0}torbrowser/linux/'+tarball_filename+'.asc'
             self.paths['tarball_filename'] = tarball_filename
             self.paths['tarball_sig_filename'] = tarball_filename+'.asc'
 
@@ -154,6 +159,7 @@ class TBLCommon:
                 'erinn_key': '/usr/share/torbrowser-launcher/erinn.asc',
                 'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc',
                 'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc',
+                'mirrors_txt': '/usr/share/torbrowser-launcher/mirrors.txt',
                 'data_dir': tbb_data,
                 'download_dir': tbb_data+'/download',
                 'gnupg_homedir': tbb_data+'/gnupg_homedir',
@@ -203,6 +209,12 @@ class TBLCommon:
                 subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['sebastian_key']]).wait()
                 subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['alexandre_key']]).wait()
 
+    # load mirrors
+    def load_mirrors(self):
+        self.mirrors = []
+        for mirror in open(self.paths['mirrors_txt'], 'r').readlines():
+            self.mirrors.append(mirror.strip())
+    
     # load settings
     def load_settings(self):
         default_settings = {
@@ -218,7 +230,8 @@ class TBLCommon:
             },
             'update_over_tor': True,
             'check_for_updates': False,
-            'last_update_check_timestamp': 0
+            'last_update_check_timestamp': 0,
+            'mirror': self.default_mirror 
         }
 
         if os.path.isfile(self.paths['settings_file']):
@@ -250,6 +263,8 @@ class TBLCommon:
                 if not 'check_for_updates' in settings:
                     good_settings = False
                 if not 'last_update_check_timestamp' in settings:
+                    good_settings = False
+                if not 'mirror' in settings:
                     good_settings = False
 
                 if good_settings:
@@ -411,6 +426,26 @@ class TBLSettings:
         self.labels_box.pack_start(self.label1, True, True, 0)
         self.label1.show()
 
+        # mirrors
+        self.mirrors_box = gtk.HBox(False, 10)
+        self.box.pack_start(self.mirrors_box, True, True, 0)
+        self.mirrors_box.show()
+
+        self.mirrors_label = gtk.Label(_('Mirror'))
+        self.mirrors_label.set_line_wrap(True)
+        self.mirrors_box.pack_start(self.mirrors_label, True, True, 0)
+        self.mirrors_label.show()
+
+        self.mirrors = gtk.combo_box_new_text()
+        for mirror in self.common.mirrors:
+            self.mirrors.append_text(mirror)
+        if self.common.settings['mirror'] in self.common.mirrors:
+            self.mirrors.set_active( self.common.mirrors.index(self.common.settings['mirror']) )
+        else:
+            self.preferred.set_active(0)
+        self.mirrors_box.pack_start(self.mirrors, True, True, 0)
+        self.mirrors.show()
+
         # button box
         self.button_box = gtk.HButtonBox()
         self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
@@ -475,6 +510,9 @@ class TBLSettings:
         # checkbox options
         self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
         self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
+
+        # figure out the selected mirror
+        self.common.settings['mirror'] = self.common.mirrors[self.mirrors.get_active()]
 
         # save them
         self.common.save_settings()
@@ -617,7 +655,7 @@ class TBLLauncher:
         self.box = gtk.VBox(False, 20)
         self.window.add(self.box)
 
-        if self.gui == 'error' or self.gui == 'error_try_stable' or self.gui == 'error_try_tor':
+        if 'error' in self.gui:
             # labels
             self.label = gtk.Label( self.gui_message ) 
             self.label.set_line_wrap(True)
@@ -638,6 +676,8 @@ class TBLLauncher:
                 self.yes_button.set_image(yes_image)
                 if self.gui == 'error_try_stable':
                     self.yes_button.connect("clicked", self.try_stable, None)
+                elif self.gui == 'error_try_default_mirror':
+                    self.yes_button.connect("clicked", self.try_default_mirror, None)
                 elif self.gui == 'error_try_tor':
                     self.yes_button.connect("clicked", self.try_tor, None)
                 self.button_box.add(self.yes_button)
@@ -727,11 +767,11 @@ class TBLLauncher:
             self.attempt_update()
 
         elif task == 'download_tarball':
-            print _('Downloading'), self.common.paths['tarball_url']
+            print _('Downloading'), self.common.paths['tarball_url'].format(self.common.settings['mirror'])
             self.download('tarball', self.common.paths['tarball_url'], self.common.paths['tarball_file'])
 
         elif task == 'download_tarball_sig':
-            print _('Downloading'), self.common.paths['tarball_sig_url']
+            print _('Downloading'), self.common.paths['tarball_sig_url'].format(self.common.settings['mirror'])
             self.download('signature', self.common.paths['tarball_sig_url'], self.common.paths['tarball_sig_file'])
 
         elif task == 'verify':
@@ -752,7 +792,7 @@ class TBLLauncher:
 
     def response_received(self, response):
         class FileDownloader(Protocol):
-            def __init__(self, language, file, total, progress, done_cb):
+            def __init__(self, common, file, total, progress, done_cb):
                 self.file = file
                 self.total = total
                 self.so_far = 0
@@ -761,15 +801,18 @@ class TBLLauncher:
 
                 if response.code != 200:
                     try_stable = False
+
                     if response.code == 404:
-                        if common.settings['preferred'] == 'alpha' and language != 'en-US':
+                        if common.settings['preferred'] == 'alpha' and common.language != 'en-US':
                             try_stable = True
                     
                     if try_stable:
-                        print 'about to raise TryStableException'
                         raise TryStableException(_("It looks like the alpha version of Tor Browser Bundle isn't available for your language. Would you like to try the stable version instead?"))
                     else:
-                        raise DownloadErrorException(_("Error with download: {0} {1}").format(response.code, response.phrase))
+                        if common.settings['mirror'] != common.default_mirror:
+                            raise TryDefaultMirrorException(_("Download Error: {0} {1}\n\nYou are currently using a non-default mirror:\n{2}\n\nWould you like to switch back to the default?").format(response.code, response.phrase, common.settings['mirror']))
+                        else:
+                            raise DownloadErrorException(_("Download Error: {0} {1}").format(response.code, response.phrase))
 
             def dataReceived(self, bytes):
                 self.file.write(bytes)
@@ -790,7 +833,7 @@ class TBLLauncher:
                 print _('Finished receiving body:'), reason.getErrorMessage()
                 self.all_done(reason)
 
-        dl = FileDownloader(self.common.language, self.file_download, response.length, self.progressbar, self.response_finished)
+        dl = FileDownloader(self.common, self.file_download, response.length, self.progressbar, self.response_finished)
         response.deliverBody(dl) 
 
     def response_finished(self, msg):
@@ -810,9 +853,20 @@ class TBLLauncher:
             f.trap(TryStableException)
             self.set_gui('error_try_stable', str(f.value), [], False)
         
+        elif isinstance(f.value, TryDefaultMirrorException):
+            f.trap(TryDefaultMirrorException)
+            self.set_gui('error_try_default_mirror', str(f.value), [], False)
+        
         elif isinstance(f.value, DownloadErrorException):
             f.trap(DownloadErrorException)
             self.set_gui('error', str(f.value), [], False)
+        
+        elif isinstance(f.value, DNSLookupError):
+            f.trap(DNSLookupError)
+            if common.settings['mirror'] != common.default_mirror:
+                self.set_gui('error_try_default_mirror', _("DNS Lookup Error\n\nYou are currently using a non-default mirror:\n{0}\n\nWould you like to switch back to the default?").format(common.settings['mirror']), [], False)
+            else:
+                self.set_gui('error', str(f.value), [], False)
 
         elif isinstance(f.value, ResponseFailed):
             for reason in f.value.reasons:
@@ -830,16 +884,26 @@ class TBLLauncher:
 
     def download(self, name, url, path):
         # initialize the progress bar
+        mirror_url = url.format(self.common.settings['mirror'])
         self.progressbar.set_fraction(0) 
         self.progressbar.set_text(_('Downloading {0}').format(name))
         self.progressbar.show()
         self.refresh_gtk()
+        
+        # default mirror gets certificate pinning, only for requests that use the mirror
+        if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
+            agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']))
+        else:
+            agent = Agent(reactor)
 
-        agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']))
-        d = agent.request('GET', url,
+        # actually, agent needs to follow redirect
+        agent = RedirectAgent(agent)
+
+        # start the request
+        d = agent.request('GET', mirror_url,
                           Headers({'User-Agent': ['torbrowser-launcher']}),
                           None)
-
+        
         self.file_download = open(path, 'w')
         d.addCallback(self.response_received).addErrback(self.download_error)
         
@@ -849,6 +913,13 @@ class TBLLauncher:
     def try_stable(self, widget, data=None):
         # change preferred to stable and relaunch TBL
         self.common.settings['preferred'] = 'stable'
+        self.common.save_settings()
+        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        self.destroy(False)
+
+    def try_default_mirror(self, widget, data=None):
+        # change preferred to stable and relaunch TBL
+        self.common.settings['mirror'] = self.common.default_mirror
         self.common.save_settings()
         p = subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)

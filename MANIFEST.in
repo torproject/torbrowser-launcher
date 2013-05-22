@@ -3,3 +3,4 @@ include img/*
 include keys/*
 include torbrowser.desktop
 include verify.sh
+include mirrors.txt
