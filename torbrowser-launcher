@@ -763,7 +763,7 @@ class TBLLauncher:
             self.download('update check', self.common.paths['update_check_url'], self.common.paths['update_check_file'])
         
         if task == 'attempt_update':
-            print _('Checking to see if update it needed')
+            print _('Checking to see if update is needed')
             self.attempt_update()
 
         elif task == 'download_tarball':
