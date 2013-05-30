@@ -71,7 +71,7 @@ msgid "Downloading"
 msgstr ""
 
 #: torbrowser-launcher:349
-msgid "Checking to see if update it needed"
+msgid "Checking to see if update is needed"
 msgstr ""
 
 #: torbrowser-launcher:361
