@@ -943,6 +943,7 @@ class TBLLauncher:
             for version in versions:
                 if str(version).find('-Linux') != -1:
                     valid_versions.append(str(version))
+            valid_versions.sort()
             # find alpha
             for version in valid_versions:
                 if version.find('alpha') != -1:
