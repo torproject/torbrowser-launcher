@@ -590,43 +590,43 @@ class TBLLauncher:
 
     # download or run TBB
     def start_launcher(self):
-      # is TBB already installed?
-      start = self.common.paths['tbb'][self.common.settings['preferred']]['start']
-      if os.path.isfile(start) and os.access(start, os.X_OK):
-        if self.common.settings['installed_version'][self.common.settings['preferred']] == self.common.settings['latest_version'][self.common.settings['preferred']]:
-          # current version of tbb is installed, launch it
-          self.run(False)
-          self.launch_gui = False
-        elif self.common.settings['installed_version'][self.common.settings['preferred']] < self.common.settings['latest_version'][self.common.settings['preferred']]:
-          # there is a tbb upgrade available
-          self.set_gui('task', _("Your Tor Browser is out of date."), 
-            ['download_tarball_sig', 
-             'download_tarball', 
-             'verify', 
-             'extract', 
-             'run'])
+        # is TBB already installed?
+        start = self.common.paths['tbb'][self.common.settings['preferred']]['start']
+        if os.path.isfile(start) and os.access(start, os.X_OK):
+            if self.common.settings['installed_version'][self.common.settings['preferred']] == self.common.settings['latest_version'][self.common.settings['preferred']]:
+                # current version of tbb is installed, launch it
+                self.run(False)
+                self.launch_gui = False
+            elif self.common.settings['installed_version'][self.common.settings['preferred']] < self.common.settings['latest_version'][self.common.settings['preferred']]:
+                # there is a tbb upgrade available
+                self.set_gui('task', _("Your Tor Browser is out of date."), 
+                    ['download_tarball_sig', 
+                     'download_tarball', 
+                     'verify', 
+                     'extract', 
+                     'run'])
+            else:
+                # for some reason the installed tbb is newer than the current version?
+                self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
+
+        # not installed
         else:
-          # for some reason the installed tbb is newer than the current version?
-          self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
+            # are the tarball and sig already downloaded?
+            if os.path.isfile(self.common.paths['tarball_file']) and os.path.isfile(self.common.paths['tarball_sig_file']):
+                # start the gui with verify
+                self.set_gui('task', _("Installing Tor Browser."), 
+                    ['verify', 
+                     'extract', 
+                     'run'])
 
-      # not installed
-      else:
-          # are the tarball and sig already downloaded?
-          if os.path.isfile(self.common.paths['tarball_file']) and os.path.isfile(self.common.paths['tarball_sig_file']):
-              # start the gui with verify
-              self.set_gui('task', _("Installing Tor Browser."), 
-                  ['verify', 
-                   'extract', 
-                   'run'])
-
-          # first run
-          else:
-              self.set_gui('task', _("Downloading and installing Tor Browser."), 
-                  ['download_tarball_sig', 
-                   'download_tarball', 
-                   'verify', 
-                   'extract', 
-                   'run'])
+            # first run
+            else:
+                self.set_gui('task', _("Downloading and installing Tor Browser."), 
+                    ['download_tarball_sig', 
+                     'download_tarball', 
+                     'verify', 
+                     'extract', 
+                     'run'])
    
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
