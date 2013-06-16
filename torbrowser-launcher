@@ -839,6 +839,8 @@ class TBLLauncher:
     def response_finished(self, msg):
         if msg.check(ResponseDone):
             self.file_download.close()
+            delattr(self, 'current_download_path')
+
             # next task!
             self.run_task()
 
@@ -883,6 +885,9 @@ class TBLLauncher:
         self.build_ui()
 
     def download(self, name, url, path):
+        # keep track of current download
+        self.current_download_path = path
+
         # initialize the progress bar
         mirror_url = url.format(self.common.settings['mirror'])
         self.progressbar.set_fraction(0) 
@@ -1049,6 +1054,9 @@ class TBLLauncher:
     def destroy(self, widget, data=None):
         if hasattr(self, 'file_download'):
             self.file_download.close()
+        if hasattr(self, 'current_download_path'):
+            os.remove(self.current_download_path)
+            delattr(self, 'current_download_path')
         if reactor.running:
             reactor.stop()
 
