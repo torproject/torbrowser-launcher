@@ -939,19 +939,20 @@ class TBLLauncher:
             latest_alpha = None
 
             # filter linux versions
-            valid_versions = []
+            valid_alphas = []
+            valid_stables = []
             for version in versions:
                 if str(version).find('-Linux') != -1:
-                    valid_versions.append(str(version))
-            valid_versions.sort()
-            # find alpha
-            for version in valid_versions:
-                if version.find('alpha') != -1:
-                    latest_alpha = version
-                    valid_versions.remove(latest_alpha)
-            # find stable (whatever is left after alpha)
-            if len(valid_versions):
-                latest_stable = valid_versions[0]
+                    if version.find('alpha') != -1:
+                        valid_alphas.append(str(version))
+                    else:
+                        valid_stables.append(str(version))
+            valid_alphas.sort()
+            if len(valid_alphas):
+                latest_alpha = valid_alphas.pop()
+            valid_stables.sort()
+            if len(valid_stables):
+                latest_stable = valid_stables.pop()
 
             if latest_stable or latest_alpha:
                 if latest_stable:
