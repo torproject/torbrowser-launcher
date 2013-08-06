@@ -37,7 +37,7 @@ install it like this:
 
 Also install the ```torbrowser-launcher``` dependencies:
 
-    apt-get install python-gtk2 python-psutil python-twisted wmctrl gnupg tor
+    apt-get install python-gtk2 python-psutil python-twisted wmctrl gnupg fakeroot tor
 
 Debian packages
 ---------------
