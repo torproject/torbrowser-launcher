@@ -511,7 +511,7 @@ class TBLSettings:
             self.common.settings['preferred'] = preferred
 
         # checkbox options
-        self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
+        #self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
         self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
 
         # figure out the selected mirror
