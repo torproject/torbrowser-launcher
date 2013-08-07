@@ -392,6 +392,8 @@ class TBLSettings:
         self.preferred.show()
 
         # download over tor
+        # this feature isn't implemented yet (#8, #41), so commenting out the GUI for it
+        """
         self.tor_update_checkbox = gtk.CheckButton(_("Download updates over Tor (recommended)"))
         self.settings_box.pack_start(self.tor_update_checkbox, True, True, 0)
         if self.common.settings['update_over_tor']:
@@ -399,6 +401,7 @@ class TBLSettings:
         else:
             self.tor_update_checkbox.set_active(False) 
         self.tor_update_checkbox.show()
+        """
 
         # check for updates
         self.update_checkbox = gtk.CheckButton(_("Check for updates next launch"))
