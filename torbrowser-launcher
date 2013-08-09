@@ -227,16 +227,13 @@ class TBLCommon:
     def init_gnupg(self):
         if not os.path.exists(self.paths['gnupg_homedir']):
             print _('Creating GnuPG homedir'), self.paths['gnupg_homedir']
-            if self.mkdir(self.paths['gnupg_homedir']):
-                self.import_keys()
+            self.mkdir(self.paths['gnupg_homedir'])
+        self.import_keys()
 
     # import gpg keys
     def import_keys(self):
         print _('Importing keys')
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key']]).wait()
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['sebastian_key']]).wait()
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['alexandre_key']]).wait()
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['mike_key']]).wait()
+        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key'], self.paths['sebastian_key'], self.paths['alexandre_key'], self.paths['mike_key']]).wait()
 
     # load mirrors
     def load_mirrors(self):
@@ -315,9 +312,6 @@ class TBLCommon:
                     pass
                 if os.path.exists(self.paths['data_dir']+'/tbb/i686'):
                     pass
-                
-                # 0.0.2 added Mike Perry's key
-                self.import_keys()
 
         else:
             self.settings = default_settings
