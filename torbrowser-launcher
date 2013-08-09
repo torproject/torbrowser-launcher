@@ -41,7 +41,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-import os, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile, psutil, hashlib
+import os, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile, psutil, hashlib, lzma
 
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
@@ -145,13 +145,15 @@ class TBLCommon:
         if tbb_version:
             if tbb_version >= '3.':
                 # tarball filename
-                dirname = tbb_version.replace('-alpha-', 'a')
-                dirname = tbb_version.replace('-beta-', 'b')
+                dirname = tbb_version.replace('-alpha-', 'a').replace('-beta-', 'b')
                 if self.architecture == 'x86_64':
                     arch = 'linux64'
                 else:
                     arch = 'linux32'
-                tarball_filename = dirname+'/tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
+                tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
+
+                # tarball
+                self.paths['tarball_url'] = 'https://archive.torproject.org/tor-package-archive/torbrowser/'+dirname+'/'+tarball_filename
 
                 # sig
                 self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
@@ -162,13 +164,15 @@ class TBLCommon:
                 # tarball filename
                 tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+tbb_version+'-dev-'+self.language+'.tar.gz'
 
+                # tarball
+                self.paths['tarball_url'] = '{0}torbrowser/linux/'+tarball_filename # {0} will be replaced with the mirror
+
                 # sig
                 self.paths['tarball_sig_file'] = tbb_data+'/download/'+tarball_filename+'.asc'
                 self.paths['tarball_sig_url'] = '{0}torbrowser/linux/'+tarball_filename+'.asc'
                 self.paths['tarball_sig_filename'] = tarball_filename+'.asc'
 
             self.paths['tarball_file'] = tbb_data+'/download/'+tarball_filename
-            self.paths['tarball_url'] = '{0}torbrowser/linux/'+tarball_filename # {0} will be replaced with the mirror
             self.paths['tarball_filename'] = tarball_filename
 
         else:
@@ -224,15 +228,15 @@ class TBLCommon:
         if not os.path.exists(self.paths['gnupg_homedir']):
             print _('Creating GnuPG homedir'), self.paths['gnupg_homedir']
             if self.mkdir(self.paths['gnupg_homedir']):
-				self.import_keys()
+                self.import_keys()
 
-	# import gpg keys
-	def import_keys(self):
-		print _('Importing keys')
-		subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key']]).wait()
-		subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['sebastian_key']]).wait()
-		subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['alexandre_key']]).wait()
-		subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['mike_key']]).wait()
+    # import gpg keys
+    def import_keys(self):
+        print _('Importing keys')
+        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key']]).wait()
+        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['sebastian_key']]).wait()
+        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['alexandre_key']]).wait()
+        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['mike_key']]).wait()
 
     # load mirrors
     def load_mirrors(self):
@@ -301,7 +305,7 @@ class TBLCommon:
             if settings['tbl_version'] == '0.0.1':
                 self.settings = default_settings
                 self.settings['installed_version']['alpha'] = settings['installed_version']
-				settings['tbl_version'] = '0.0.2'
+                self.settings['tbl_version'] = '0.0.2'
                 self.save_settings()
 
                 # move tbb alpha
@@ -311,10 +315,9 @@ class TBLCommon:
                     pass
                 if os.path.exists(self.paths['data_dir']+'/tbb/i686'):
                     pass
-			
-			if settings['tbl_version'] == '0.0.2':
-				# 0.0.2 added Mike Perry's key
-				self.import_keys()
+                
+                # 0.0.2 added Mike Perry's key
+                self.import_keys()
 
         else:
             self.settings = default_settings
@@ -624,52 +627,56 @@ class TBLLauncher:
     # download or run TBB
     def start_launcher(self):
         # is TBB already installed?
-		latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
-		installed_version = self.common.settings['installed_version'][self.common.settings['preferred']]
+        latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
+        installed_version = self.common.settings['installed_version'][self.common.settings['preferred']]
+
         start = self.common.paths['tbb'][self.common.settings['preferred']]['start']
         if os.path.isfile(start) and os.access(start, os.X_OK):
             if installed_version == latest_version:
+                print _('Latest version of TBB is installed, launching')
                 # current version of tbb is installed, launch it
                 self.run(False)
                 self.launch_gui = False
-			elif installed_version < latest_version:
+            elif installed_version < latest_version:
+                print _('TBB is out of date, attempting to upgrade to {0}'.format(latest_version))
                 # there is a tbb upgrade available
-				if latest_version >= '3.':
-					self.set_gui('task', _("Your Tor Browser is out of date."), 
-						['download_sha256', 
-						 'download_sha256_sig',
-						 'download_tarball', 
-						 'verify',
-						 'extract',
-						 'run'])
-				else:
-					self.set_gui('task', _("Your Tor Browser is out of date."), 
-						['download_tarball_sig', 
-						 'download_tarball', 
-						 'verify', 
-						 'extract', 
-						 'run'])
+                if latest_version >= '3.':
+                    self.set_gui('task', _("Your Tor Browser is out of date."), 
+                        ['download_sha256', 
+                         'download_sha256_sig',
+                         'download_tarball', 
+                         'verify',
+                         'extract',
+                         'run'])
+                else:
+                    self.set_gui('task', _("Your Tor Browser is out of date."), 
+                        ['download_tarball_sig', 
+                         'download_tarball', 
+                         'verify', 
+                         'extract', 
+                         'run'])
             else:
                 # for some reason the installed tbb is newer than the current version?
                 self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
 
         # not installed
         else:
-			if latest_version >= '3.':
-				self.set_gui('task', _("Downloading and installing Tor Browser."), 
-					['download_sha256', 
-					 'download_sha256_sig',
-					 'download_tarball', 
-					 'verify', 
-					 'extract', 
-					 'run'])
-			else:
-				self.set_gui('task', _("Downloading and installing Tor Browser."), 
-					['download_tarball_sig', 
-					 'download_tarball', 
-					 'verify', 
-					 'extract', 
-					 'run'])
+            print _('TBB is not installed, attempting to install {0}'.format(latest_version))
+            if latest_version >= '3.':
+                self.set_gui('task', _("Downloading and installing Tor Browser."), 
+                    ['download_sha256', 
+                     'download_sha256_sig',
+                     'download_tarball', 
+                     'verify', 
+                     'extract', 
+                     'run'])
+            else:
+                self.set_gui('task', _("Downloading and installing Tor Browser."), 
+                    ['download_tarball_sig', 
+                     'download_tarball', 
+                     'verify', 
+                     'extract', 
+                     'run'])
    
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
@@ -801,6 +808,7 @@ class TBLLauncher:
         # get ready for the next task
         self.gui_task_i += 1
 
+        print _('Running task: {0}'.format(task))
         if task == 'download_update_check':
             print _('Downloading'), self.common.paths['update_check_url']
             self.download('update check', self.common.paths['update_check_url'], self.common.paths['update_check_file'])
@@ -1034,33 +1042,33 @@ class TBLLauncher:
         self.build_ui()
 
     def verify(self):
-		latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
+        latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
 
         # initialize the progress bar
         self.progressbar.set_fraction(0) 
         self.progressbar.set_text(_('Verifying Signature'))
         self.progressbar.show()
 
-		verified = False
-		if latest_version >= '3.':
-			# after 3.x we check the sha256 file's sig, and also take the sha256 of the tarball and compare
-			p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sha256_sig_file']])
-			self.pulse_until_process_exits(p)
-			if p.returncode == 0:
-				# compare with sha256 of the tarball
-				tarball_sha256 = hashlib.sha256(open(self.common.paths['tarball_file'], 'r').read()).hexdigest()
-				for line in open(self.common.paths['sha256_file'], 'r').readlines():
-					if tarball_sha256.lower() in line.lower() and self.common.paths['tarball_filename'] in line:
-						verified = True
+        verified = False
+        if latest_version >= '3.':
+            # after 3.x we check the sha256 file's sig, and also take the sha256 of the tarball and compare
+            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sha256_sig_file']])
+            self.pulse_until_process_exits(p)
+            if p.returncode == 0:
+                # compare with sha256 of the tarball
+                tarball_sha256 = hashlib.sha256(open(self.common.paths['tarball_file'], 'r').read()).hexdigest()
+                for line in open(self.common.paths['sha256_file'], 'r').readlines():
+                    if tarball_sha256.lower() in line.lower() and self.common.paths['tarball_filename'] in line:
+                        verified = True
 
-		else:
-			# before 3.x we just check the tarball sig
-			p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['tarball_sig_file']])
-			self.pulse_until_process_exits(p)
-			if p.returncode == 0:
-				verified = True
+        else:
+            # before 3.x we just check the tarball sig
+            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['tarball_sig_file']])
+            self.pulse_until_process_exits(p)
+            if p.returncode == 0:
+                verified = True
         
-		if verified:
+        if verified:
             self.run_task()
         else:
             # TODO: add the ability to report attack by posting bug to trac.torproject.org
@@ -1078,14 +1086,28 @@ class TBLLauncher:
         self.progressbar.show()
         self.refresh_gtk()
 
-        # make sure this file is a tarfile
-        if tarfile.is_tarfile(self.common.paths['tarball_file']):
-          tf = tarfile.open(self.common.paths['tarball_file'])
-          tf.extractall(self.common.paths['tbb'][self.common.settings['preferred']]['dir'])
-        else:
-            self.set_gui('task', _("Tor Browser Launcher doesn't understand the file format of {0}"), ['start_over'], False)
+        extracted = False
+        try:
+            if self.common.paths['tarball_file'][-2:] == 'xz':
+                # if tarball is .tar.xz
+                xz = lzma.LZMAFile(self.common.paths['tarball_file'])
+                tf = tarfile.open(fileobj=xz)
+                tf.extractall(self.common.paths['tbb'][self.common.settings['preferred']]['dir'])
+                extracted = True
+            else:
+                # if tarball is .tar.gz
+                if tarfile.is_tarfile(self.common.paths['tarball_file']):
+                    tf = tarfile.open(self.common.paths['tarball_file'])
+                    tf.extractall(self.common.paths['tbb'][self.common.settings['preferred']]['dir'])
+                    extracted = True
+        except:
+            pass
+
+        if not extracted:
+            self.set_gui('task', _("Tor Browser Launcher doesn't understand the file format of {0}".format(self.common.paths['tarball_file'])), ['start_over'], False)
             self.clear_ui()
             self.build_ui()
+            return
 
         # installation is finished, so save installed_version
         self.common.settings['installed_version'] = self.common.settings['latest_version']
