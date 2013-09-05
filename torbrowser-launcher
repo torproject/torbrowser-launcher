@@ -29,6 +29,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 import sys
 sys.path.append('/usr/share/torbrowser-launcher/lib/')
+import platform
 
 import gettext
 gettext.install('torbrowser-launcher', '/usr/share/torbrowser-launcher/locale')
@@ -108,7 +109,7 @@ class TBLCommon:
     def discover_arch_lang(self):
         # figure out the architecture
         (sysname, nodename, release, version, machine) = os.uname()
-        self.architecture = machine
+        self.architecture = 'x86_64' if '64' in platform.architecture()[0] else 'i686'
 
         # figure out the language
         available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
