@@ -1,5 +1,5 @@
 # Tor Browser Launcher
-# Copyright (C) 2013 Micah Lee <micahflee@riseup.net>
+# Copyright (C) 2013 Micah Lee <micah@micahflee.com>
 #
 msgid ""
 msgstr ""

@@ -2,7 +2,7 @@
 Tor Browser Launcher
 https://github.com/micahflee/torbrowser-launcher/
 
-Copyright (c) 2013 Micah Lee <micahflee@riseup.net>
+Copyright (c) 2013 Micah Lee <micah@micahflee.com>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -39,7 +39,7 @@ def file_list(path):
 setup(name='torbrowser-launcher',
       version='0.0.2',
       author='Micah Lee',
-      author_email='micahflee@riseup.net',
+      author_email='micah@micahflee.com',
       url='https://www.github.com/micahflee/torbrowser-launcher',
       platforms=['GNU/Linux'],
       license='BSD',
