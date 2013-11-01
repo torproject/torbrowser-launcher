@@ -24,6 +24,15 @@ install it with dpkg.
     cd torbrowser-launcher
     ./build_and_install.sh
 
+Installing in Ubuntu
+--------------------
+
+I've created a PPA where I'm maintaining torbrowser-launcher binaries. You can install in an Ubuntu-based distribution like this:
+
+    sudo add-apt-repository ppa:micahflee/ppa
+    sudo apt-get update
+    sudo apt-get install torbrowser-launcher
+
 Building
 ========
 
