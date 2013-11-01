@@ -42,13 +42,9 @@ Also install the ```torbrowser-launcher``` dependencies:
 Debian packages
 ---------------
 
-To build a Debian source package:
+To build a Debian source and binary packages:
 
-    python setup.py --command-packages=stdeb.command sdist_dsc
-
-To build a Debian binary package:
-
-    python setup.py --command-packages=stdeb.command bdist_deb
+    python setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
 
 Once you've made a ```.deb```, you can install by running this as root:
 
