@@ -160,7 +160,7 @@ class TBLCommon:
                 self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
                 self.paths['sha256_sig_file'] = tbb_data+'/download/sha256sums.txt.asc'
                 self.paths['sha256_url'] = 'https://archive.torproject.org/tor-package-archive/torbrowser/'+dirname+'/sha256sums.txt'
-                self.paths['sha256_sig_url'] = 'https://archive.torproject.org/tor-package-archive/torbrowser/'+dirname+'/sha256sums.txt.mp-asc'
+                self.paths['sha256_sig_url'] = 'https://archive.torproject.org/tor-package-archive/torbrowser/'+dirname+'/sha256sums.txt.asc-mp'
             else:
                 # tarball filename
                 tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+tbb_version+'-dev-'+self.language+'.tar.gz'
@@ -184,7 +184,7 @@ class TBLCommon:
                 'erinn_key': '/usr/share/torbrowser-launcher/erinn.asc',
                 'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc',
                 'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc',
-                'mike_key': '/usr/share/torbrowser-launcher/mike.asc',
+                'mike_key': '/usr/share/torbrowser-launcher/mike-2013-09.asc',
                 'mirrors_txt': '/usr/share/torbrowser-launcher/mirrors.txt',
                 'data_dir': tbb_data,
                 'download_dir': tbb_data+'/download',
