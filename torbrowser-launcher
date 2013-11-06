@@ -1001,10 +1001,8 @@ class TBLLauncher:
             valid_alphas = []
             valid_stables = []
             for version in versions:
-                if str(version).find('-Linux') != -1:
-                    if '-rc' in version:
-                        continue
-                    if 'alpha' in version or 'beta' in version:
+                if '-Linux' in version:
+                    if 'alpha' in version or 'beta' in version or '-rc' in version:
                         valid_alphas.append(str(version))
                     else:
                         valid_stables.append(str(version))
