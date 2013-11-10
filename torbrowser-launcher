@@ -186,6 +186,7 @@ class TBLCommon:
                 'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc',
                 'mike_key': '/usr/share/torbrowser-launcher/mike-2013-09.asc',
                 'mirrors_txt': '/usr/share/torbrowser-launcher/mirrors.txt',
+                'modem_sound': '/usr/share/torbrowser-launcher/modem.ogg',
                 'data_dir': tbb_data,
                 'download_dir': tbb_data+'/download',
                 'gnupg_homedir': tbb_data+'/gnupg_homedir',
@@ -259,6 +260,7 @@ class TBLCommon:
             },
             'update_over_tor': True,
             'check_for_updates': False,
+            'modem_sound': False,
             'last_update_check_timestamp': 0,
             'mirror': self.default_mirror
         }
@@ -418,6 +420,15 @@ class TBLSettings:
             self.update_checkbox.set_active(False)
         self.update_checkbox.show()
 
+        # modem sound
+        self.modem_checkbox = gtk.CheckButton(_("Play modem sound, because Tor is slow :]"))
+        self.settings_box.pack_start(self.modem_checkbox, True, True, 0)
+        if self.common.settings['modem_sound']:
+            self.modem_checkbox.set_active(True)
+        else:
+            self.modem_checkbox.set_active(False)
+        self.modem_checkbox.show()
+
         # labels
         if(self.common.settings['installed_version'][self.common.settings['preferred']]):
             self.label1 = gtk.Label(_('Installed version:\n{0}').format(self.common.settings['installed_version'][self.common.settings['preferred']]))
@@ -519,6 +530,7 @@ class TBLSettings:
         # checkbox options
         #self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
         self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
+        self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
 
         # figure out the selected mirror
         self.common.settings['mirror'] = self.common.mirrors[self.mirrors.get_active()]
@@ -1098,6 +1110,15 @@ class TBLLauncher:
 
     def run(self, run_next_task = True):
         subprocess.Popen([self.common.paths['tbb'][self.common.settings['preferred']]['start']])
+
+        # play modem sound?
+        if self.common.settings['modem_sound']:
+            import pygame
+            pygame.mixer.init()
+            sound = pygame.mixer.Sound(self.common.paths['modem_sound'])
+            sound.play()
+            time.sleep(10)
+
         if run_next_task:
             self.run_task()
 
