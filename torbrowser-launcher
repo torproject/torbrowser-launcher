@@ -270,7 +270,6 @@ class TBLCommon:
                 print '0.0.1 migration'
                 self.settings = default_settings
                 self.settings['installed_version']['alpha'] = settings['installed_version']
-                self.settings['tbl_version'] = self.tbl_version
                 resave = True
 
                 # move tbb alpha
@@ -281,6 +280,11 @@ class TBLCommon:
                 if setting not in settings:
                     settings[setting] = default_settings[setting]
                     resave = True
+
+            # make sure the version is current
+            if settings['tbl_version'] != self.tbl_version:
+                settings['tbl_version'] = self.tbl_version
+                resave = True
             
             self.settings = settings
             if resave:
