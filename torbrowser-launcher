@@ -199,6 +199,7 @@ class TBLCommon:
                         'vidalia_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
                         'firefox_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
                         'firefox_profile': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
+                        'versions': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/sources/versions',
                     },
                     'alpha': {
                         'dir': tbb_data+'/tbb/alpha/'+self.architecture,
@@ -206,6 +207,7 @@ class TBLCommon:
                         'vidalia_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
                         'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
                         'firefox_profile': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
+                        'versions': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/sources/versions',
                     }
                 }
             }
@@ -600,6 +602,14 @@ class TBLLauncher:
         # is TBB already installed?
         latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
         installed_version = self.common.settings['installed_version'][self.common.settings['preferred']]
+
+        # verify installed version for newer versions of TBB (#58)
+        if installed_version >= '3.0':
+            versions_filename = self.common.paths['tbb'][self.common.settings['preferred']]['versions']
+            if os.path.exists(versions_filename):
+                for line in open(versions_filename):
+                    if 'TORBROWSER_VERSION' in line:
+                        installed_version = line.lstrip('TORBROWSER_VERSION=').strip()
 
         start = self.common.paths['tbb'][self.common.settings['preferred']]['start']
         if os.path.isfile(start) and os.access(start, os.X_OK):
