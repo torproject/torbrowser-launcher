@@ -263,56 +263,28 @@ class TBLCommon:
 
         if os.path.isfile(self.paths['settings_file']):
             settings = pickle.load(open(self.paths['settings_file']))
-
-            # what version settings is this?
-            if not 'tbl_version' in settings:
-                settings['tbl_version'] = '0.0.1'
-
-            # sanity checks for current version
-            if settings['tbl_version'] == self.tbl_version:
-                good_settings = True
-                if not 'preferred' in settings:
-                    good_settings = False
-                if not 'installed_version' in settings:
-                    good_settings = False
-                if not 'stable' in settings['installed_version']:
-                    good_settings = False
-                if not 'alpha' in settings['installed_version']:
-                    good_settings = False
-                if not 'latest_version' in settings:
-                    good_settings = False
-                if not 'stable' in settings['latest_version']:
-                    good_settings = False
-                if not 'alpha' in settings['latest_version']:
-                    good_settings = False
-                if not 'update_over_tor' in settings:
-                    good_settings = False
-                if not 'check_for_updates' in settings:
-                    good_settings = False
-                if not 'last_update_check_timestamp' in settings:
-                    good_settings = False
-                if not 'mirror' in settings:
-                    good_settings = False
-
-                if good_settings:
-                    self.settings = settings
-                else:
-                    self.settings = default_settings
+            resave = False
 
             # settings migrations
             if settings['tbl_version'] == '0.0.1':
+                print '0.0.1 migration'
                 self.settings = default_settings
                 self.settings['installed_version']['alpha'] = settings['installed_version']
-                self.settings['tbl_version'] = '0.0.2'
-                self.save_settings()
+                self.settings['tbl_version'] = self.tbl_version
+                resave = True
 
                 # move tbb alpha
                 self.mkdir(self.paths['tbb']['alpha']['dir'])
-                # todo: move already-installed TBB alpha to new location
-                if os.path.exists(self.paths['data_dir']+'/tbb/x86_64'):
-                    pass
-                if os.path.exists(self.paths['data_dir']+'/tbb/i686'):
-                    pass
+
+            # make sure settings file is up-to-date
+            for setting in default_settings:
+                if setting not in settings:
+                    settings[setting] = default_settings[setting]
+                    resave = True
+            
+            self.settings = settings
+            if resave:
+                self.save_settings()
 
         else:
             self.settings = default_settings
