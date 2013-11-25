@@ -19,7 +19,7 @@ If you're using a Debian-based distro like Debian, Ubuntu, or Linux Mint, the
 following instructions will install dependencies, clone this repo, build a .deb, and
 install it with dpkg.
 
-    sudo apt-get install python-stdeb python-gtk2 python-psutil python-twisted python-lzma wmctrl gnupg fakeroot
+    sudo apt-get install python-stdeb python-gtk2 python-psutil python-twisted python-pygame python-lzma wmctrl gnupg fakeroot
     git clone https://github.com/micahflee/torbrowser-launcher.git
     cd torbrowser-launcher
     ./build_and_install.sh
