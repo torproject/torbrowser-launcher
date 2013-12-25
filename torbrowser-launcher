@@ -200,7 +200,7 @@ class TBLCommon:
                         'vidalia_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
                         'firefox_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
                         'firefox_profile': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
-                        'versions': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/sources/versions',
+                        'versions': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
                     },
                     'alpha': {
                         'dir': tbb_data+'/tbb/alpha/'+self.architecture,
@@ -208,7 +208,7 @@ class TBLCommon:
                         'vidalia_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
                         'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
                         'firefox_profile': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
-                        'versions': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/sources/versions',
+                        'versions': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
                     }
                 }
             }
