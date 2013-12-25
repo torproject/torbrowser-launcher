@@ -37,7 +37,7 @@ def file_list(path):
     return files
 
 setup(name='torbrowser-launcher',
-      version='0.0.4',
+      version='0.0.5',
       author='Micah Lee',
       author_email='micah@micahflee.com',
       url='https://www.github.com/micahflee/torbrowser-launcher',
