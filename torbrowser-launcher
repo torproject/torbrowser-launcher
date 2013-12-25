@@ -185,7 +185,8 @@ class TBLCommon:
                 'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc',
                 'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc',
                 'mike_key': '/usr/share/torbrowser-launcher/mike-2013-09.asc',
-                'mirrors_txt': '/usr/share/torbrowser-launcher/mirrors.txt',
+                'mirrors_txt': ['/usr/share/torbrowser-launcher/mirrors.txt',
+                                '/usr/local/share/torbrowser-launcher/mirrors.txt'],
                 'modem_sound': '/usr/share/torbrowser-launcher/modem.ogg',
                 'data_dir': tbb_data,
                 'download_dir': tbb_data+'/download',
@@ -242,8 +243,13 @@ class TBLCommon:
     # load mirrors
     def load_mirrors(self):
         self.mirrors = []
-        for mirror in open(self.paths['mirrors_txt'], 'r').readlines():
-            self.mirrors.append(mirror.strip())
+        for srcfile in self.paths['mirrors_txt']:
+            if not os.path.exists(srcfile):
+                print "Warning: can't load mirrors from %s" % srcfile
+                continue
+            for mirror in open(srcfile, 'r').readlines():
+                if mirror.strip() not in self.mirrors:
+                    self.mirrors.append(mirror.strip())
 
     # load settings
     def load_settings(self):
@@ -289,7 +295,7 @@ class TBLCommon:
             if settings['tbl_version'] != self.tbl_version:
                 settings['tbl_version'] = self.tbl_version
                 resave = True
-            
+
             self.settings = settings
             if resave:
                 self.save_settings()
