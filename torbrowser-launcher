@@ -154,13 +154,13 @@ class TBLCommon:
                 tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
 
                 # tarball
-                self.paths['tarball_url'] = 'https://archive.torproject.org/tor-package-archive/torbrowser/'+dirname+'/'+tarball_filename
+                self.paths['tarball_url'] = '{0}torbrowser/'+dirname+'/'+tarball_filename
 
                 # sig
                 self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
                 self.paths['sha256_sig_file'] = tbb_data+'/download/sha256sums.txt.asc'
-                self.paths['sha256_url'] = 'https://archive.torproject.org/tor-package-archive/torbrowser/'+dirname+'/sha256sums.txt'
-                self.paths['sha256_sig_url'] = 'https://archive.torproject.org/tor-package-archive/torbrowser/'+dirname+'/sha256sums.txt.mp-asc'
+                self.paths['sha256_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt'
+                self.paths['sha256_sig_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt-mikeperry.asc'
             else:
                 # tarball filename
                 tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+tbb_version+'-dev-'+self.language+'.tar.gz'
