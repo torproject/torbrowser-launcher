@@ -1,0 +1,41 @@
+#include <tunables/global>
+
+/home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+
+  capability sys_ptrace,
+
+
+  /bin/cat rix,
+  /bin/dash ix,
+  /bin/grep rix,
+  /bin/ps rix,
+  /bin/sed rix,
+  /dev/pts/[0-9]* rw,
+  /dev/tty rw,
+  /etc/magic r,
+  /opt/tor-browser_en-US/Browser/firefox Px,
+  /opt/tor-browser_en-US/Tor/tor r,
+  /opt/tor-browser_en-US/start-tor-browser r,
+  @{PROC}/ r,
+  @{PROC}/[0-9]*/status r,
+  @{PROC}/[0-9]*/stat r,
+  @{PROC}/[0-9]*/cmdline r,
+  @{PROC}/meminfo r,
+  @{PROC}/sys/kernel/pid_max r,
+  @{PROC}/tty/drivers r,
+  @{PROC}/uptime r,
+  /{,var/}run/utmp r,
+  /dev/ptmx rw,
+  /usr/bin/dirname rix,
+  /usr/bin/expr rix,
+  /usr/bin/file rix,
+  /usr/bin/getconf rix,
+  /usr/bin/id rix,
+  /usr/bin/ldd rix,
+  /usr/lib{,32,64}/** mr,
+  /usr/share/file/magic.mgc r,
+  /usr/share/file/magic/ r,
+
+}

@@ -58,6 +58,7 @@ Tor Browser Launcher will get updated each time a new version of TBB is released
                   ('/usr/share/pixmaps', ['img/torbrowser32.xpm', 'img/torbrowser80.xpm']),
                   ('/usr/share/torbrowser-launcher', ['keys/erinn.asc', 'keys/sebastian.asc', 'keys/alexandre.asc', 'keys/mike.asc', 'keys/mike-2013-09.asc', 'torproject.pem', 'mirrors.txt', 'modem.ogg']),
                   ('/usr/share/torbrowser-launcher/locale/en', ['locale/en/messages.pot']),
+                  ('/etc/apparmor.d/', ['apparmor/tor-browser.Browser.firefox', 'apparmor/tor-browser.start-tor-browser', 'apparmor/tor-browser.Tor.tor']),
 
                   # unpackaged third party libraries
                   ('/usr/share/torbrowser-launcher/lib/txsocksx', file_list('lib/txsocksx-0.0.2/txsocksx')),

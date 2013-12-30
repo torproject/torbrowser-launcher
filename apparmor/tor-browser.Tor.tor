@@ -1,0 +1,22 @@
+#include <tunables/global>
+
+/home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor {
+  #include <abstractions/base>
+
+  network tcp,
+  network udp,
+
+  /etc/host.conf r,
+  /etc/nsswitch.conf r,
+  /etc/passwd r,
+  /etc/resolv.conf r,
+  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor mr,
+  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Data/Tor/* rw,
+  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Data/Tor/lock rwk,
+  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Lib/*.so mr,
+  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Lib/*.so.* mr,
+  @{PROC}/meminfo r,
+  @{PROC}/sys/kernel/random/uuid r,
+  /sys/devices/system/cpu/ r,
+
+}
