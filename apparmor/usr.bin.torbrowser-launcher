@@ -1,0 +1,58 @@
+# Last Modified: Thu Jan  2 15:12:38 2014
+#include <tunables/global>
+
+/usr/bin/torbrowser-launcher {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/python>
+  
+  capability sys_ptrace,
+
+  #/bin/{dash,grep,ps} rix,
+  /dev/ r,
+  /dev/pts/ r,
+  /etc/magic r,
+  /etc/fonts/** r,
+  /var/cache/fontconfig/* r,
+  /usr/share/fonts/ r,
+  @{HOME}/.Xauthority r,
+  @{HOME}/.cache/fontconfig/e2d80dc3d99bd64349f910b1f0a35039-le64.cache-4 r,
+  @{HOME}/.config/pulse/cookie rk,
+  @{HOME}/.local/share/fonts/ r,
+  @{HOME}/.torbrowser/ rw,
+  @{HOME}/.torbrowser/** mrwk,
+  @{HOME}/.torbrowser/gnupg_homedir/* l,
+  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser ux,
+  @{PROC}/ r,
+  @{PROC}/*/cmdline r,
+  @{PROC}/*/maps r,
+  @{PROC}/*/mountinfo r,
+  @{PROC}/*/mounts r,
+  @{PROC}/*/stat r,
+  @{PROC}/*/status r,
+  @{PROC}/*/task/** r,
+  @{PROC}/filesystems r,
+  @{PROC}/meminfo r,
+  @{PROC}/sys/kernel/pid_max r,
+  @{PROC}/tty/drivers r,
+  @{PROC}/uptime r,
+  /usr/bin/ r,
+  /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id,dash,grep,ps} rix,
+  /usr/bin/python2.7 rix,
+  /usr/bin/torbrowser-launcher rux,
+  /usr/lib{,32,64}/** mr,
+  /usr/local/share/fonts/ r,
+  /usr/local/share/fonts/** r,
+  /usr/share/file/magic.mgc r,
+  /usr/share/file/magic/ r,
+  /usr/share/fonts/** r,
+  /usr/share/icons/ r,
+  /usr/share/icons/** r,
+  /usr/share/mime/ r,
+  /usr/share/mime/* r,
+  /usr/share/pixmaps/ r,
+  /usr/share/pixmaps/torbrowser{32,80}.xpm r,
+  /usr/share/themes/** r,
+  /usr/share/torbrowser-launcher/** r,
+
+}
