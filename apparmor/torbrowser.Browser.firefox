@@ -29,6 +29,8 @@
   /etc/passwd r,
   /lib{,32,64}/*.so mr,
   /lib{,32,64}/*.so.* mr,
+  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/ w,
+  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/** w,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.mozilla/ w,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.mozilla/*/ w,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/** r,
