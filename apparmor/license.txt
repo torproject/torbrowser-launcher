@@ -1,4 +1,4 @@
-These AppArmor profiles are based on https://gitorious.org/tbb-apparmor/tbb-apparmor/
+TBB AppArmor profiles are based on https://gitorious.org/tbb-apparmor/tbb-apparmor/
 Originally written by Radostan Riedel <raybuntu@googlemail.com>
 
 --
