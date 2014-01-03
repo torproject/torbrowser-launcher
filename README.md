@@ -33,6 +33,17 @@ I've created a PPA where I'm maintaining torbrowser-launcher binaries. You can i
     sudo apt-get update
     sudo apt-get install torbrowser-launcher
 
+Enabling AppArmor Profiles
+--------------------------
+
+AppArmor is a Linux kernel hardening technology that lets you confine specific programs to only use specific resources. For example, if you visit a website that exploits a bug in the Tor Browser to get arbitrary code execution, the attacker won't be able to access files in ~/.gnupg. Here's how you turn on the AppArmor profiles for Tor Browser Launcher and for the programs bundled in the TBB.
+
+    sudo apt-get install apparmor-utils
+    sudo aa-enforce /etc/apparmor.d/usr.bin.torbrowser-launcher
+    sudo aa-enforce /etc/apparmor.d/torbrowser.start-tor-browser
+    sudo aa-enforce /etc/apparmor.d/torbrowser.Browser.firefox
+    sudo aa-enforce /etc/apparmor.d/torbrowser.Tor.tor
+
 Building
 ========
 
