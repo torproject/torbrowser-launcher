@@ -1,5 +1,7 @@
 #!/bin/sh
 
+VERSION=`cat version`
+
 # to clean up from last time, run this:
 # rm -rf ~/.torbrowser
 
@@ -10,5 +12,5 @@ rm -r deb_dist
 python setup.py --command-packages=stdeb.command bdist_deb
 
 # install it
-sudo dpkg -i deb_dist/torbrowser-launcher_0.0.7-1_all.deb
+sudo dpkg -i deb_dist/torbrowser-launcher_$VERSION-1_all.deb
 

@@ -1160,7 +1160,7 @@ class TBLLauncher:
             reactor.stop()
 
 if __name__ == "__main__":
-    tor_browser_launcher_version = '0.0.7'
+    tor_browser_launcher_version = open('/usr/share/torbrowser-launcher/version').read().strip()
 
     print _('Tor Browser Launcher')
     print _('By Micah Lee, licensed under GPLv3')

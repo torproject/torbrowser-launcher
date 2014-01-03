@@ -36,8 +36,10 @@ def file_list(path):
             files.append(path+'/'+filename)
     return files
 
+version = open('version').read().strip()
+
 setup(name='torbrowser-launcher',
-      version='0.0.7',
+      version=version,
       author='Micah Lee',
       author_email='micah@micahflee.com',
       url='https://www.github.com/micahflee/torbrowser-launcher',
@@ -56,7 +58,7 @@ Tor Browser Launcher will get updated each time a new version of TBB is released
       scripts=['torbrowser-launcher'],
       data_files=[('/usr/share/applications', ['torbrowser.desktop', 'torbrowser-settings.desktop']),
                   ('/usr/share/pixmaps', ['img/torbrowser32.xpm', 'img/torbrowser80.xpm']),
-                  ('/usr/share/torbrowser-launcher', ['keys/erinn.asc', 'keys/sebastian.asc', 'keys/alexandre.asc', 'keys/mike.asc', 'keys/mike-2013-09.asc', 'torproject.pem', 'mirrors.txt', 'modem.ogg']),
+                  ('/usr/share/torbrowser-launcher', ['keys/erinn.asc', 'keys/sebastian.asc', 'keys/alexandre.asc', 'keys/mike.asc', 'keys/mike-2013-09.asc', 'torproject.pem', 'mirrors.txt', 'modem.ogg', 'version']),
                   ('/usr/share/torbrowser-launcher/locale/en', ['locale/en/messages.pot']),
                   ('/etc/apparmor.d/', ['apparmor/torbrowser.Browser.firefox', 'apparmor/torbrowser.start-tor-browser', 'apparmor/torbrowser.Tor.tor', 'apparmor/usr.bin.torbrowser-launcher']),
 
