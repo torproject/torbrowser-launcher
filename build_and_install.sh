@@ -10,5 +10,5 @@ rm -r deb_dist
 python setup.py --command-packages=stdeb.command bdist_deb
 
 # install it
-sudo dpkg -i deb_dist/torbrowser-launcher_0.0.6-1_all.deb
+sudo dpkg -i deb_dist/torbrowser-launcher_0.0.7-1_all.deb
 
