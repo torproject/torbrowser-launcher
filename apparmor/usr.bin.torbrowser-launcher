@@ -39,7 +39,7 @@
   /usr/bin/ r,
   /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id,dash,grep,ps} rix,
   /usr/bin/python2.7 rix,
-  /usr/bin/torbrowser-launcher rux,
+  /usr/bin/torbrowser-launcher rix,
   /usr/lib{,32,64}/** mr,
   /usr/local/share/fonts/ r,
   /usr/local/share/fonts/** r,
