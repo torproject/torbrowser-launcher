@@ -28,7 +28,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import sys
-sys.path.append('/usr/share/torbrowser-launcher/lib/')
 import platform
 
 import gettext

@@ -3,6 +3,7 @@
 ## 0.0.7
 
 * Added AppArmor profiles for torbrowser-launcher and TBB
+* Removed included libs in favor of adding new Debian package dependencies
 
 ## 0.0.6
 
