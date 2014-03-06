@@ -143,34 +143,22 @@ class TBLCommon:
         tbb_data = '%s/.torbrowser' % homedir
 
         if tbb_version:
-            if tbb_version >= '3.':
-                # tarball filename
-                dirname = tbb_version.replace('-alpha-', 'a').replace('-beta-', 'b').replace('-rc-', 'rc')
-                if self.architecture == 'x86_64':
-                    arch = 'linux64'
-                else:
-                    arch = 'linux32'
-                tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
-
-                # tarball
-                self.paths['tarball_url'] = '{0}torbrowser/'+dirname+'/'+tarball_filename
-
-                # sig
-                self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
-                self.paths['sha256_sig_file'] = tbb_data+'/download/sha256sums.txt.asc'
-                self.paths['sha256_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt'
-                self.paths['sha256_sig_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt-mikeperry.asc'
+            # tarball filename
+            dirname = tbb_version.replace('-alpha-', 'a').replace('-beta-', 'b').replace('-rc-', 'rc')
+            if self.architecture == 'x86_64':
+                arch = 'linux64'
             else:
-                # tarball filename
-                tarball_filename = 'tor-browser-gnu-linux-'+self.architecture+'-'+tbb_version+'-dev-'+self.language+'.tar.gz'
+                arch = 'linux32'
+            tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
 
-                # tarball
-                self.paths['tarball_url'] = '{0}torbrowser/linux/'+tarball_filename # {0} will be replaced with the mirror
+            # tarball
+            self.paths['tarball_url'] = '{0}torbrowser/'+dirname+'/'+tarball_filename
 
-                # sig
-                self.paths['tarball_sig_file'] = tbb_data+'/download/'+tarball_filename+'.asc'
-                self.paths['tarball_sig_url'] = '{0}torbrowser/linux/'+tarball_filename+'.asc'
-                self.paths['tarball_sig_filename'] = tarball_filename+'.asc'
+            # sig
+            self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
+            self.paths['sha256_sig_file'] = tbb_data+'/download/sha256sums.txt.asc'
+            self.paths['sha256_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt'
+            self.paths['sha256_sig_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt-mikeperry.asc'
 
             self.paths['tarball_file'] = tbb_data+'/download/'+tarball_filename
             self.paths['tarball_filename'] = tarball_filename
@@ -197,16 +185,14 @@ class TBLCommon:
                     'stable': {
                         'dir': tbb_data+'/tbb/stable/'+self.architecture,
                         'start': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                        'vidalia_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
-                        'firefox_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
+                        'firefox_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Browser/firefox',
                         'firefox_profile': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                         'versions': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
                     },
                     'alpha': {
                         'dir': tbb_data+'/tbb/alpha/'+self.architecture,
                         'start': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                        'vidalia_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/vidalia',
-                        'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/App/Firefox/firefox',
+                        'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Browser/firefox',
                         'firefox_profile': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                         'versions': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
                     }
@@ -560,22 +546,13 @@ class TBLLauncher:
         self.launch_gui = True
         self.common.build_paths(self.common.settings['latest_version'][self.common.settings['preferred']])
 
-        # is vidalia already running and we just need to open a new firefox?
+        # is firefox already running?
         if self.common.settings['installed_version']:
-            vidalia_pid = self.common.get_pid('./App/vidalia')
-            firefox_pid = self.common.get_pid(self.common.paths['tbb'][self.common.settings['preferred']]['firefox_bin'])
-
-            if vidalia_pid and not firefox_pid:
-                print _('Vidalia is already open, but Firefox is closed. Launching new Firefox.')
-                self.common.bring_window_to_front(vidalia_pid)
-                subprocess.Popen([self.common.paths['tbb'][self.common.settings['preferred']]['firefox_bin'], '-no-remote', '-profile', self.common.paths['tbb'][self.common.settings['preferred']]['firefox_profile']])
-                return
-            elif vidalia_pid and firefox_pid:
-                print _('Vidalia and Firefox are already open, bringing them to focus')
-
-                # bring firefox to front, then vidalia
+            firefox_pid = self.common.get_pid('./Browser/firefox')
+            if firefox_pid:
+                print _('Firefox are is open, bringing to focus')
+                # bring firefox to front
                 self.common.bring_window_to_front(firefox_pid)
-                self.common.bring_window_to_front(vidalia_pid)
                 return
 
         # check for updates?
@@ -638,30 +615,7 @@ class TBLLauncher:
             elif installed_version < latest_version:
                 print _('TBB is out of date, attempting to upgrade to {0}'.format(latest_version))
                 # there is a tbb upgrade available
-                if latest_version >= '3.':
-                    self.set_gui('task', _("Your Tor Browser is out of date."),
-                        ['download_sha256',
-                         'download_sha256_sig',
-                         'download_tarball',
-                         'verify',
-                         'extract',
-                         'run'])
-                else:
-                    self.set_gui('task', _("Your Tor Browser is out of date."),
-                        ['download_tarball_sig',
-                         'download_tarball',
-                         'verify',
-                         'extract',
-                         'run'])
-            else:
-                # for some reason the installed tbb is newer than the current version?
-                self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
-
-        # not installed
-        else:
-            print _('TBB is not installed, attempting to install {0}'.format(latest_version))
-            if latest_version >= '3.':
-                self.set_gui('task', _("Downloading and installing Tor Browser."),
+                self.set_gui('task', _("Your Tor Browser is out of date."),
                     ['download_sha256',
                      'download_sha256_sig',
                      'download_tarball',
@@ -669,12 +623,19 @@ class TBLLauncher:
                      'extract',
                      'run'])
             else:
-                self.set_gui('task', _("Downloading and installing Tor Browser."),
-                    ['download_tarball_sig',
-                     'download_tarball',
-                     'verify',
-                     'extract',
-                     'run'])
+                # for some reason the installed tbb is newer than the current version?
+                self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
+
+        # not installed
+        else:
+            print _('TBB is not installed, attempting to install {0}'.format(latest_version))
+            self.set_gui('task', _("Downloading and installing Tor Browser."),
+                ['download_sha256',
+                 'download_sha256_sig',
+                 'download_tarball',
+                 'verify',
+                 'extract',
+                 'run'])
 
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
@@ -1048,23 +1009,15 @@ class TBLLauncher:
         self.progressbar.show()
 
         verified = False
-        if latest_version >= '3.':
-            # after 3.x we check the sha256 file's sig, and also take the sha256 of the tarball and compare
-            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sha256_sig_file']])
-            self.pulse_until_process_exits(p)
-            if p.returncode == 0:
-                # compare with sha256 of the tarball
-                tarball_sha256 = hashlib.sha256(open(self.common.paths['tarball_file'], 'r').read()).hexdigest()
-                for line in open(self.common.paths['sha256_file'], 'r').readlines():
-                    if tarball_sha256.lower() in line.lower() and self.common.paths['tarball_filename'] in line:
-                        verified = True
-
-        else:
-            # before 3.x we just check the tarball sig
-            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['tarball_sig_file']])
-            self.pulse_until_process_exits(p)
-            if p.returncode == 0:
-                verified = True
+        # check the sha256 file's sig, and also take the sha256 of the tarball and compare
+        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sha256_sig_file']])
+        self.pulse_until_process_exits(p)
+        if p.returncode == 0:
+            # compare with sha256 of the tarball
+            tarball_sha256 = hashlib.sha256(open(self.common.paths['tarball_file'], 'r').read()).hexdigest()
+            for line in open(self.common.paths['sha256_file'], 'r').readlines():
+                if tarball_sha256.lower() in line.lower() and self.common.paths['tarball_filename'] in line:
+                    verified = True
 
         if verified:
             self.run_task()
@@ -1182,4 +1135,3 @@ if __name__ == "__main__":
     else:
         # launcher mode
         app = TBLLauncher(common)
-
