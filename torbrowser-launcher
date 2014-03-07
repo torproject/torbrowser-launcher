@@ -153,16 +153,14 @@ class TBLCommon:
 
             # tarball
             self.paths['tarball_url'] = '{0}torbrowser/'+dirname+'/'+tarball_filename
+            self.paths['tarball_file'] = tbb_data+'/download/'+tarball_filename
+            self.paths['tarball_filename'] = tarball_filename
 
             # sig
             self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
             self.paths['sha256_sig_file'] = tbb_data+'/download/sha256sums.txt.asc'
             self.paths['sha256_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt'
             self.paths['sha256_sig_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt-mikeperry.asc'
-
-            self.paths['tarball_file'] = tbb_data+'/download/'+tarball_filename
-            self.paths['tarball_filename'] = tarball_filename
-
         else:
             self.paths = {
                 'tbl_bin': '/usr/bin/torbrowser-launcher',
@@ -185,15 +183,11 @@ class TBLCommon:
                     'stable': {
                         'dir': tbb_data+'/tbb/stable/'+self.architecture,
                         'start': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                        'firefox_bin': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Browser/firefox',
-                        'firefox_profile': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                         'versions': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
                     },
                     'alpha': {
                         'dir': tbb_data+'/tbb/alpha/'+self.architecture,
                         'start': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                        'firefox_bin': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Browser/firefox',
-                        'firefox_profile': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Data/profile',
                         'versions': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
                     }
                 }
@@ -784,10 +778,6 @@ class TBLLauncher:
             print _('Downloading'), self.common.paths['sha256_sig_url'].format(self.common.settings['mirror'])
             self.download('signature', self.common.paths['sha256_sig_url'], self.common.paths['sha256_sig_file'])
 
-        elif task == 'download_tarball_sig':
-            print _('Downloading'), self.common.paths['tarball_sig_url'].format(self.common.settings['mirror'])
-            self.download('signature', self.common.paths['tarball_sig_url'], self.common.paths['tarball_sig_file'])
-
         elif task == 'download_tarball':
             print _('Downloading'), self.common.paths['tarball_url'].format(self.common.settings['mirror'])
             self.download('tarball', self.common.paths['tarball_url'], self.common.paths['tarball_file'])
@@ -1090,7 +1080,7 @@ class TBLLauncher:
     # start over and download TBB again
     def start_over(self):
         self.label.set_text(_("Downloading Tor Browser Bundle over again."))
-        self.gui_tasks = ['download_tarball', 'download_tarball_sig', 'verify', 'extract', 'run']
+        self.gui_tasks = ['download_tarball', 'verify', 'extract', 'run']
         self.gui_task_i = 0
         self.start(None)
 
