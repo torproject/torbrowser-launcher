@@ -41,16 +41,13 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-import os, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile, psutil, hashlib, lzma
+import os, subprocess, locale, time, pickle, json, tarfile, psutil, hashlib, lzma
 
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
 from twisted.internet.ssl import ClientContextFactory
-from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.error import DNSLookupError
-
-from txsocksx.client import SOCKS5ClientEndpoint
 
 import OpenSSL
 
@@ -72,13 +69,13 @@ class VerifyTorProjectCert(ClientContextFactory):
     def __init__(self, torproject_pem):
         self.torproject_ca = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, open(torproject_pem, 'r').read())
 
-    def getContext(self, host, port):
+    def getContext(self):
         ctx = ClientContextFactory.getContext(self)
         ctx.set_verify_depth(0)
         ctx.set_verify(OpenSSL.SSL.VERIFY_PEER | OpenSSL.SSL.VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
         return ctx
 
-    def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
+    def verifyHostname(self, cert):
         return cert.digest('sha256') == self.torproject_ca.digest('sha256')
 
 
@@ -114,7 +111,6 @@ class TBLCommon:
     # discover the architecture and language
     def discover_arch_lang(self):
         # figure out the architecture
-        (sysname, nodename, release, version, machine) = os.uname()
         self.architecture = 'x86_64' if '64' in platform.architecture()[0] else 'i686'
 
         # figure out the language
@@ -207,7 +203,8 @@ class TBLCommon:
             }
 
     # create a directory
-    def mkdir(self, path):
+    @staticmethod
+    def mkdir(path):
         try:
             if not os.path.exists(path):
                 os.makedirs(path, 0700)
@@ -302,7 +299,8 @@ class TBLCommon:
         return True
 
     # get the process id of a program
-    def get_pid(self, bin_path, python=False):
+    @staticmethod
+    def get_pid(bin_path, python=False):
         pid = None
 
         for p in psutil.process_iter():
@@ -326,7 +324,8 @@ class TBLCommon:
         return pid
 
     # bring program's x window to front
-    def bring_window_to_front(self, pid):
+    @staticmethod
+    def bring_window_to_front(pid):
         # figure out the window id
         win_id = None
         p = subprocess.Popen(['wmctrl', '-l', '-p'], stdout=subprocess.PIPE)
@@ -507,7 +506,7 @@ class TBLSettings:
     # save and launch
     def save_launch(self, widget, data=None):
         self.save()
-        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     # save and exit
@@ -953,14 +952,14 @@ class TBLLauncher:
         # change preferred to stable and relaunch TBL
         self.common.settings['mirror'] = self.common.default_mirror
         self.common.save_settings()
-        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     def try_tor(self, widget, data=None):
         # set update_over_tor to true and relaunch TBL
         self.common.settings['update_over_tor'] = True
         self.common.save_settings()
-        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     def attempt_update(self):
@@ -1010,8 +1009,6 @@ class TBLLauncher:
         self.build_ui()
 
     def verify(self):
-        latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
-
         # initialize the progress bar
         self.progressbar.set_fraction(0)
         self.progressbar.set_text(_('Verifying Signature'))
