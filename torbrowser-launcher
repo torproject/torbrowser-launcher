@@ -69,13 +69,13 @@ class VerifyTorProjectCert(ClientContextFactory):
     def __init__(self, torproject_pem):
         self.torproject_ca = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, open(torproject_pem, 'r').read())
 
-    def getContext(self):
+    def getContext(self, host, port):
         ctx = ClientContextFactory.getContext(self)
         ctx.set_verify_depth(0)
         ctx.set_verify(OpenSSL.SSL.VERIFY_PEER | OpenSSL.SSL.VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
         return ctx
 
-    def verifyHostname(self, cert):
+    def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
         return cert.digest('sha256') == self.torproject_ca.digest('sha256')
 
 
