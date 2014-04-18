@@ -41,25 +41,28 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-import os, subprocess, locale, urllib2, gobject, time, pickle, json, tarfile, psutil, hashlib, lzma
+import os, subprocess, locale, time, pickle, json, tarfile, psutil, hashlib, lzma
 
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
 from twisted.internet.ssl import ClientContextFactory
-from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.error import DNSLookupError
-
-from txsocksx.client import SOCKS5ClientEndpoint
 
 import OpenSSL
 
+
 class TryStableException(Exception):
     pass
+
+
 class TryDefaultMirrorException(Exception):
     pass
+
+
 class DownloadErrorException(Exception):
     pass
+
 
 class VerifyTorProjectCert(ClientContextFactory):
 
@@ -74,6 +77,7 @@ class VerifyTorProjectCert(ClientContextFactory):
 
     def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
         return cert.digest('sha256') == self.torproject_ca.digest('sha256')
+
 
 class TBLCommon:
 
@@ -107,13 +111,12 @@ class TBLCommon:
     # discover the architecture and language
     def discover_arch_lang(self):
         # figure out the architecture
-        (sysname, nodename, release, version, machine) = os.uname()
         self.architecture = 'x86_64' if '64' in platform.architecture()[0] else 'i686'
 
         # figure out the language
         available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
         default_locale = locale.getdefaultlocale()[0]
-        if default_locale == None:
+        if default_locale is None:
             self.language = 'en-US'
         else:
             self.language = default_locale.replace('_', '-')
@@ -128,11 +131,11 @@ class TBLCommon:
                 self.language = 'en-US'
 
     # build all relevant paths
-    def build_paths(self, tbb_version = None):
+    def build_paths(self, tbb_version=None):
         homedir = os.getenv('HOME')
         if not homedir:
             homedir = '/tmp/.torbrowser-'+os.getenv('USER')
-            if os.path.exists(homedir) == False:
+            if not os.path.exists(homedir):
                 try:
                     os.mkdir(homedir, 0700)
                 except:
@@ -194,9 +197,10 @@ class TBLCommon:
             }
 
     # create a directory
-    def mkdir(self, path):
+    @staticmethod
+    def mkdir(path):
         try:
-            if os.path.exists(path) == False:
+            if not os.path.exists(path):
                 os.makedirs(path, 0700)
                 return True
         except:
@@ -289,7 +293,8 @@ class TBLCommon:
         return True
 
     # get the process id of a program
-    def get_pid(self, bin_path, python = False):
+    @staticmethod
+    def get_pid(bin_path, python=False):
         pid = None
 
         for p in psutil.process_iter():
@@ -313,7 +318,8 @@ class TBLCommon:
         return pid
 
     # bring program's x window to front
-    def bring_window_to_front(self, pid):
+    @staticmethod
+    def bring_window_to_front(pid):
         # figure out the window id
         win_id = None
         p = subprocess.Popen(['wmctrl', '-l', '-p'], stdout=subprocess.PIPE)
@@ -327,6 +333,7 @@ class TBLCommon:
         # bring to front
         if win_id:
             subprocess.call(['wmctrl', '-i', '-a', win_id])
+
 
 class TBLSettings:
     def __init__(self, common):
@@ -378,7 +385,7 @@ class TBLSettings:
         for option in self.preferred_options:
             self.preferred.append_text(option)
         if self.common.settings['preferred'] in self.common.available_versions:
-            self.preferred.set_active( self.preferred_options.index(self.common.available_versions[self.common.settings['preferred']]) )
+            self.preferred.set_active(self.preferred_options.index(self.common.available_versions[self.common.settings['preferred']]))
         else:
             self.preferred.set_active(0)
         self.preferred_box.pack_start(self.preferred, True, True, 0)
@@ -445,7 +452,7 @@ class TBLSettings:
         for mirror in self.common.mirrors:
             self.mirrors.append_text(mirror)
         if self.common.settings['mirror'] in self.common.mirrors:
-            self.mirrors.set_active( self.common.mirrors.index(self.common.settings['mirror']) )
+            self.mirrors.set_active(self.common.mirrors.index(self.common.settings['mirror']))
         else:
             self.preferred.set_active(0)
         self.mirrors_box.pack_start(self.mirrors, True, True, 0)
@@ -493,7 +500,7 @@ class TBLSettings:
     # save and launch
     def save_launch(self, widget, data=None):
         self.save()
-        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     # save and exit
@@ -526,6 +533,7 @@ class TBLSettings:
     # exit
     def delete_event(self, widget, event, data=None):
         return False
+
     def destroy(self, widget, data=None):
         gtk.main_quit()
 
@@ -565,8 +573,8 @@ class TBLLauncher:
             # check for update
             print 'Checking for update'
             self.set_gui('task', _("Checking for Tor Browser update."),
-                ['download_update_check',
-                 'attempt_update'])
+                         ['download_update_check',
+                          'attempt_update'])
         else:
             # no need to check for update
             print _('Checked for update within 24 hours, skipping')
@@ -610,12 +618,12 @@ class TBLLauncher:
                 print _('TBB is out of date, attempting to upgrade to {0}'.format(latest_version))
                 # there is a tbb upgrade available
                 self.set_gui('task', _("Your Tor Browser is out of date."),
-                    ['download_sha256',
-                     'download_sha256_sig',
-                     'download_tarball',
-                     'verify',
-                     'extract',
-                     'run'])
+                             ['download_sha256',
+                              'download_sha256_sig',
+                              'download_tarball',
+                              'verify',
+                              'extract',
+                              'run'])
             else:
                 # for some reason the installed tbb is newer than the current version?
                 self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
@@ -624,12 +632,12 @@ class TBLLauncher:
         else:
             print _('TBB is not installed, attempting to install {0}'.format(latest_version))
             self.set_gui('task', _("Downloading and installing Tor Browser."),
-                ['download_sha256',
-                 'download_sha256_sig',
-                 'download_tarball',
-                 'verify',
-                 'extract',
-                 'run'])
+                         ['download_sha256',
+                          'download_sha256_sig',
+                          'download_tarball',
+                          'verify',
+                          'extract',
+                          'run'])
 
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
@@ -660,7 +668,7 @@ class TBLLauncher:
 
         if 'error' in self.gui:
             # labels
-            self.label = gtk.Label( self.gui_message )
+            self.label = gtk.Label(self.gui_message)
             self.label.set_line_wrap(True)
             self.box.pack_start(self.label, True, True, 0)
             self.label.show()
@@ -697,7 +705,7 @@ class TBLLauncher:
 
         elif self.gui == 'task':
             # label
-            self.label = gtk.Label( self.gui_message )
+            self.label = gtk.Label(self.gui_message)
             self.label.set_line_wrap(True)
             self.box.pack_start(self.label, True, True, 0)
             self.label.show()
@@ -722,7 +730,7 @@ class TBLLauncher:
             self.start_button.connect("clicked", self.start, None)
             self.button_box.add(self.start_button)
             if not self.gui_autostart:
-              self.start_button.show()
+                self.start_button.show()
 
             # exit button
             exit_image = gtk.Image()
@@ -934,14 +942,14 @@ class TBLLauncher:
         # change preferred to stable and relaunch TBL
         self.common.settings['mirror'] = self.common.default_mirror
         self.common.save_settings()
-        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     def try_tor(self, widget, data=None):
         # set update_over_tor to true and relaunch TBL
         self.common.settings['update_over_tor'] = True
         self.common.save_settings()
-        p = subprocess.Popen([self.common.paths['tbl_bin']])
+        subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     def attempt_update(self):
@@ -991,8 +999,6 @@ class TBLLauncher:
         self.build_ui()
 
     def verify(self):
-        latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
-
         # initialize the progress bar
         self.progressbar.set_fraction(0)
         self.progressbar.set_text(_('Verifying Signature'))
@@ -1056,7 +1062,7 @@ class TBLLauncher:
 
         self.run_task()
 
-    def run(self, run_next_task = True):
+    def run(self, run_next_task=True):
         subprocess.Popen([self.common.paths['tbb'][self.common.settings['preferred']]['start']])
 
         # play modem sound?
@@ -1072,7 +1078,7 @@ class TBLLauncher:
 
     # make the progress bar pulse until process p (a Popen object) finishes
     def pulse_until_process_exits(self, p):
-        while p.poll() == None:
+        while p.poll() is None:
             time.sleep(0.01)
             self.progressbar.pulse()
             self.refresh_gtk()
@@ -1092,6 +1098,7 @@ class TBLLauncher:
     # exit
     def delete_event(self, widget, event, data=None):
         return False
+
     def destroy(self, widget, data=None):
         if hasattr(self, 'file_download'):
             self.file_download.close()
