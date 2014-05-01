@@ -1,5 +1,12 @@
 # Tor Browser Launcher Changelog
 
+## 0.0.8
+
+* Removed older code that's no longer used
+* Updated list of Tor mirrors
+* Replaced certificate for www.torproject.org post-heartbleed
+* Fixed URLs to deal with TBB release filename changes
+
 ## 0.0.7
 
 * Added AppArmor profiles for torbrowser-launcher and TBB
