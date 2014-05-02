@@ -20,7 +20,7 @@ Then install dependencies, build a package, and install:
 
 ### Debian, Ubuntu, Linux Mint, etc.
 
-    sudo apt-get install build-essential python-all python-stdeb python-gtk2 python-psutil python-twisted python-pygame python-lzma python-parsley python-txsocksx wmctrl gnupg fakeroot
+    sudo apt-get install build-essential python-all python-stdeb python-gtk2 python-psutil python-twisted python-pygame python-lzma wmctrl gnupg fakeroot
     ./build_deb.sh
     sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 
@@ -48,24 +48,3 @@ AppArmor is a Linux kernel hardening technology that lets you confine specific p
     sudo aa-enforce /etc/apparmor.d/torbrowser.Browser.firefox
     sudo aa-enforce /etc/apparmor.d/torbrowser.Tor.tor
 
-# Building in Debian
-
-## Dependencies
-
-You need to have ```stdeb``` installed. If you're using Debian or Ubuntu you can install it like this:
-
-    apt-get install python-stdeb
-
-Also install the ```torbrowser-launcher``` dependencies:
-
-    apt-get install python-gtk2 python-psutil python-twisted python-lzma wmctrl gnupg fakeroot
-
-## Debian packages
-
-To build a Debian source and binary packages:
-
-    python setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
-
-Once you've made a ```.deb```, you can install by running this as root:
-
-    dpkg -i deb_dist/torbrowser-launcher_VERSION_all.deb
