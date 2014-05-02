@@ -84,4 +84,8 @@
 
   dbus,
 
+  /usr/share/glib-2.0/schemas/gschemas.compiled r,
+  /usr/share/gvfs/remote-volume-monitors/* r,
+  owner /{,var/}run/user/*/dconf/user rw,
+
 }
