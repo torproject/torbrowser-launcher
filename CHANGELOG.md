@@ -1,5 +1,12 @@
 # Tor Browser Launcher Changelog
 
+## 0.0.9
+
+* Fixed AppArmor rules that were broken in Ubuntu
+* Added support for basic RPM packaging
+* Removed un-used dependencies
+* Fixed URLs to deal with TBB release filename changes
+
 ## 0.0.8
 
 * Removed older code that's no longer used
