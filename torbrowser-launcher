@@ -163,7 +163,7 @@ class TBLCommon:
             self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
             self.paths['sha256_sig_file'] = tbb_data+'/download/sha256sums.txt.asc'
             self.paths['sha256_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt'
-            self.paths['sha256_sig_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt-mp.asc'
+            self.paths['sha256_sig_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt-mikeperry.asc'
         else:
             self.paths = {
                 'tbl_bin': '/usr/bin/torbrowser-launcher',
