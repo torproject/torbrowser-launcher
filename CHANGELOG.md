@@ -1,5 +1,13 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.0
+
+* Added Polish translations
+* Version 0.1.0 marks first version in Debian!
+* Changed GPG release signing key
+  from 5C17616361BD9F92422AC08BB4D25A1E99999697
+  to 0B1491929806596254700155FD720AD9EBA34B1C
+
 ## 0.0.9
 
 * Fixed AppArmor rules that were broken in Ubuntu
