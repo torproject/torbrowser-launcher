@@ -11,6 +11,7 @@ Vcs-Browser: https://github.com/micahflee/torbrowser-launcher.git
 Package: torbrowser-launcher
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, python-gtk2, python-psutil, python-twisted, python-lzma, python-pygame, gnupg, wmctrl
+Suggests: apparmor
 Description: helps download, update and run the Tor Browser Bundle
  Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier
  to maintain and use for GNU/Linux users. torbrowser-launcher handles

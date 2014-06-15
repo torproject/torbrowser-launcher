@@ -1,13 +1,15 @@
 torbrowser-launcher (0.1.0-1.1) unstable; urgency=low
 
+  [ Ulrike Uhlig ]
   * Non-maintainer upload in coordination with maintainer.
   * New upstream version. (Closes: #751284)
   * debian/control:
     - Added homepage, Vcs-Git and Vcs-Browser information.
     - move to contrib (Closes: #751366)
+    - Suggests: apparmor (Closes: #751452)
   * debian/watch added
 
- -- Ulrike Uhlig <u@451f.org>  Thu, 12 Jun 2014 16:07:28 +0200
+ --  Ulrike Uhlig <u@451f.org>  Sun, 15 Jun 2014 01:00:33 +0200
 
 torbrowser-launcher (0.0.6-1) unstable; urgency=low
 
