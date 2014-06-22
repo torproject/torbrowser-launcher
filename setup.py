@@ -28,6 +28,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 from distutils.core import setup
 import os
+SHARE = 'share'
+PREFIX = '/usr'
+
 
 def file_list(path):
     files = []
@@ -36,7 +39,14 @@ def file_list(path):
             files.append(path+'/'+filename)
     return files
 
-version = open('version').read().strip()
+with open(os.path.join(SHARE, 'torbrowser-launcher/version')) as buf:
+    version = buf.read().strip()
+
+datafiles = []
+for root, dirs, files in os.walk(SHARE):
+    datafiles.append((os.path.join(PREFIX, root),
+                      [os.path.join(root, f) for f in files]))
+
 
 setup(name='torbrowser-launcher',
       version=version,
@@ -52,13 +62,9 @@ Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier to 
 
 When you first launch Tor Browser Launcher, it will download TBB from https://www.torproject.org/ and extract it in ~/.torproject, and then execute it. When you run it after that it will just execute TBB.
 
-Tor Browser Launcher will get updated each time a new version of TBB is released. When you open Tor Browser after an update, it will download the newer version of TBB for you and extract it over your old TBB directory in ~/.torproject, so you will maintain your TBB bookmarks. 
+Tor Browser Launcher will get updated each time a new version of TBB is released. When you open Tor Browser after an update, it will download the newer version of TBB for you and extract it over your old TBB directory in ~/.torproject, so you will maintain your TBB bookmarks.
 """,
 
       scripts=['torbrowser-launcher'],
-      data_files=[('/usr/share/applications', ['torbrowser.desktop', 'torbrowser-settings.desktop']),
-                  ('/usr/share/pixmaps', ['img/torbrowser32.xpm', 'img/torbrowser80.xpm']),
-                  ('/usr/share/torbrowser-launcher', ['keys/erinn.asc', 'keys/sebastian.asc', 'keys/alexandre.asc', 'keys/mike.asc', 'keys/mike-2013-09.asc', 'torproject.pem', 'mirrors.txt', 'modem.ogg', 'version']),
-                  ('/usr/share/torbrowser-launcher/locale/en', ['locale/en/messages.pot']),
-                  ('/etc/apparmor.d/', ['apparmor/torbrowser.Browser.firefox', 'apparmor/torbrowser.start-tor-browser', 'apparmor/torbrowser.Tor.tor', 'apparmor/usr.bin.torbrowser-launcher'])]
+      data_files=datafiles
       )
