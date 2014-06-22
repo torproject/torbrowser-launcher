@@ -27,11 +27,13 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+import os
+SHARE = os.getenv('TBL_SHARE', '/usr/share')
 import sys
 import platform
 
 import gettext
-gettext.install('torbrowser-launcher', '/usr/share/torbrowser-launcher/locale')
+gettext.install('torbrowser-launcher', os.path.join(SHARE, 'torbrowser-launcher/locale'))
 
 from twisted.internet import gtk2reactor
 gtk2reactor.install()
@@ -41,7 +43,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-import os, subprocess, locale, time, pickle, json, tarfile, psutil, hashlib, lzma
+import subprocess, locale, time, pickle, json, tarfile, psutil, hashlib, lzma
 
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
@@ -167,15 +169,15 @@ class TBLCommon:
         else:
             self.paths = {
                 'tbl_bin': '/usr/bin/torbrowser-launcher',
-                'icon_file': '/usr/share/pixmaps/torbrowser80.xpm',
-                'torproject_pem': '/usr/share/torbrowser-launcher/torproject.pem',
-                'erinn_key': '/usr/share/torbrowser-launcher/erinn.asc',
-                'sebastian_key': '/usr/share/torbrowser-launcher/sebastian.asc',
-                'alexandre_key': '/usr/share/torbrowser-launcher/alexandre.asc',
-                'mike_key': '/usr/share/torbrowser-launcher/mike-2013-09.asc',
-                'mirrors_txt': ['/usr/share/torbrowser-launcher/mirrors.txt',
+                'icon_file': os.path.join(SHARE, 'pixmaps/torbrowser80.xpm'),
+                'torproject_pem': os.path.join(SHARE, 'torbrowser-launcher/torproject.pem'),
+                'erinn_key': os.path.join(SHARE, 'torbrowser-launcher/erinn.asc'),
+                'sebastian_key': os.path.join(SHARE, 'torbrowser-launcher/sebastian.asc'),
+                'alexandre_key': os.path.join(SHARE, 'torbrowser-launcher/alexandre.asc'),
+                'mike_key': os.path.join(SHARE, 'torbrowser-launcher/mike-2013-09.asc'),
+                'mirrors_txt': [os.path.join(SHARE, 'torbrowser-launcher/mirrors.txt'),
                                 '/usr/local/share/torbrowser-launcher/mirrors.txt'],
-                'modem_sound': '/usr/share/torbrowser-launcher/modem.ogg',
+                'modem_sound': os.path.join(SHARE, 'torbrowser-launcher/modem.ogg'),
                 'data_dir': tbb_data,
                 'download_dir': tbb_data+'/download',
                 'gnupg_homedir': tbb_data+'/gnupg_homedir',
@@ -1109,7 +1111,8 @@ class TBLLauncher:
             reactor.stop()
 
 if __name__ == "__main__":
-    tor_browser_launcher_version = open('/usr/share/torbrowser-launcher/version').read().strip()
+    with open(os.path.join(SHARE, 'torbrowser-launcher/version')) as buf:
+        tor_browser_launcher_version = buf.read().strip()
 
     print _('Tor Browser Launcher')
     print _('By Micah Lee, licensed under GPLv3')
