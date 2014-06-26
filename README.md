@@ -20,15 +20,19 @@ Then install dependencies, build a package, and install:
 
 ### Debian, Ubuntu, Linux Mint, etc.
 
-    sudo apt-get install build-essential python-all python-stdeb python-gtk2 python-psutil python-twisted python-pygame python-lzma wmctrl gnupg fakeroot
+    sudo apt-get install build-essential python-all python-stdeb python-gtk2 python-psutil python-twisted python-lzma wmctrl gnupg fakeroot
     ./build_deb.sh
     sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 
+Optionally you can install python-pygame if you want to play a modem sound while Tor Browser is launching.
+
 ### Red Hat, Fedora, CentOS, etc.
 
-    sudo yum install python-psutil python-twisted pygame wmctrl gnupg fakeroot
+    sudo yum install python-psutil python-twisted wmctrl gnupg fakeroot
     ./build_rpm.sh
     sudo yum install dist/torbrowser-launcher-*.rpm
+
+Optionally you can install pygame if you want to play a modem sound while Tor Browser is launching.
 
 ## Installing in Ubuntu
 
