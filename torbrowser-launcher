@@ -249,10 +249,14 @@ class TBLCommon:
             },
             'update_over_tor': True,
             'check_for_updates': False,
+            'use_system_tor': False,
             'modem_sound': False,
             'last_update_check_timestamp': 0,
             'mirror': self.default_mirror
         }
+
+        if os.getenv("TOR_SKIP_LAUNCH") == "1":
+            default_settings['use_system_tor'] = True
 
         if os.path.isfile(self.paths['settings_file']):
             settings = pickle.load(open(self.paths['settings_file']))
@@ -391,18 +395,42 @@ class TBLSettings:
         self.preferred_box.pack_start(self.preferred, True, True, 0)
         self.preferred.show()
 
+        # use system tor
+        self.system_tor_checkbox = gtk.CheckButton(_("Use the system's Tor installation"))
+        self.settings_box.pack_start(self.system_tor_checkbox, True, True, 0)
+        if self.common.settings['use_system_tor']:
+            self.system_tor_checkbox.set_active(True)
+        else:
+            self.system_tor_checkbox.set_active(False)
+        self.system_tor_checkbox.show()
+
+        try:
+            import txsocksx
+            self.txsocks_found = True
+        except ImportError:
+            self.txsocks_found = False
+
         # download over tor
-        # this feature isn't implemented yet (#8, #41), so commenting out the GUI for it
-        """
         self.tor_update_checkbox = gtk.CheckButton(_("Download updates over Tor (recommended)"))
+        if self.txsocks_found:
+            self.tor_update_checkbox.set_tooltip_text(_("This option is only available when using a system wide Tor installation."))
+        else:
+            self.tor_update_checkbox.set_tooltip_text(_("This option requires the python-txsocksx package."))
+
         self.settings_box.pack_start(self.tor_update_checkbox, True, True, 0)
-        if self.common.settings['update_over_tor']:
+        if self.common.settings['update_over_tor'] and self.txsocks_found:
             self.tor_update_checkbox.set_active(True)
         else:
             self.tor_update_checkbox.set_active(False)
-        self.tor_update_checkbox.show()
-        """
+        
+        if self.txsocks_found == False:
+            self.tor_update_checkbox.set_sensitive(False)
 
+        self.tor_update_checkbox.show()
+
+        # Set callback for system tor and update over tor
+        self.system_tor_checkbox.connect('clicked', self.on_system_tor_clicked)
+        
         # check for updates
         self.update_checkbox = gtk.CheckButton(_("Check for updates next launch"))
         self.settings_box.pack_start(self.update_checkbox, True, True, 0)
@@ -504,6 +532,16 @@ class TBLSettings:
         # start gtk
         gtk.main()
 
+    # UI Callback for update over tor/use system tor
+    def on_system_tor_clicked(self, event):
+        if self.txsocks_found:
+            value = self.system_tor_checkbox.get_active()
+        else:
+            value = False
+
+        self.tor_update_checkbox.set_active(value)
+        self.tor_update_checkbox.set_sensitive(value)
+
     # save and launch
     def save_launch(self, widget, data=None):
         self.save()
@@ -527,7 +565,8 @@ class TBLSettings:
             self.common.settings['preferred'] = preferred
 
         # checkbox options
-        #self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
+        self.common.settings['use_system_tor'] = self.system_tor_checkbox.get_active()
+        self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
         self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
         self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
 
@@ -554,6 +593,22 @@ class TBLLauncher:
         self.set_gui(None, '', [])
         self.launch_gui = True
         self.common.build_paths(self.common.settings['latest_version'][self.common.settings['preferred']])
+
+        if self.common.settings['use_system_tor']:
+            os.putenv("TOR_SKIP_LAUNCH", "1")
+            os.putenv("TOR_SOCKS_HOST", "127.0.0.1")
+            os.putenv("TOR_SOCKS_PORT", "9050")
+
+        try:
+            import txsocksx
+
+            self.common.settings['update_over_tor'] = True
+        except ImportError:
+            md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-txsocksx package is missing, downloads will not happen over tor"))
+            md.set_position(gtk.WIN_POS_CENTER)
+            md.run()
+            md.destroy()
+            self.common.settings['update_over_tor'] = False
 
         # is firefox already running?
         if self.common.settings['installed_version']:
@@ -918,11 +973,22 @@ class TBLLauncher:
         self.progressbar.show()
         self.refresh_gtk()
 
-        # default mirror gets certificate pinning, only for requests that use the mirror
-        if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
-            agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']))
+        if self.common.settings['update_over_tor']:
+            from twisted.internet.endpoints import TCP4ClientEndpoint 
+            from txsocksx.http import SOCKS5Agent
+
+            torEndpoint = TCP4ClientEndpoint(reactor, os.getenv("TOR_SOCKS_HOST"), int(os.getenv("TOR_SOCKS_PORT")))
+
+            # default mirror gets certificate pinning, only for requests that use the mirror
+            if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
+                agent = SOCKS5Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']), proxyEndpoint=torEndpoint)
+            else:
+                agent = SOCKS5Agent(reactor, proxyEndpoint=torEndpoint)
         else:
-            agent = Agent(reactor)
+            if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
+                agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']))
+            else:
+                agent = Agent(reactor)
 
         # actually, agent needs to follow redirect
         agent = RedirectAgent(agent)
