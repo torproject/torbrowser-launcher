@@ -430,6 +430,7 @@ class TBLSettings:
 
         # Set callback for system tor and update over tor
         self.system_tor_checkbox.connect('clicked', self.on_system_tor_clicked)
+        self.on_system_tor_clicked(None)
 
         # check for updates
         self.update_checkbox = gtk.CheckButton(_("Check for updates next launch"))
@@ -598,6 +599,11 @@ class TBLLauncher:
             os.putenv("TOR_SKIP_LAUNCH", "1")
             os.putenv("TOR_SOCKS_HOST", "127.0.0.1")
             os.putenv("TOR_SOCKS_PORT", "9050")
+            # need to manually set os.environ because os.putenv doesn't update it
+            # https://docs.python.org/2/library/os.html#os.putenv
+            os.environ["TOR_SKIP_LAUNCH"] = "1"
+            os.environ["TOR_SOCKS_HOST"] = "127.0.0.1"
+            os.environ["TOR_SOCKS_PORT"] = "9050"
 
         try:
             import txsocksx
@@ -973,7 +979,7 @@ class TBLLauncher:
         self.progressbar.show()
         self.refresh_gtk()
 
-        if self.common.settings['update_over_tor']:
+        if self.common.settings['use_system_tor'] and self.common.settings['update_over_tor']:
             from twisted.internet.endpoints import TCP4ClientEndpoint 
             from txsocksx.http import SOCKS5Agent
 
