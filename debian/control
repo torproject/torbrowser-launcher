@@ -1,0 +1,29 @@
+Source: torbrowser-launcher
+Maintainer: Jacob Appelbaum <jacob@appelbaum.net>
+Section: contrib/python
+Priority: optional
+Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7.4.3)
+Standards-Version: 3.9.5
+Homepage: https://micahflee.com/torbrowser-launcher/
+Vcs-Git: git://github.com/micahflee/torbrowser-launcher.git
+Vcs-Browser: https://github.com/micahflee/torbrowser-launcher.git
+
+Package: torbrowser-launcher
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python-gtk2, python-psutil, python-twisted, python-lzma, python-pygame, gnupg, wmctrl, python-txsocksx, python-parsley
+Suggests: apparmor
+Description: helps download, update and run the Tor Browser Bundle
+ Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier
+ to maintain and use for GNU/Linux users. torbrowser-launcher handles
+ downloading the most recent version of TBB for you, in your language and for
+ your architecture. It also adds a "Tor Browser" application launcher to your
+ operating system's menu.
+ .
+ When you first launch Tor Browser Launcher, it will download TBB from
+ https://www.torproject.org/ and extract it in ~/.torbrowser, and then execute
+ it. Each subsequent execution after installation will simply launch the most
+ recent TBB.  Tor Browser will be fetched, verified and unpacked each time a new
+ version of TBB is released. When you open Tor Browser Launcher after an update,
+ it will download the newer version of TBB for you and extract it over your old
+ TBB directory in ~/.torbrowser, so you will maintain your TBB bookmarks.
+ .

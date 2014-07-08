@@ -1,0 +1,21 @@
+torbrowser-launcher (0.1.0-1.1) unstable; urgency=low
+
+  [ Ulrike Uhlig ]
+  * Non-maintainer upload in coordination with maintainer.
+  * New upstream version. (Closes: #751284)
+  * debian/control:
+    - Added homepage, Vcs-Git and Vcs-Browser information.
+    - Move to contrib (Closes: #751366)
+    - Suggests: apparmor (Closes: #751452)
+    - Deleted depencies: apparmor-utils, apparmor-profiles, debhelper
+    - debhelper Build-dependency downgraded from >9.20140228 to >7.4.3
+      (Closes: #751773)
+  * debian/watch added
+
+ --  Ulrike Uhlig <u@451f.org>  Fri, 20 Jun 2014 07:27:25 +0200
+
+torbrowser-launcher (0.0.7-1) unstable; urgency=low
+
+  * Initial release. (Closes: #705177)
+
+ -- Jacob Appelbaum <jacob@appelbaum.net>  Tue, 11 Mar 2014 18:54:47 +0000
