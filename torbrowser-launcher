@@ -249,14 +249,10 @@ class TBLCommon:
             },
             'update_over_tor': True,
             'check_for_updates': False,
-            'use_system_tor': False,
             'modem_sound': False,
             'last_update_check_timestamp': 0,
             'mirror': self.default_mirror
         }
-
-        if os.getenv("TOR_SKIP_LAUNCH") == "1":
-            default_settings['use_system_tor'] = True
 
         if os.path.isfile(self.paths['settings_file']):
             settings = pickle.load(open(self.paths['settings_file']))
@@ -395,22 +391,12 @@ class TBLSettings:
         self.preferred_box.pack_start(self.preferred, True, True, 0)
         self.preferred.show()
 
-        # use system tor
-        self.system_tor_checkbox = gtk.CheckButton(_("Use the system's Tor installation"))
-        self.settings_box.pack_start(self.system_tor_checkbox, True, True, 0)
-        if self.common.settings['use_system_tor']:
-            self.system_tor_checkbox.set_active(True)
-        else:
-            self.system_tor_checkbox.set_active(False)
-        self.system_tor_checkbox.show()
-
+        # download over tor
         try:
             import txsocksx
             self.txsocks_found = True
         except ImportError:
             self.txsocks_found = False
-
-        # download over tor
         self.tor_update_checkbox = gtk.CheckButton(_("Download updates over Tor (recommended)"))
         if self.txsocks_found:
             self.tor_update_checkbox.set_tooltip_text(_("This option is only available when using a system wide Tor installation."))
@@ -427,10 +413,6 @@ class TBLSettings:
             self.tor_update_checkbox.set_sensitive(False)
 
         self.tor_update_checkbox.show()
-
-        # Set callback for system tor and update over tor
-        self.system_tor_checkbox.connect('clicked', self.on_system_tor_clicked)
-        self.on_system_tor_clicked(None)
 
         # check for updates
         self.update_checkbox = gtk.CheckButton(_("Check for updates next launch"))
@@ -566,7 +548,6 @@ class TBLSettings:
             self.common.settings['preferred'] = preferred
 
         # checkbox options
-        self.common.settings['use_system_tor'] = self.system_tor_checkbox.get_active()
         self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
         self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
         self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
@@ -595,26 +576,16 @@ class TBLLauncher:
         self.launch_gui = True
         self.common.build_paths(self.common.settings['latest_version'][self.common.settings['preferred']])
 
-        if self.common.settings['use_system_tor']:
-            os.putenv("TOR_SKIP_LAUNCH", "1")
-            os.putenv("TOR_SOCKS_HOST", "127.0.0.1")
-            os.putenv("TOR_SOCKS_PORT", "9050")
-            # need to manually set os.environ because os.putenv doesn't update it
-            # https://docs.python.org/2/library/os.html#os.putenv
-            os.environ["TOR_SKIP_LAUNCH"] = "1"
-            os.environ["TOR_SOCKS_HOST"] = "127.0.0.1"
-            os.environ["TOR_SOCKS_PORT"] = "9050"
-
-        try:
-            import txsocksx
-
-            self.common.settings['update_over_tor'] = True
-        except ImportError:
-            md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-txsocksx package is missing, downloads will not happen over tor"))
-            md.set_position(gtk.WIN_POS_CENTER)
-            md.run()
-            md.destroy()
-            self.common.settings['update_over_tor'] = False
+        if self.common.settings['update_over_tor']:
+            try:
+                import txsocksx
+            except ImportError:
+                md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-txsocksx package is missing, downloads will not happen over tor"))
+                md.set_position(gtk.WIN_POS_CENTER)
+                md.run()
+                md.destroy()
+                self.common.settings['update_over_tor'] = False
+                self.common.save_settings()
 
         # is firefox already running?
         if self.common.settings['installed_version']:
@@ -979,11 +950,12 @@ class TBLLauncher:
         self.progressbar.show()
         self.refresh_gtk()
 
-        if self.common.settings['use_system_tor'] and self.common.settings['update_over_tor']:
+        if self.common.settings['update_over_tor']:
+            print _('Updating over Tor')
             from twisted.internet.endpoints import TCP4ClientEndpoint 
             from txsocksx.http import SOCKS5Agent
 
-            torEndpoint = TCP4ClientEndpoint(reactor, os.getenv("TOR_SOCKS_HOST"), int(os.getenv("TOR_SOCKS_PORT")))
+            torEndpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 9050)
 
             # default mirror gets certificate pinning, only for requests that use the mirror
             if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
