@@ -422,7 +422,7 @@ class TBLSettings:
             self.tor_update_checkbox.set_active(True)
         else:
             self.tor_update_checkbox.set_active(False)
-        
+
         if self.txsocks_found == False:
             self.tor_update_checkbox.set_sensitive(False)
 
@@ -430,7 +430,7 @@ class TBLSettings:
 
         # Set callback for system tor and update over tor
         self.system_tor_checkbox.connect('clicked', self.on_system_tor_clicked)
-        
+
         # check for updates
         self.update_checkbox = gtk.CheckButton(_("Check for updates next launch"))
         self.settings_box.pack_start(self.update_checkbox, True, True, 0)
