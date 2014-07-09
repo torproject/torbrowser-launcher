@@ -34,6 +34,11 @@ Optionally you can install python-pygame if you want to play a modem sound while
 
 Optionally you can install pygame if you want to play a modem sound while Tor Browser is launching.
 
+### Run without installing
+
+Install the dependencies: sadly, not all of them are available in virtualenv, so you will need to install (some of) them system-wide.
+Then, you can run: `TBL_SHARE=share ./torbrowser-launcher`
+
 ## Installing in Ubuntu
 
 I've created a PPA where I'm maintaining torbrowser-launcher binaries. You can install in an Ubuntu-based distribution like this:

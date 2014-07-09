@@ -1,0 +1,2 @@
+Parsley==1.2
+txsocksx==1.13.0.1
