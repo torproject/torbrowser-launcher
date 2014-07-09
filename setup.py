@@ -47,6 +47,11 @@ for root, dirs, files in os.walk(SHARE):
     datafiles.append((os.path.join(PREFIX, root),
                       [os.path.join(root, f) for f in files]))
 
+datafiles += [('/etc/apparmor.d/', [
+    'apparmor/torbrowser.Browser.firefox',
+    'apparmor/torbrowser.start-tor-browser',
+    'apparmor/torbrowser.Tor.tor',
+    'apparmor/usr.bin.torbrowser-launcher'])]
 
 setup(name='torbrowser-launcher',
       version=version,
