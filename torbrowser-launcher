@@ -368,31 +368,6 @@ class TBLSettings:
         self.hbox.pack_start(self.labels_box, True, True, 0)
         self.labels_box.show()
 
-        # preferred version
-        self.preferred_box = gtk.HBox(False, 10)
-        self.settings_box.pack_start(self.preferred_box, True, True, 0)
-        self.preferred_box.show()
-
-        self.preferred_label = gtk.Label(_('I prefer'))
-        self.preferred_label.set_line_wrap(True)
-        self.preferred_box.pack_start(self.preferred_label, True, True, 0)
-        self.preferred_label.show()
-
-        self.preferred_options = []
-        for i in self.common.available_versions:
-            self.preferred_options.append(self.common.available_versions[i])
-        self.preferred_options.sort()
-
-        self.preferred = gtk.combo_box_new_text()
-        for option in self.preferred_options:
-            self.preferred.append_text(option)
-        if self.common.settings['preferred'] in self.common.available_versions:
-            self.preferred.set_active(self.preferred_options.index(self.common.available_versions[self.common.settings['preferred']]))
-        else:
-            self.preferred.set_active(0)
-        self.preferred_box.pack_start(self.preferred, True, True, 0)
-        self.preferred.show()
-
         # download over tor
         try:
             import txsocksx
@@ -474,7 +449,7 @@ class TBLSettings:
         if self.common.settings['mirror'] in self.common.mirrors:
             self.mirrors.set_active(self.common.mirrors.index(self.common.settings['mirror']))
         else:
-            self.preferred.set_active(0)
+            self.mirrors.set_active(0)
         self.mirrors_box.pack_start(self.mirrors, True, True, 0)
         self.mirrors.show()
 
@@ -540,14 +515,7 @@ class TBLSettings:
 
     # save settings
     def save(self):
-        # figure out the selected preferred option
-        preferred = None
-        selected = self.preferred_options[self.preferred.get_active()]
-        for i in self.common.available_versions:
-            if self.common.available_versions[i] == selected:
-                preferred = i
-        if preferred:
-            self.common.settings['preferred'] = preferred
+        self.common.settings['preferred'] = 'stable'
 
         # checkbox options
         self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
