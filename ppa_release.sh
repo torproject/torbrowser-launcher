@@ -4,7 +4,7 @@
 # If you want to use it, you'll need your own ~/.dput.cf and ssh key.
 # More info: https://help.launchpad.net/Packaging/PPA/Uploading
 
-VERSION=`cat version`
+VERSION=`cat share/torbrowser-launcher/version`
 
 rm -rf deb_dist
 python setup.py --command-packages=stdeb.command sdist_dsc
