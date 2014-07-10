@@ -88,19 +88,14 @@ class TBLCommon:
         self.tbl_version = tbl_version
 
         # initialize the app
-        self.available_versions = {
-            'stable': _('Tor Browser Bundle - stable'),
-            'alpha': _('Tor Browser Bundle - alpha')
-        }
         self.default_mirror = 'https://www.torproject.org/dist/'
-
         self.discover_arch_lang()
         self.build_paths()
         self.mkdir(self.paths['data_dir'])
         self.load_mirrors()
         self.load_settings()
         self.mkdir(self.paths['download_dir'])
-        self.mkdir(self.paths['tbb'][self.settings['preferred']]['dir'])
+        self.mkdir(self.paths['tbb']['dir'])
         self.init_gnupg()
 
         # allow buttons to have icons
@@ -149,7 +144,6 @@ class TBLCommon:
 
         if tbb_version:
             # tarball filename
-            dirname = tbb_version.replace('-alpha-', 'a').replace('-beta-', 'b').replace('-rc-', 'rc')
             if self.architecture == 'x86_64':
                 arch = 'linux64'
             else:
@@ -157,15 +151,15 @@ class TBLCommon:
             tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
 
             # tarball
-            self.paths['tarball_url'] = '{0}torbrowser/'+dirname+'/'+tarball_filename
+            self.paths['tarball_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename
             self.paths['tarball_file'] = tbb_data+'/download/'+tarball_filename
             self.paths['tarball_filename'] = tarball_filename
 
             # sig
             self.paths['sha256_file'] = tbb_data+'/download/sha256sums.txt'
             self.paths['sha256_sig_file'] = tbb_data+'/download/sha256sums.txt.asc'
-            self.paths['sha256_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt'
-            self.paths['sha256_sig_url'] = '{0}torbrowser/'+dirname+'/sha256sums.txt-mikeperry.asc'
+            self.paths['sha256_url'] = '{0}torbrowser/'+tbb_version+'/sha256sums.txt'
+            self.paths['sha256_sig_url'] = '{0}torbrowser/'+tbb_version+'/sha256sums.txt-mikeperry.asc'
         else:
             self.paths = {
                 'tbl_bin': '/usr/bin/torbrowser-launcher',
@@ -185,16 +179,9 @@ class TBLCommon:
                 'update_check_url': 'https://check.torproject.org/RecommendedTBBVersions',
                 'update_check_file': tbb_data+'/download/RecommendedTBBVersions',
                 'tbb': {
-                    'stable': {
-                        'dir': tbb_data+'/tbb/stable/'+self.architecture,
-                        'start': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                        'versions': tbb_data+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
-                    },
-                    'alpha': {
-                        'dir': tbb_data+'/tbb/alpha/'+self.architecture,
-                        'start': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                        'versions': tbb_data+'/tbb/alpha/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
-                    }
+                    'dir': tbb_data+'/tbb/'+self.architecture,
+                    'start': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
+                    'versions': tbb_data+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
                 }
             }
 
@@ -240,15 +227,8 @@ class TBLCommon:
     def load_settings(self):
         default_settings = {
             'tbl_version': self.tbl_version,
-            'preferred': 'stable',
-            'installed_version': {
-                'stable': False,
-                'alpha': False
-            },
-            'latest_version': {
-                'stable': '0',
-                'alpha': '0'
-            },
+            'installed_version': False,
+            'latest_version': '0',
             'update_over_tor': True,
             'check_for_updates': False,
             'modem_sound': False,
@@ -261,14 +241,18 @@ class TBLCommon:
             resave = False
 
             # settings migrations
-            if settings['tbl_version'] == '0.0.1':
-                print '0.0.1 migration'
-                self.settings = default_settings
-                self.settings['installed_version']['alpha'] = settings['installed_version']
+            if settings['tbl_version'] <= '0.1.0':
+                print '0.1.0 migration'
+                settings['installed_version'] = settings['installed_version']['stable']
+                settings['latest_version'] = settings['latest_version']['stable']
                 resave = True
 
-                # move tbb alpha
-                self.mkdir(self.paths['tbb']['alpha']['dir'])
+                # make new tbb folder
+                self.mkdir(self.paths['tbb']['dir'])
+                old_tbb_dir = self.paths['data_dir']+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language
+                new_tbb_dir = self.paths['tbb']['dir']+'/tor-browser_'+self.language
+                if os.path.isdir(old_tbb_dir):
+                    os.rename(old_tbb_dir, new_tbb_dir)
 
             # make sure settings file is up-to-date
             for setting in default_settings:
@@ -417,8 +401,8 @@ class TBLSettings:
         self.modem_checkbox.show()
 
         # labels
-        if(self.common.settings['installed_version'][self.common.settings['preferred']]):
-            self.label1 = gtk.Label(_('Installed version:\n{0}').format(self.common.settings['installed_version'][self.common.settings['preferred']]))
+        if(self.common.settings['installed_version']):
+            self.label1 = gtk.Label(_('Installed version:\n{0}').format(self.common.settings['installed_version']))
         else:
             self.label1 = gtk.Label(_('Not installed'))
         self.label1.set_line_wrap(True)
@@ -515,8 +499,6 @@ class TBLSettings:
 
     # save settings
     def save(self):
-        self.common.settings['preferred'] = 'stable'
-
         # checkbox options
         self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
         self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
@@ -544,7 +526,8 @@ class TBLLauncher:
         # init launcher
         self.set_gui(None, '', [])
         self.launch_gui = True
-        self.common.build_paths(self.common.settings['latest_version'][self.common.settings['preferred']])
+        print "LATEST VERSION", self.common.settings['latest_version']
+        self.common.build_paths(self.common.settings['latest_version'])
 
         if self.common.settings['update_over_tor']:
             try:
@@ -605,18 +588,18 @@ class TBLLauncher:
     # download or run TBB
     def start_launcher(self):
         # is TBB already installed?
-        latest_version = self.common.settings['latest_version'][self.common.settings['preferred']]
-        installed_version = self.common.settings['installed_version'][self.common.settings['preferred']]
+        latest_version = self.common.settings['latest_version']
+        installed_version = self.common.settings['installed_version']
 
         # verify installed version for newer versions of TBB (#58)
         if installed_version >= '3.0':
-            versions_filename = self.common.paths['tbb'][self.common.settings['preferred']]['versions']
+            versions_filename = self.common.paths['tbb']['versions']
             if os.path.exists(versions_filename):
                 for line in open(versions_filename):
                     if 'TORBROWSER_VERSION' in line:
                         installed_version = line.lstrip('TORBROWSER_VERSION=').strip()
 
-        start = self.common.paths['tbb'][self.common.settings['preferred']]['start']
+        start = self.common.paths['tbb']['start']
         if os.path.isfile(start) and os.access(start, os.X_OK):
             if installed_version == latest_version:
                 print _('Latest version of TBB is installed, launching')
@@ -808,7 +791,7 @@ class TBLLauncher:
             self.extract()
 
         elif task == 'run':
-            print _('Running'), self.common.paths['tbb'][self.common.settings['preferred']]['start']
+            print _('Running'), self.common.paths['tbb']['start']
             self.run()
 
         elif task == 'start_over':
@@ -825,19 +808,10 @@ class TBLLauncher:
                 self.all_done = done_cb
 
                 if response.code != 200:
-                    try_stable = False
-
-                    if response.code == 404:
-                        if common.settings['preferred'] == 'alpha' and common.language != 'en-US':
-                            try_stable = True
-
-                    if try_stable:
-                        raise TryStableException(_("It looks like the alpha version of Tor Browser Bundle isn't available for your language. Would you like to try the stable version instead?"))
+                    if common.settings['mirror'] != common.default_mirror:
+                        raise TryDefaultMirrorException(_("Download Error: {0} {1}\n\nYou are currently using a non-default mirror:\n{2}\n\nWould you like to switch back to the default?").format(response.code, response.phrase, common.settings['mirror']))
                     else:
-                        if common.settings['mirror'] != common.default_mirror:
-                            raise TryDefaultMirrorException(_("Download Error: {0} {1}\n\nYou are currently using a non-default mirror:\n{2}\n\nWould you like to switch back to the default?").format(response.code, response.phrase, common.settings['mirror']))
-                        else:
-                            raise DownloadErrorException(_("Download Error: {0} {1}").format(response.code, response.phrase))
+                        raise DownloadErrorException(_("Download Error: {0} {1}").format(response.code, response.phrase))
 
             def dataReceived(self, bytes):
                 self.file.write(bytes)
@@ -952,15 +926,8 @@ class TBLLauncher:
         if not reactor.running:
             reactor.run()
 
-    def try_stable(self, widget, data=None):
-        # change preferred to stable and relaunch TBL
-        self.common.settings['preferred'] = 'stable'
-        self.common.save_settings()
-        p = subprocess.Popen([self.common.paths['tbl_bin']])
-        self.destroy(False)
-
     def try_default_mirror(self, widget, data=None):
-        # change preferred to stable and relaunch TBL
+        # change mirror to default and relaunch TBL
         self.common.settings['mirror'] = self.common.default_mirror
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
@@ -977,34 +944,23 @@ class TBLLauncher:
         # load the update check file
         try:
             versions = json.load(open(self.common.paths['update_check_file']))
-            latest_stable = None
-            latest_alpha = None
+            latest = None
 
             # filter linux versions
-            valid_alphas = []
-            valid_stables = []
+            valid = []
             for version in versions:
                 if '-Linux' in version:
-                    if 'alpha' in version or 'beta' in version or '-rc' in version:
-                        valid_alphas.append(str(version))
-                    else:
-                        valid_stables.append(str(version))
-            valid_alphas.sort()
-            if len(valid_alphas):
-                latest_alpha = valid_alphas.pop()
-            valid_stables.sort()
-            if len(valid_stables):
-                latest_stable = valid_stables.pop()
+                    valid.append(str(version))
+            valid.sort()
+            if len(valid):
+                latest = valid.pop()
 
-            if latest_stable or latest_alpha:
-                if latest_stable:
-                    self.common.settings['latest_version']['stable'] = latest_stable[:-len('-Linux')]
-                if latest_alpha:
-                    self.common.settings['latest_version']['alpha'] = latest_alpha[:-len('-Linux')]
+            if latest:
+                self.common.settings['latest_version'] = latest[:-len('-Linux')]
                 self.common.settings['last_update_check_timestamp'] = int(time.time())
                 self.common.settings['check_for_updates'] = False
                 self.common.save_settings()
-                self.common.build_paths(self.common.settings['latest_version'][self.common.settings['preferred']])
+                self.common.build_paths(self.common.settings['latest_version'])
                 self.start_launcher()
 
             else:
@@ -1060,13 +1016,13 @@ class TBLLauncher:
                 # if tarball is .tar.xz
                 xz = lzma.LZMAFile(self.common.paths['tarball_file'])
                 tf = tarfile.open(fileobj=xz)
-                tf.extractall(self.common.paths['tbb'][self.common.settings['preferred']]['dir'])
+                tf.extractall(self.common.paths['tbb']['dir'])
                 extracted = True
             else:
                 # if tarball is .tar.gz
                 if tarfile.is_tarfile(self.common.paths['tarball_file']):
                     tf = tarfile.open(self.common.paths['tarball_file'])
-                    tf.extractall(self.common.paths['tbb'][self.common.settings['preferred']]['dir'])
+                    tf.extractall(self.common.paths['tbb']['dir'])
                     extracted = True
         except:
             pass
@@ -1084,7 +1040,7 @@ class TBLLauncher:
         self.run_task()
 
     def run(self, run_next_task=True):
-        subprocess.Popen([self.common.paths['tbb'][self.common.settings['preferred']]['start']])
+        subprocess.Popen([self.common.paths['tbb']['start']])
 
         # play modem sound?
         if self.common.settings['modem_sound']:
