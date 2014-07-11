@@ -1,5 +1,13 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.1
+
+* Added TBL_SHARE support, to more easily develop without installing systemwide
+* Modem sound and python-pygame dependency is now optional
+* Support for updating TBB over Tor using a system Tor
+* Removed support for stable/alpha preference, forces stable now
+* Added French translations
+
 ## 0.1.0
 
 * Added Polish translations
