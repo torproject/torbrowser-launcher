@@ -11,5 +11,5 @@ python setup.py --command-packages=stdeb.command sdist_dsc
 cd deb_dist/torbrowser-launcher-$VERSION
 dpkg-buildpackage -S
 cd ..
-dput ppa:micahflee/ppa torbrowser-launcher_$VERSION-1_source.change
+dput ppa:micahflee/ppa torbrowser-launcher_$VERSION-1_source.changes
 cd ..
