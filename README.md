@@ -9,6 +9,8 @@ Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier to 
 
 If you use Ubuntu, you can install it now from my PPA (see "Installing in Ubuntu" below). [Soon](https://github.com/micahflee/torbrowser-launcher/issues/31) it will be in Debian. To install it in any other distribution, follow the "Quick Start" instructions.
 
+You might want to check out the [security design doc](/security_design.md).
+
 ## Quick Start
 
 First, clone the repository:
