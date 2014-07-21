@@ -1,15 +1,15 @@
 Source: torbrowser-launcher
 Maintainer: Jacob Appelbaum <jacob@appelbaum.net>
+Uploaders: Ulrike Uhlig <u@451f.org>
 Section: contrib/python
 Priority: optional
-Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7.4.3)
+Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7.4.3), dh-apparmor
 Standards-Version: 3.9.5
 Homepage: https://micahflee.com/torbrowser-launcher/
-Vcs-Git: git://github.com/micahflee/torbrowser-launcher.git
-Vcs-Browser: https://github.com/micahflee/torbrowser-launcher.git
+Vcs-Browser: https://github.com/micahflee/torbrowser-launcher/tree/debian
 
 Package: torbrowser-launcher
-Architecture: all
+Architecture: i386 amd64
 Depends: ${misc:Depends}, ${python:Depends}, python-gtk2, python-psutil, python-twisted, python-lzma, python-pygame, gnupg, wmctrl, python-txsocksx, python-parsley
 Suggests: apparmor
 Description: helps download, update and run the Tor Browser Bundle

@@ -1,3 +1,27 @@
+torbrowser-launcher (0.1.1-1.1) unstable; urgency=low
+
+  [ Ulrike Uhlig ]
+    * Non-maintainer upload in coordination with maintainer.
+    * New upstream version.
+    * debian/control:
+        * Adding myself to uploaders.
+        * Adding Vcs-Browser now pointing to upstream debian/ branch.
+        * restricting Architecture to i386 and amd64 (Closes: #752240)
+        * Build dependency dh-apparmor added.
+    * debian/rules:
+        * use dh_apparmor (Closes: #751449)
+
+ --  Ulrike Uhlig <u@451f.org>  Mon, 21 Jul 2014 23:06:57 +0200
+
+torbrowser-launcher (0.1.0-1.2) unstable; urgency=low
+
+  [ Ulrike Uhlig ]
+    * Non-maintainer upload in coordination with maintainer.
+    * debian/control:
+      - Deleted problematic Vcs-Git and Vcs-Browser information.
+
+ --  Ulrike Uhlig <u@451f.org>  Sun, 06 Jul 2014 16:00:51 +0200
+
 torbrowser-launcher (0.1.0-1.1) unstable; urgency=low
 
   [ Ulrike Uhlig ]

@@ -6,4 +6,9 @@
 %:
 	dh $@ --with python2 --buildsystem=python_distutils
 
-
+override_dh_install:
+	cp apparmor/usr.bin.torbrowser-launcher debian/torbrowser-launcher/etc/apparmor.d/usr.bin.torbrowser-launcher
+	cp apparmor/torbrowser.Tor.tor debian/torbrowser-launcher/etc/apparmor.d/torbrowser.Tor.tor
+	cp apparmor/torbrowser.start-tor-browser debian/torbrowser-launcher/etc/apparmor.d/torbrowser.start-tor-browser
+	cp apparmor/torbrowser.Browser.firefox debian/torbrowser-launcher/etc/apparmor.d/torbrowser.Browser.firefox
+	dh_apparmor --profile-name=usr.bin.torbrowser-launcher -ptorbrowser-launcher
