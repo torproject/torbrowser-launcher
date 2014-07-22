@@ -216,7 +216,9 @@ class TBLCommon:
     def load_mirrors(self):
         self.mirrors = []
         for srcfile in self.paths['mirrors_txt']:
-            if not os.path.exists(srcfile):
+            if os.path.exists(srcfile):
+                print "Successfully loaded mirrors from %s" % srcfile
+            elif not os.path.exists(srcfile):
                 print "Warning: can't load mirrors from %s" % srcfile
                 continue
             for mirror in open(srcfile, 'r').readlines():
@@ -896,7 +898,7 @@ class TBLLauncher:
 
         if self.common.settings['update_over_tor']:
             print _('Updating over Tor')
-            from twisted.internet.endpoints import TCP4ClientEndpoint 
+            from twisted.internet.endpoints import TCP4ClientEndpoint
             from txsocksx.http import SOCKS5Agent
 
             torEndpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 9050)
