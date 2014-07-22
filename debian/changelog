@@ -1,13 +1,14 @@
 torbrowser-launcher (0.1.1-1) unstable; urgency=low
 
-    * Taking over the package from Jacob Appelbaum. Thanks for your work so
-      far.
+    * Adopt the package under the umbrella of the Debian Anonymity Tools Team.
     * New upstream version.
     * debian/control:
-        * Moving Jacob Appelbaum to uploaders.
+        * Add Jacob Appelbaum, Holger Levsen and myself to Uploaders.
         * Adding Vcs-Browser now pointing to upstream debian/ branch.
         * restricting Architecture to i386 and amd64 (Closes: #752240)
         * Build dependency dh-apparmor added.
+        * python-pygame dependency is now optional
+        * added versions to dependencies python-parsley and python-txsocksx
     * debian/rules:
         * use dh_apparmor (Closes: #751449)
 
