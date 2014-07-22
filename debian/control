@@ -1,6 +1,6 @@
 Source: torbrowser-launcher
-Maintainer: Jacob Appelbaum <jacob@appelbaum.net>
-Uploaders: Ulrike Uhlig <u@451f.org>
+Maintainer: Ulrike Uhlig <u@451f.org>
+Uploaders: Jacob Appelbaum <jacob@appelbaum.net>
 Section: contrib/python
 Priority: optional
 Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7.4.3), dh-apparmor
