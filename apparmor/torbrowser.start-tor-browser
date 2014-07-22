@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-/home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser {
+@{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser {
   #include <abstractions/base>
   #include <abstractions/bash>
 

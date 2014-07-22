@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-/home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox {
+@{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox {
   #include <abstractions/base>
   #include <abstractions/user-tmp>
 
