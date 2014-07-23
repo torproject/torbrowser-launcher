@@ -15,7 +15,7 @@
   
   capability sys_ptrace,
 
-  #/bin/{dash,grep,ps} rix,
+  /bin/{dash,grep,ps} rix,
   /etc/magic r,
   @{HOME}/.torbrowser/ rw,
   @{HOME}/.torbrowser/** mrwk,
@@ -28,7 +28,7 @@
   @{PROC}/tty/drivers r,
   @{PROC}/uptime r,
   /usr/bin/ r,
-  /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id,dash,grep,ps} rix,
+  /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id} rix,
   /usr/bin/torbrowser-launcher rux,
   /usr/share/file/magic.mgc r,
   /usr/share/file/magic/ r,
