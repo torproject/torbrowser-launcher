@@ -1,6 +1,7 @@
 #include <tunables/global>
 
 /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox {
+  #include <abstractions/audio>
   #include <abstractions/gnome>
 
   network tcp,
@@ -47,4 +48,9 @@
   /usr/share/glib-2.0/schemas/gschemas.compiled r,
   owner /{,var/}run/user/*/dconf/user rw,
 
+  # Should use abstractions/gstreamer instead once merged upstream
+  /etc/udev/udev.conf r,
+  /run/udev/data/+pci:* r,
+  /sys/devices/pci[0-9]*/**/uevent r,
+  owner /{dev,run}/shm/shmfd-* rw,
 }
