@@ -1,10 +1,7 @@
 #include <tunables/global>
 
 /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox {
-  #include <abstractions/base>
-  #include <abstractions/fonts>
-  #include <abstractions/user-tmp>
-  #include <abstractions/X>
+  #include <abstractions/gnome>
 
   network tcp,
 
@@ -18,15 +15,9 @@
   deny @{HOME}/.local/share/recently-used.xbel* rw,
 
   /bin/dash rix,
-  /etc/gnome/defaults.list r,
-  /etc/gnome-vfs-2.0/modules/ r,
-  /etc/gnome-vfs-2.0/modules/default-modules.conf r,
-  /etc/gnome-vfs-2.0/modules/extra-modules.conf r,
   /etc/mailcap r,
   /etc/mime.types r,
   /etc/passwd r,
-  /lib{,32,64}/*.so mr,
-  /lib{,32,64}/*.so.* mr,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/ w,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/** w,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.mozilla/ w,
@@ -45,26 +36,9 @@
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor Px,
   /sys/devices/system/cpu/present r,
   /tmp/.X[0-9]*-lock r,
-  /usr/lib{,32,64}/** mr,
   /usr/share/ r,
-  /usr/share/applications/*.desktop r,
-  /usr/share/applications/mimeinfo.cache r,
-  /usr/share/gvfs/remote-volume-monitors/ r,
-  /usr/share/gvfs/remote-volume-monitors/afc.monitor r,
-  /usr/share/gvfs/remote-volume-monitors/gdu.monitor r,
-  /usr/share/gvfs/remote-volume-monitors/gphoto2.monitor r,
-  /usr/share/icons/ r,
-  /usr/share/icons/** r,
   /usr/share/mime/ r,
-  /usr/share/mime/** r,
-  /usr/share/pixmaps/ r,
-  /usr/share/poppler/** r,
-  /usr/share/themes/** r,
-  owner @{HOME}/.config/gtk-2.0/gtkfilechooser.ini r,
-  owner @{HOME}/.icons/ r,
   owner @{HOME}/.icons/** r,
-  owner @{HOME}/.local/share/icons/ r,
-  owner @{HOME}/.themes/** r,
   @{PROC}/[0-9]*/maps r,
   @{PROC}/[0-9]*/mounts r,
   @{PROC}/[0-9]*/stat r,
