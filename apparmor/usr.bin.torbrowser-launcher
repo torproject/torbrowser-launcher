@@ -11,7 +11,6 @@
   #include <abstractions/X>
   #include <abstractions/audio>
   #include <abstractions/freedesktop.org>
-  #include <abstractions/dconf>
   
   capability sys_ptrace,
 
@@ -37,6 +36,7 @@
   /usr/share/torbrowser-launcher/** r,
 
   /usr/share/glib-2.0/schemas/gschemas.compiled r,
+  owner @{HOME}/.config/dconf/user r,
   owner /{,var/}run/user/*/dconf/user rw,
 
 }
