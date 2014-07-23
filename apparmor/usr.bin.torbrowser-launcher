@@ -21,7 +21,7 @@
   @{HOME}/.torbrowser/ rw,
   @{HOME}/.torbrowser/** mrwk,
   @{HOME}/.torbrowser/gnupg_homedir/* l,
-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser ux,
+  @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser ux,
   @{PROC}/ r,
   @{PROC}/[0-9]*/{cmdline,mountinfo,stat,status} r,
   @{PROC}/[0-9]*/task/** r,
