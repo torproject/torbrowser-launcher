@@ -19,6 +19,7 @@
   /etc/mailcap r,
   /etc/mime.types r,
   /etc/passwd r,
+  @{HOME}/.config/pulse/cookie rwk,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/ w,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/** w,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.mozilla/ w,
@@ -40,6 +41,7 @@
   /usr/share/ r,
   /usr/share/mime/ r,
   owner @{HOME}/.icons/** r,
+  @{PROC}/[0-9]*/fd/ r,
   @{PROC}/[0-9]*/stat r,
   @{PROC}/[0-9]*/task/*/stat r,
 
