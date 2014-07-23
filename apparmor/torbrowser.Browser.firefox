@@ -47,7 +47,7 @@
   @{PROC}/[0-9]*/stat r,
   @{PROC}/[0-9]*/task/*/stat r,
 
-  dbus,
+  #dbus,
 
   /usr/share/glib-2.0/schemas/gschemas.compiled r,
   owner /{,var/}run/user/*/dconf/user rw,
