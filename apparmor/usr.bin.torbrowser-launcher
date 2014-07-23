@@ -16,6 +16,7 @@
   capability sys_ptrace,
 
   /bin/{dash,grep,ps} rix,
+  /dev/ r,
   /etc/magic r,
   @{HOME}/.torbrowser/ rw,
   @{HOME}/.torbrowser/** mrwk,
