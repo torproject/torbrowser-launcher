@@ -4,6 +4,7 @@
   #include <abstractions/base>
   #include <abstractions/fonts>
   #include <abstractions/user-tmp>
+  #include <abstractions/X>
 
   network tcp,
 
@@ -17,9 +18,6 @@
   deny @{HOME}/.local/share/recently-used.xbel* rw,
 
   /bin/dash rix,
-  /dev/dri/card0 rw,
-  /etc/X11/cursors/* r,
-  /etc/drirc r,
   /etc/gnome/defaults.list r,
   /etc/gnome-vfs-2.0/modules/ r,
   /etc/gnome-vfs-2.0/modules/default-modules.conf r,
@@ -45,10 +43,8 @@
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Downloads/ rw,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Downloads/** rw,
   @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor Px,
-  @{HOME}/.Xauthority r,
-  /run/gdm3/** r,
   /sys/devices/system/cpu/present r,
-  /tmp/.X0-lock r,
+  /tmp/.X[0-9]*-lock r,
   /usr/lib{,32,64}/** mr,
   /usr/share/ r,
   /usr/share/applications/*.desktop r,
