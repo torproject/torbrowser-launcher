@@ -2,6 +2,7 @@
 
 /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox {
   #include <abstractions/base>
+  #include <abstractions/fonts>
   #include <abstractions/user-tmp>
 
   network tcp,
@@ -19,7 +20,6 @@
   /dev/dri/card0 rw,
   /etc/X11/cursors/* r,
   /etc/drirc r,
-  /etc/fonts/** r,
   /etc/gnome/defaults.list r,
   /etc/gnome-vfs-2.0/modules/ r,
   /etc/gnome-vfs-2.0/modules/default-modules.conf r,
@@ -50,12 +50,9 @@
   /sys/devices/system/cpu/present r,
   /tmp/.X0-lock r,
   /usr/lib{,32,64}/** mr,
-  /usr/local/share/fonts/ r,
   /usr/share/ r,
   /usr/share/applications/*.desktop r,
   /usr/share/applications/mimeinfo.cache r,
-  /usr/share/fonts/ r,
-  /usr/share/fonts/** r,
   /usr/share/gvfs/remote-volume-monitors/ r,
   /usr/share/gvfs/remote-volume-monitors/afc.monitor r,
   /usr/share/gvfs/remote-volume-monitors/gdu.monitor r,
@@ -67,7 +64,6 @@
   /usr/share/pixmaps/ r,
   /usr/share/poppler/** r,
   /usr/share/themes/** r,
-  /var/cache/fontconfig/* r,
   owner @{HOME}/.config/gtk-2.0/gtkfilechooser.ini r,
   owner @{HOME}/.icons/ r,
   owner @{HOME}/.icons/** r,
