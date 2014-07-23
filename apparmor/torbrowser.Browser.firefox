@@ -48,6 +48,11 @@
   /usr/share/glib-2.0/schemas/gschemas.compiled r,
   owner /{,var/}run/user/*/dconf/user rw,
 
+  /usr/share/gnome/applications/ r,
+  /usr/share/gnome/applications/kde4/ r,
+  /usr/share/applications/kde4/ r,
+  /usr/share/applications/kde/ r,
+
   # Should use abstractions/gstreamer instead once merged upstream
   /etc/udev/udev.conf r,
   /run/udev/data/+pci:* r,
