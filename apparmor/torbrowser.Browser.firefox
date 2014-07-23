@@ -11,7 +11,7 @@
   deny /etc/hosts r,
   deny /etc/nsswitch.conf r,
   deny /etc/resolv.conf r,
-  deny /proc/9881/mountinfo r,
+  deny @{PROC}/[0-9]*/mountinfo r,
   deny @{HOME}/.config/user-dirs.dirs r,
   deny @{HOME}/.gtk-bookmarks r,
   deny @{HOME}/.local/share/recently-used.xbel* rw,
