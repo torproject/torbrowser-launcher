@@ -39,19 +39,12 @@
   /usr/share/ r,
   /usr/share/mime/ r,
   owner @{HOME}/.icons/** r,
-  @{PROC}/[0-9]*/maps r,
-  @{PROC}/[0-9]*/mounts r,
   @{PROC}/[0-9]*/stat r,
   @{PROC}/[0-9]*/task/*/stat r,
-  @{PROC}/cpuinfo r,
-  @{PROC}/filesystems r,
-  @{PROC}/meminfo r,
-  @{PROC}/stat r,
 
   dbus,
 
   /usr/share/glib-2.0/schemas/gschemas.compiled r,
-  /usr/share/gvfs/remote-volume-monitors/* r,
   owner /{,var/}run/user/*/dconf/user rw,
 
 }
