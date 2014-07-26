@@ -1,0 +1,17 @@
+commit e8350a1c4dee89de1155eb613a24de83dc27cc54
+Author: Micah Lee <micah@micahflee.com>
+Date:   Thu Jul 10 17:22:19 2014 -0700
+
+    typo in ppa script
+
+diff --git a/ppa_release.sh b/ppa_release.sh
+index d901fe9..0d972b5 100755
+--- a/ppa_release.sh
++++ b/ppa_release.sh
+@@ -11,5 +11,5 @@ python setup.py --command-packages=stdeb.command sdist_dsc
+ cd deb_dist/torbrowser-launcher-$VERSION
+ dpkg-buildpackage -S
+ cd ..
+-dput ppa:micahflee/ppa torbrowser-launcher_$VERSION-1_source.change
++dput ppa:micahflee/ppa torbrowser-launcher_$VERSION-1_source.changes
+ cd ..
