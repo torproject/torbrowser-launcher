@@ -1,3 +1,14 @@
+torbrowser-launcher (0.1.1-2) unstable; urgency=medium
+
+  * debian/rules: call dh_apparmor for each shipped profile.
+    (Closes: #755817)
+  * Include e8350a1c4 from upstream to fix typo in ppa script.
+  * Cleanup AppArmor profiles as per not yet merged pull request 
+    https://github.com/micahflee/torbrowser-launcher/pull/111
+    Thanks intrigeri for the patch! (Closes: #751453).
+
+ -- Holger Levsen <holger@debian.org>  Sat, 26 Jul 2014 17:15:04 +0200
+
 torbrowser-launcher (0.1.1-1) unstable; urgency=low
 
     * Adopt the package under the umbrella of the Debian Anonymity Tools Team.
