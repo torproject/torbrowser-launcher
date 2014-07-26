@@ -1,0 +1,252 @@
+commit 6552a2ea511cdc268f020984e1ce745d91562f94
+Author: intrigeri <intrigeri@boum.org>
+Date:   Wed Jul 23 18:48:40 2014 +0000
+
+Submitted as https://github.com/micahflee/torbrowser-launcher/pull/111
+
+These updated profiles clean up and refactor many parts of the profiles, fix a bunch of bugs, and make it fit for non-Ubuntu distros. Tested on Debian Wheezy only, as torbrowser-launcher is broken with the version of Twisted that's in Debian unstable currently.
+
+diff --git a/apparmor/torbrowser.Browser.firefox b/apparmor/torbrowser.Browser.firefox
+index d38f187..9ca96d4 100644
+--- a/apparmor/torbrowser.Browser.firefox
++++ b/apparmor/torbrowser.Browser.firefox
+@@ -1,8 +1,7 @@
+ #include <tunables/global>
+ 
+-/home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox {
+-  #include <abstractions/base>
+-  #include <abstractions/user-tmp>
++/home/*/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
++  #include <abstractions/gnome>
+ 
+   network tcp,
+ 
+@@ -10,82 +9,57 @@
+   deny /etc/hosts r,
+   deny /etc/nsswitch.conf r,
+   deny /etc/resolv.conf r,
+-  deny /proc/9881/mountinfo r,
++  deny @{PROC}/[0-9]*/mountinfo r,
+   deny @{HOME}/.config/user-dirs.dirs r,
+   deny @{HOME}/.gtk-bookmarks r,
+   deny @{HOME}/.local/share/recently-used.xbel* rw,
+ 
+   /bin/dash rix,
+-  /dev/dri/card0 rw,
+-  /etc/X11/cursors/* r,
+-  /etc/drirc r,
+-  /etc/fonts/** r,
+-  /etc/gnome/defaults.list r,
+-  /etc/gnome-vfs-2.0/modules/ r,
+-  /etc/gnome-vfs-2.0/modules/default-modules.conf r,
+-  /etc/gnome-vfs-2.0/modules/extra-modules.conf r,
+   /etc/mailcap r,
+   /etc/mime.types r,
+   /etc/passwd r,
+-  /lib{,32,64}/*.so mr,
+-  /lib{,32,64}/*.so.* mr,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/ w,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/** w,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.mozilla/ w,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/.mozilla/*/ w,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/** r,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/*.so mr,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/browser/components/*.so mr,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox rix,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Data/Browser/ r,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Data/Browser/** rwk,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Desktop/ rw,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Desktop/** rw,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Downloads/ rw,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Downloads/** rw,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor Px,
+-  @{HOME}/.Xauthority r,
+-  /run/gdm3/** r,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/ r,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.fontconfig/ rw,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.fontconfig/** mrwl,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/ w,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/** w,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.mozilla/ w,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.mozilla/*/ w,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/** r,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/*.so mr,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/browser/components/*.so mr,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox rix,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Browser/ r,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Browser/** rwk,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Desktop/ rw,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Desktop/** rw,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/ rw,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/** rw,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor Px,
++  /sys/devices/system/cpu/ r,
+   /sys/devices/system/cpu/present r,
+-  /tmp/.X0-lock r,
+-  /usr/lib{,32,64}/** mr,
+-  /usr/local/share/fonts/ r,
++  /tmp/.X[0-9]*-lock r,
+   /usr/share/ r,
+-  /usr/share/applications/*.desktop r,
+-  /usr/share/applications/mimeinfo.cache r,
+-  /usr/share/fonts/ r,
+-  /usr/share/fonts/** r,
+-  /usr/share/gvfs/remote-volume-monitors/ r,
+-  /usr/share/gvfs/remote-volume-monitors/afc.monitor r,
+-  /usr/share/gvfs/remote-volume-monitors/gdu.monitor r,
+-  /usr/share/gvfs/remote-volume-monitors/gphoto2.monitor r,
+-  /usr/share/icons/ r,
+-  /usr/share/icons/** r,
+   /usr/share/mime/ r,
+-  /usr/share/mime/** r,
+-  /usr/share/pixmaps/ r,
+-  /usr/share/poppler/** r,
+-  /usr/share/themes/** r,
+-  /var/cache/fontconfig/* r,
+-  owner @{HOME}/.config/gtk-2.0/gtkfilechooser.ini r,
+-  owner @{HOME}/.icons/ r,
+   owner @{HOME}/.icons/** r,
+-  owner @{HOME}/.local/share/icons/ r,
+-  owner @{HOME}/.themes/** r,
+-  @{PROC}/[0-9]*/maps r,
+-  @{PROC}/[0-9]*/mounts r,
++  @{PROC}/[0-9]*/fd/ r,
+   @{PROC}/[0-9]*/stat r,
+   @{PROC}/[0-9]*/task/*/stat r,
+-  @{PROC}/cpuinfo r,
+-  @{PROC}/filesystems r,
+-  @{PROC}/meminfo r,
+-  @{PROC}/stat r,
+ 
+-  dbus,
++  #dbus,
+ 
+   /usr/share/glib-2.0/schemas/gschemas.compiled r,
+-  /usr/share/gvfs/remote-volume-monitors/* r,
+   owner /{,var/}run/user/*/dconf/user rw,
+ 
++  /usr/share/gnome/applications/ r,
++  /usr/share/gnome/applications/kde4/ r,
++  /usr/share/applications/kde4/ r,
++  /usr/share/applications/kde/ r,
++
++  # Should use abstractions/gstreamer instead once merged upstream
++  /etc/udev/udev.conf r,
++  /run/udev/data/+pci:* r,
++  /sys/devices/pci[0-9]*/**/uevent r,
++  owner /{dev,run}/shm/shmfd-* rw,
+ }
+diff --git a/apparmor/torbrowser.Tor.tor b/apparmor/torbrowser.Tor.tor
+index cd4e4c9..7b12a32 100644
+--- a/apparmor/torbrowser.Tor.tor
++++ b/apparmor/torbrowser.Tor.tor
+@@ -1,6 +1,6 @@
+ #include <tunables/global>
+ 
+-/home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor {
++/home/*/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor {
+   #include <abstractions/base>
+ 
+   network tcp,
+@@ -10,11 +10,11 @@
+   /etc/nsswitch.conf r,
+   /etc/passwd r,
+   /etc/resolv.conf r,
+-  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor mr,
+-  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Data/Tor/* rw,
+-  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Data/Tor/lock rwk,
+-  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Lib/*.so mr,
+-  /home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Lib/*.so.* mr,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor mr,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Tor/* rw,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Tor/lock rwk,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Lib/*.so mr,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Lib/*.so.* mr,
+   @{PROC}/meminfo r,
+   @{PROC}/sys/kernel/random/uuid r,
+   /sys/devices/system/cpu/ r,
+diff --git a/apparmor/torbrowser.start-tor-browser b/apparmor/torbrowser.start-tor-browser
+index 0751963..770fd8b 100644
+--- a/apparmor/torbrowser.start-tor-browser
++++ b/apparmor/torbrowser.start-tor-browser
+@@ -1,6 +1,6 @@
+ #include <tunables/global>
+ 
+-/home/*/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser {
++/home/*/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser {
+   #include <abstractions/base>
+   #include <abstractions/bash>
+ 
+@@ -15,9 +15,9 @@
+   /dev/pts/[0-9]* rw,
+   /dev/tty rw,
+   /etc/magic r,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox Px,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor r,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser r,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox Px,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor r,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser r,
+   @{PROC}/ r,
+   @{PROC}/[0-9]*/status r,
+   @{PROC}/[0-9]*/stat r,
+diff --git a/apparmor/usr.bin.torbrowser-launcher b/apparmor/usr.bin.torbrowser-launcher
+index a445af9..e0a1ffd 100644
+--- a/apparmor/usr.bin.torbrowser-launcher
++++ b/apparmor/usr.bin.torbrowser-launcher
+@@ -11,46 +11,32 @@
+   #include <abstractions/X>
+   #include <abstractions/audio>
+   #include <abstractions/freedesktop.org>
+-  #include <abstractions/dconf>
+   
+   capability sys_ptrace,
+ 
+-  #/bin/{dash,grep,ps} rix,
++  /bin/{dash,grep,ps} rix,
++  /dev/ r,
+   /etc/magic r,
+   @{HOME}/.torbrowser/ rw,
+   @{HOME}/.torbrowser/** mrwk,
+   @{HOME}/.torbrowser/gnupg_homedir/* l,
+-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser ux,
++  @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser ux,
+   @{PROC}/ r,
+-  @{PROC}/@{pid}/cmdline r,
+-  @{PROC}/@{pid}/mountinfo r,
+-  @{PROC}/@{pid}/stat r,
+-  @{PROC}/@{pid}/status r,
+-  @{PROC}/@{pid}/task/** r,
++  @{PROC}/[0-9]*/{cmdline,mountinfo,stat,status} r,
++  @{PROC}/[0-9]*/task/** r,
+   @{PROC}/sys/kernel/pid_max r,
+   @{PROC}/tty/drivers r,
+   @{PROC}/uptime r,
+   /usr/bin/ r,
+-  /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id,dash,grep,ps} rix,
+-  /usr/bin/python2.7 rix,
++  /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id} rix,
+   /usr/bin/torbrowser-launcher rux,
+-  /usr/lib{,32,64}/** mr,
+-  /usr/local/share/fonts/ r,
+-  /usr/local/share/fonts/** r,
+   /usr/share/file/magic.mgc r,
+   /usr/share/file/magic/ r,
+-  /usr/share/fonts/** r,
+-  /usr/share/icons/ r,
+-  /usr/share/icons/** r,
+-  /usr/share/mime/ r,
+-  /usr/share/mime/* r,
+-  /usr/share/pixmaps/ r,
+-  /usr/share/pixmaps/torbrowser{32,80}.xpm r,
+   /usr/share/themes/** r,
+   /usr/share/torbrowser-launcher/** r,
+ 
+   /usr/share/glib-2.0/schemas/gschemas.compiled r,
+-  /usr/lib{,32,64}/python{2,3}.[34567]/**.{pyc,so} mrw,
++  owner @{HOME}/.config/dconf/user r,
+   owner /{,var/}run/user/*/dconf/user rw,
+ 
+ }
