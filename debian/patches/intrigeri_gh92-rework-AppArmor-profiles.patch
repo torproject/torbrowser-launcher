@@ -21,7 +21,7 @@ index d38f187..9ca96d4 100644
  
    network tcp,
  
-@@ -10,82 +9,57 @@
+@@ -10,82 +9,58 @@
    deny /etc/hosts r,
    deny /etc/nsswitch.conf r,
    deny /etc/resolv.conf r,
@@ -82,6 +82,7 @@ index d38f187..9ca96d4 100644
 +  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/ rw,
 +  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/** rw,
 +  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor Px,
++  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/*.so.* mr,
 +  /sys/devices/system/cpu/ r,
    /sys/devices/system/cpu/present r,
 -  /tmp/.X0-lock r,
