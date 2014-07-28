@@ -30,7 +30,7 @@ Optionally you can install python-pygame if you want to play a modem sound while
 
 ### Red Hat, Fedora, CentOS, etc.
 
-    sudo yum install python-psutil python-twisted wmctrl gnupg fakeroot
+    sudo yum install python-psutil python-twisted wmctrl gnupg fakeroot rpm-build
     ./build_rpm.sh
     sudo yum install dist/torbrowser-launcher-*.rpm
 
