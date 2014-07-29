@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-@{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser {
+@{Home}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser {
   #include <abstractions/base>
   #include <abstractions/bash>
 
@@ -15,9 +15,9 @@
   /dev/pts/[0-9]* rw,
   /dev/tty rw,
   /etc/magic r,
-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Browser/firefox Px,
-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/Tor/tor r,
-  @{HOME}/.torbrowser/tbb/{stable,alpha}/{i686,x86_64}/tor-browser_*/start-tor-browser r,
+  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox Px,
+  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor r,
+  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser r,
   @{PROC}/ r,
   @{PROC}/[0-9]*/status r,
   @{PROC}/[0-9]*/stat r,
