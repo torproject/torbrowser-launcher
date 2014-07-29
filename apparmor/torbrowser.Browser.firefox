@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-@{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
+/home/*/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
 
   network tcp,
 
