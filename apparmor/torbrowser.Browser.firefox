@@ -1,6 +1,7 @@
 #include <tunables/global>
 
 /home/*/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
+  #include <abstractions/gnome>
 
   network tcp,
 
