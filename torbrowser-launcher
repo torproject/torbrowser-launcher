@@ -165,9 +165,6 @@ class TBLCommon:
                 'tbl_bin': '/usr/bin/torbrowser-launcher',
                 'icon_file': os.path.join(SHARE, 'pixmaps/torbrowser80.xpm'),
                 'torproject_pem': os.path.join(SHARE, 'torbrowser-launcher/torproject.pem'),
-                'erinn_key': os.path.join(SHARE, 'torbrowser-launcher/erinn.asc'),
-                'sebastian_key': os.path.join(SHARE, 'torbrowser-launcher/sebastian.asc'),
-                'alexandre_key': os.path.join(SHARE, 'torbrowser-launcher/alexandre.asc'),
                 'mike_key': os.path.join(SHARE, 'torbrowser-launcher/mike-2013-09.asc'),
                 'mirrors_txt': [os.path.join(SHARE, 'torbrowser-launcher/mirrors.txt'),
                                 '/usr/local/share/torbrowser-launcher/mirrors.txt'],
@@ -210,7 +207,7 @@ class TBLCommon:
     # import gpg keys
     def import_keys(self):
         print _('Importing keys')
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key'], self.paths['sebastian_key'], self.paths['alexandre_key'], self.paths['mike_key']]).wait()
+        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['mike_key']]).wait()
 
     # load mirrors
     def load_mirrors(self):
