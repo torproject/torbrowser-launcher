@@ -9,7 +9,7 @@ Then install dependencies, build a package, and install:
 
 ### Debian, Ubuntu, Linux Mint, etc.
 
-    sudo apt-get install build-essential python-all python-stdeb python-gtk2 python-psutil python-twisted python-lzma wmctrl gnupg fakeroot xz-utils
+    sudo apt-get install build-essential python-all python-stdeb python-gtk2 python-psutil python-twisted python-lzma python-txsocksx wmctrl gnupg fakeroot xz-utils tor
     ./build_deb.sh
     sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 
