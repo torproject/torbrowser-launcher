@@ -1039,6 +1039,9 @@ class TBLLauncher:
         self.run_task()
 
     def run(self, run_next_task=True):
+        devnull = open('/dev/null', 'w')
+        subprocess.Popen([self.common.paths['tbb']['start']], stdout=devnull, stderr=devnull)
+
         # play modem sound?
         if self.common.settings['modem_sound']:
             try:
@@ -1046,13 +1049,12 @@ class TBLLauncher:
                 pygame.mixer.init()
                 sound = pygame.mixer.Sound(self.common.paths['modem_sound'])
                 sound.play()
+                time.sleep(10)
             except ImportError:
                 md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-pygame package is missing, the modem sound is unavailable."))
                 md.set_position(gtk.WIN_POS_CENTER)
                 md.run()
                 md.destroy()
-
-        subprocess.call([self.common.paths['tbb']['start']])
 
         if run_next_task:
             self.run_task()
