@@ -11,7 +11,7 @@
   #include <abstractions/X>
   #include <abstractions/audio>
   #include <abstractions/freedesktop.org>
-  
+
   capability sys_ptrace,
 
   /bin/{dash,grep,ps} rix,
@@ -39,4 +39,6 @@
   owner @{HOME}/.config/dconf/user r,
   owner /{,var/}run/user/*/dconf/user rw,
 
+  # including abstractions/audio is not enough to play modem sound
+  /usr/bin/pulseaudio Pixr,
 }
