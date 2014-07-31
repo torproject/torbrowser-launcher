@@ -19,4 +19,7 @@
   @{PROC}/sys/kernel/random/uuid r,
   /sys/devices/system/cpu/ r,
 
+  # OnionShare compatibility
+  /tmp/onionshare_*/ rw,
+  /tmp/onionshare_*/* rw,
 }
