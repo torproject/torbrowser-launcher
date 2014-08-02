@@ -8,7 +8,8 @@ Priority: optional
 Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7.4.3), dh-apparmor
 Standards-Version: 3.9.5
 Homepage: https://micahflee.com/torbrowser-launcher/
-Vcs-Browser: https://github.com/micahflee/torbrowser-launcher/tree/debian
+Vcs-Git: git://anonscm.debian.org/collab-maint/torbrowser-launcher.git
+Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/torbrowser-launcher.git
 
 Package: torbrowser-launcher
 Architecture: i386 amd64
