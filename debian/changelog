@@ -3,7 +3,9 @@ torbrowser-launcher (0.1.2-1) UNRELEASED; urgency=medium
   * New upstream version. (Closes: #######, #######, #######)
   * Drop patch intrigeri_gh92-rework-AppArmor-profiles.patch.
   * Drop patch fix_typo_in_ppa_script.patch.
-  * debian/control: Update Vcs-URLs to new git repo location in collab-maint.
+  * debian/control:
+    - add tor to depends.
+    - update Vcs-URLs to new git repo location in collab-maint.
   * Add debian/examples to show how to run torbrowser-launcher, confined with
     AppArmor, in Xephyr as another user. Read the README!
   * Fix DEP5 syntax error in debian/copyright, thanks Lintian!

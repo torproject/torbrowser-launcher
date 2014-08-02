@@ -13,7 +13,7 @@ Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/torbrowser-launch
 
 Package: torbrowser-launcher
 Architecture: i386 amd64
-Depends: ${misc:Depends}, ${python:Depends}, python-gtk2, python-psutil, python-twisted, python-lzma, gnupg, wmctrl, python-txsocksx (>= 1.13.0.1), python-parsley (>= 1.2)
+Depends: ${misc:Depends}, ${python:Depends}, python-gtk2, python-psutil, python-twisted, python-lzma, gnupg, wmctrl, python-txsocksx (>= 1.13.0.1), python-parsley (>= 1.2), tor
 Suggests: apparmor, python-pygame
 Description: helps download, update and run the Tor Browser Bundle
  Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier
