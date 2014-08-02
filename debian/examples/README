@@ -16,6 +16,9 @@ AppArmor should be enabled, but doesn't have to. I followed the HowTo from
 https://wiki.debian.org/AppArmor, which can be summed up as just adding one
 parameter to the kernel to enable it, followed by a reboot.
 
+Using Apparmor has the advantage that the browser process cannot most of the
+filesystem, eg saving downloads only works in ~/.torbrowser/tbb/x86_64/tor-browser_en-US/Desktop/
+
 On wheezy, I'm using backports for torbrowser-launcher and apparmor.
 
 The scripts assume they have been copied to /usr/local/bin/ and that there is a user
@@ -54,4 +57,4 @@ Ideas, questions and ToDo:
 Feedback welcome, especially accompanied by patches! 
 
 
--- Holger Levsen, holger@debian.org, last updated: 2014-08-02
+-- Holger Levsen, holger@debian.org, last updated: 2014-08-03
