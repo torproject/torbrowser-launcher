@@ -1,0 +1,40 @@
+#!/bin/sh
+
+#
+#        (c) 2014 Holger Levsen         holger@layer-acht.org
+#        Expat licenced, see /usr/share/doc/torbrowser-launcher/copyright
+
+#
+# configuration
+#
+unset XAUTHORITY
+unset XDG_SESSION_COOKIE
+unset ftp_proxy
+unset http_proxy
+unset https_proxy
+unset SUDO_GID
+unset SUDO_UID
+unset SUDO_USER
+export
+export LANG=C
+
+#
+# run awesome, torbrowser-launcher, wait for it to terminate and then kill awesome
+#
+set -e
+set -x
+DISPLAY=:1.0 awesome &
+#DISPLAY=:1.0 dbus-launch &
+sleep 4
+export
+sleep 4
+DISPLAY=:1.0 torbrowser-launcher
+set +x
+while [ "$(ps fax -U $USER | grep start-tor-browser | grep -v grep | wc -l)" -eq 1 ] ; 
+	do sleep 2
+done
+set -x
+killall awesome || true
+#killall dbus-launch || true
+#killall dbus-daemon || true
+exit 0

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+#
+#        (c) 2014 Holger Levsen         holger@layer-acht.org
+#        Expat licenced, see /usr/share/doc/torbrowser-launcher/copyright
+
+#
+# configuration
+#
+TBBUSER=foo
+RESOLUTION=1100x850
+
+#
+# run tbb-l-wrapper in Xephyr and kill Xephyr once torbrowser terminates
+#
+#set -x
+set -e
+Xephyr -ac -br -noreset -screen $RESOLUTION :1.0 &
+XEPHYR_PID=$!
+sleep 1
+sudo -i -u $TBBUSER /usr/local/bin/tbb-l-wrapper
+sudo slay $TBBUSER
+kill $XEPHYR_PID 
+echo voila.
