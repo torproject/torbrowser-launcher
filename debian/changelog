@@ -1,7 +1,8 @@
-torbrowser-launcher (0.1.1-3) UNRELEASED; urgency=medium
+torbrowser-launcher (0.1.2-1) UNRELEASED; urgency=medium
 
-  * Include 66e44a7dc (as per #751453#63) in
-    debian/patches/intrigeri_gh92-rework-AppArmor-profiles.patch 
+  * New upstream version. (Closes: #######, #######, #######)
+  * Drop patch intrigeri_gh92-rework-AppArmor-profiles.patch.
+  * Drop patch fix_typo_in_ppa_script.patch.
 
  -- Holger Levsen <holger@debian.org>  Sun, 27 Jul 2014 22:04:56 +0200
 
