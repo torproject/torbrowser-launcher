@@ -1,6 +1,6 @@
-torbrowser-launcher (0.1.2-1) UNRELEASED; urgency=medium
+torbrowser-launcher (0.1.2-1) unstable; urgency=medium
 
-  * New upstream version. (Closes: #######, #######, #######)
+  * New upstream version. (Closes: #754281, #753413, #755682)
   * Drop patch intrigeri_gh92-rework-AppArmor-profiles.patch.
   * Drop patch fix_typo_in_ppa_script.patch.
   * debian/control:
@@ -8,9 +8,9 @@ torbrowser-launcher (0.1.2-1) UNRELEASED; urgency=medium
     - update Vcs-URLs to new git repo location in collab-maint.
   * Add debian/examples to show how to run torbrowser-launcher, confined with
     AppArmor, in Xephyr as another user. Read the README!
-  * Fix DEP5 syntax error in debian/copyright, thanks Lintian!
+  * Fix DEP5 syntax error in debian/copyright, thanks Lintian.
 
- -- Holger Levsen <holger@debian.org>  Sun, 27 Jul 2014 22:04:56 +0200
+ -- Holger Levsen <holger@debian.org>  Sun, 03 Aug 2014 00:42:59 +0200
 
 torbrowser-launcher (0.1.1-2) unstable; urgency=medium
 
