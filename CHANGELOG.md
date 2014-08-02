@@ -1,5 +1,16 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.2
+
+* Updated Dutch translation
+* Fixed bug with loading mirrors list
+* Huge refactor of AppArmor profiles
+* Added OnionShare support to AppArmor profiles
+* Suppresses output from detached TBB process
+* Uses freedesktop xdg-user-dirs instead of ~/.torbrowser
+* Removed all signing keys except Mike Perry's
+* Made tor and python-txsocksx dependencies to update over Tor by default
+
 ## 0.1.1
 
 * Added TBL_SHARE support, to more easily develop without installing systemwide
