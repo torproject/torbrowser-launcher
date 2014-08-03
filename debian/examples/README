@@ -1,9 +1,17 @@
 torbrowser-launcher launcher scripts
 ====================================
 
-These scripts are intended to run torbrowser-launcher (and thus torbrowser) as
-another user in an Xephyr window server running inside your normal Xorg
-session.
+These scripts show how to run torbrowser-launcher (and thus torbrowser),
+confined with AppArmor, in Xephyr (a virtual Xserver running on another
+Xserver) as another user. This, using AppArmor and Xephyr, shall have two
+effects:
+
+- the browser process (and it's subprocesses) can - thanks to AppArmor
+  confinement - only access a tiny part of the filesystem
+
+- the real Xserver is not exposed to the browser application, so hopefully
+  that application cannot exploit bugs to grab keyboard input from other
+  applications.
 
 They assume the following packages are installed:
 
@@ -44,8 +52,8 @@ Ideas, questions and ToDo:
 
 - maybe all of this functionality could be integrated into.
   torbrowser-launcher itself, just writing this in shell was so easy.
-- or for the time being, merge these two scripts into one, doing both,
-  depending on how its called. Also make them run from everywhere.
+- or for the time being, merge these two scripts into one, called tbbll, doing
+  both, depending on how its called. Also make them run from everywhere.
 - run this in an unprivileged LXC container, which is also apparmor confined.
 - (when) does this double confinement make sense?
 - use a more sensible named default user (instead of foo).
