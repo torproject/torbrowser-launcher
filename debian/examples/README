@@ -21,9 +21,9 @@ filesystem, eg saving downloads only works in ~/.torbrowser/tbb/x86_64/tor-brows
 
 On wheezy, I'm using backports for torbrowser-launcher and apparmor.
 
-The scripts assume they have been copied to /usr/local/bin/ and that there is a user
-called "foo" (for running the actuall torbrowser(-launcher) process, and that
-the current user has sudo rights for the following commands:
+The scripts assume they have been copied to /usr/local/bin/ and that there is
+a user called "foo" (for running the actuall torbrowser(-launcher) process,
+and that the current user has sudo rights for the following commands:
 
 - sudo -i -u foo /usr/local/bin/tbb-l-wrapper
 - sudo slay foo
@@ -45,7 +45,7 @@ Ideas, questions and ToDo:
 - maybe all of this functionality could be integrated into.
   torbrowser-launcher itself, just writing this in shell was so easy.
 - or for the time being, merge these two scripts into one, doing both,
-  depending on how its called.
+  depending on how its called. Also make them run from everywhere.
 - run this in an unprivileged LXC container, which is also apparmor confined.
 - (when) does this double confinement make sense?
 - use a more sensible named default user (instead of foo).
