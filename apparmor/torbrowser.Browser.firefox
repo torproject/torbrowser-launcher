@@ -35,7 +35,7 @@
 
   @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/ r,
   @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/* r,
-  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_en-US/.** rwk,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/.** rwk,
   @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/** r,
   @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/*.so mr,
   @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
