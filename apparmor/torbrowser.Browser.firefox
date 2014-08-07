@@ -1,66 +1,71 @@
+# Last modified
 #include <tunables/global>
 
-/home/*/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
+/home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
   #include <abstractions/gnome>
-
-  network tcp,
-
+  #include <abstractions/audio>
+  #include <abstractions/user-download>
+  
   deny /etc/host.conf r,
   deny /etc/hosts r,
   deny /etc/nsswitch.conf r,
   deny /etc/resolv.conf r,
-  deny @{PROC}/[0-9]*/mountinfo r,
-  deny @{HOME}/.config/user-dirs.dirs r,
-  deny @{HOME}/.gtk-bookmarks r,
-  deny @{HOME}/.local/share/recently-used.xbel* rw,
+  deny /etc/passwd r,
+  deny /etc/group r,
+  deny /etc/udev/udev.conf r,
+  deny /etc/mailcap r,
 
-  /bin/dash rix,
-  /etc/mailcap r,
+  deny @{PROC}/[0-9]*/stat r,
+  deny @{PROC}/[0-9]*/mountinfo r,
+  deny @{PROC}/[0-9]*/task/** r,
+  deny @{PROC}/sys/kernel/random/uuid r,
+  deny @{PROC}/[0-9]*/fd/ r,
+  deny @{PROC}/[0-9]*/stat r,
+  deny @{PROC}/[0-9]*/task/*/stat r,
+
+  deny /run/udev/** r,
+  deny /sys/devices/** r,
+  deny /var/lib/dbus/machine-id r,
+
+  ## Missing in <abstractions/user-download> #######
+  # Without this line, access is denied to @{HOME},
+  # [dD]ownload{,s}, Desktop... for downloads.
+  @{HOME}/ r,
+  ##################################################
+
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/ r,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/* r,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_en-US/.** rwk,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/** r,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/*.so mr,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/browser/components/*.so mr,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox rix,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Browser/profiles.ini r,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Browser/profile.default/** rwk,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Tor/* rwk,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/* mr,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor rix,
+
   /etc/mime.types r,
-  /etc/passwd r,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/ r,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.fontconfig/ rw,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.fontconfig/** mrwl,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/ w,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.gnome2{,_private}/** w,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.mozilla/ w,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/.mozilla/*/ w,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/** r,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/*.so mr,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/browser/components/*.so mr,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox rix,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Browser/ r,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Browser/** rwk,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Desktop/ rw,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Desktop/** rw,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/ rw,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/** rw,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor Px,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/*.so.* mr,
-  /sys/devices/system/cpu/ r,
-  /sys/devices/system/cpu/present r,
-  /tmp/.X[0-9]*-lock r,
+
   /usr/share/ r,
   /usr/share/mime/ r,
-  owner @{HOME}/.icons/** r,
-  @{PROC}/[0-9]*/fd/ r,
-  @{PROC}/[0-9]*/stat r,
-  @{PROC}/[0-9]*/task/*/stat r,
+  /usr/share/mime/** r,
+  /usr/share/themes/ r,
+  /usr/share/themes/** r,
+  /usr/share/applications/** rk,
+  /usr/share/poppler/cMap/ r,
+  /usr/share/poppler/cMap/** r,
 
-  #dbus,
+  ## Might flash a message when some packages are installed
+  #/usr/share/fontconfig/conf.avail/* r,
+  #/var/cache/fontconfig/ rk,
 
-  /usr/share/glib-2.0/schemas/gschemas.compiled r,
-  owner /{,var/}run/user/*/dconf/user rw,
+  ## KDE 4 ##
+  @{HOME}/.kde/share/config/* r,
 
-  /usr/share/gnome/applications/ r,
-  /usr/share/gnome/applications/kde4/ r,
-  /usr/share/applications/kde4/ r,
-  /usr/share/applications/kde/ r,
-
-  # Should use abstractions/gstreamer instead once merged upstream
-  /etc/udev/udev.conf r,
-  /run/udev/data/+pci:* r,
-  /sys/devices/pci[0-9]*/**/uevent r,
-  owner /{dev,run}/shm/shmfd-* rw,
+  ## Xfce4 ##
+  /etc/xfce4/defaults.list r,
+  /usr/share/xfce4/applications/ r,
 }
