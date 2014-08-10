@@ -55,14 +55,21 @@ Ideas, questions and ToDo:
 - or for the time being, merge these two scripts into one, called tbbll, doing
   both, depending on how its called. Also make them run from everywhere.
 - run this in an unprivileged LXC container, which is also apparmor confined.
+- use Xpra additionally to or instead of Xephyr? (or not at all?)
 - (when) does this double confinement make sense?
 - use a more sensible named default user (instead of foo).
 - there should really be an option, so torbrowser-launcher doesn't detach
   itself, so that this "while;ps fax|grep" hack can go away.
 - ship an usable sudoers.d example too.
-- support for more users / instances
+- support for more users / instances.
 
 Feedback welcome, especially accompanied by patches! 
 
+Last words:
+-----------
 
--- Holger Levsen, holger@debian.org, last updated: 2014-08-03
+If you desire more seperation, use Tails (from https://tails.boum.org/) on a
+computer without a harddrive.
+
+
+-- Holger Levsen, holger@debian.org, last updated: 2014-08-10
