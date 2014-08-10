@@ -961,7 +961,18 @@ class TBLLauncher:
                     valid.append(str(version))
             valid.sort()
             if len(valid):
-                latest = valid.pop()
+                if len(valid) == 1:
+                    latest = valid.pop()
+                else:
+                    stable = []
+                    # remove alphas/betas
+                    for version in valid:
+                        if '-alpha-' not in version and '-beta-' not in version:
+                            stable.append(version)
+                    if len(stable):
+                        latest = stable.pop()
+                    else:
+                        latest = valid.pop()
 
             if latest:
                 self.common.settings['latest_version'] = latest[:-len('-Linux')]
