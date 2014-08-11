@@ -1,5 +1,11 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.3
+
+* Force installing stable release if available in RecommendedTBBVersions
+* Removed Mike Perry's signing key and added Erinn Clark's signing key
+* Fixed AppArmor profiles (thanks to troubadoour)
+
 ## 0.1.2
 
 * Updated Dutch translation
