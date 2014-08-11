@@ -163,7 +163,7 @@ class TBLCommon:
             self.paths['sha256_file'] = tbb_cache+'/download/sha256sums.txt'
             self.paths['sha256_sig_file'] = tbb_cache+'/download/sha256sums.txt.asc'
             self.paths['sha256_url'] = '{0}torbrowser/'+tbb_version+'/sha256sums.txt'
-            self.paths['sha256_sig_url'] = '{0}torbrowser/'+tbb_version+'/sha256sums.txt-mikeperry.asc'
+            self.paths['sha256_sig_url'] = '{0}torbrowser/'+tbb_version+'/sha256sums.txt.asc'
         else:
             self.paths = {
                 'dirs': {
@@ -175,7 +175,7 @@ class TBLCommon:
                 'tbl_bin': '/usr/bin/torbrowser-launcher',
                 'icon_file': os.path.join(SHARE, 'pixmaps/torbrowser80.xpm'),
                 'torproject_pem': os.path.join(SHARE, 'torbrowser-launcher/torproject.pem'),
-                'mike_key': os.path.join(SHARE, 'torbrowser-launcher/mike-2013-09.asc'),
+                'erinn_key': os.path.join(SHARE, 'torbrowser-launcher/erinn.asc'),
                 'mirrors_txt': [os.path.join(SHARE, 'torbrowser-launcher/mirrors.txt'),
                                 '/usr/local/share/torbrowser-launcher/mirrors.txt'],
                 'modem_sound': os.path.join(SHARE, 'torbrowser-launcher/modem.ogg'),
@@ -216,7 +216,7 @@ class TBLCommon:
     # import gpg keys
     def import_keys(self):
         print _('Importing keys')
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['mike_key']]).wait()
+        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key']]).wait()
 
     # load mirrors
     def load_mirrors(self):
@@ -961,7 +961,18 @@ class TBLLauncher:
                     valid.append(str(version))
             valid.sort()
             if len(valid):
-                latest = valid.pop()
+                if len(valid) == 1:
+                    latest = valid.pop()
+                else:
+                    stable = []
+                    # remove alphas/betas
+                    for version in valid:
+                        if '-alpha-' not in version and '-beta-' not in version:
+                            stable.append(version)
+                    if len(stable):
+                        latest = stable.pop()
+                    else:
+                        latest = valid.pop()
 
             if latest:
                 self.common.settings['latest_version'] = latest[:-len('-Linux')]
