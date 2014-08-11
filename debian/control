@@ -23,10 +23,14 @@ Description: helps download, update and run the Tor Browser Bundle
  operating system's menu.
  .
  When you first launch Tor Browser Launcher, it will download TBB from
- https://www.torproject.org/ and extract it in ~/.torbrowser, and then execute
- it. Each subsequent execution after installation will simply launch the most
- recent TBB.  Tor Browser will be fetched, verified and unpacked each time a new
+ https://www.torproject.org/ and extract it to ~/.local/share/torbrowser,
+ and then execute it.
+ Cache and configuration files will be stored in ~/.cache/torbrowser and
+ ~/.config/torbrowser.
+ Each subsequent execution after installation will simply launch the most
+ recent TBB. Tor Browser will be fetched, verified and unpacked each time a new
  version of TBB is released. When you open Tor Browser Launcher after an update,
  it will download the newer version of TBB for you and extract it over your old
- TBB directory in ~/.torbrowser, so you will maintain your TBB bookmarks.
+ TBB directory in ~/.local/share/torbrowser, so you will maintain your TBB
+ bookmarks.
  .
