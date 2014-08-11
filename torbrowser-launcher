@@ -28,8 +28,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
-SHARE = os.getenv('TBL_SHARE', '/usr/share')
 import sys
+SHARE = os.getenv('TBL_SHARE', sys.prefix+'/share')
+
 import platform
 
 import gettext
