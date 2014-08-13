@@ -1,19 +1,16 @@
-torbrowser-launcher (0.1.3-1) unstable; urgency=medium
+torbrowser-launcher (0.1.3-1) UNRELEASED; urgency=medium
 
   [ Ulrike Uhlig ]
   * New upstream version. (Closes: #757627)
   * debian/control:
     - Update package description to correctly indicate the places
-      where TBB is downloaded to (Closes: #756928)
-
- -- Ulrike Uhlig <u@451f.org>  Mon, 11 Aug 2014 18:47:03 +0200
-
-torbrowser-launcher (0.1.2-2) UNRELEASED; urgency=medium
+      where TBB is downloaded to (Closes: #756928).
 
   [ Holger Levsen ]
-  * debian/examples/README: explain why AppArmor is awesome.
+  * debian/examples/README: explain why AppArmor is awesome, mention Tails
+    too.
 
- -- Holger Levsen <holger@debian.org>  Sun, 03 Aug 2014 01:06:03 +0200
+ -- Ulrike Uhlig <u@451f.org>  Mon, 11 Aug 2014 18:47:03 +0200
 
 torbrowser-launcher (0.1.2-1) unstable; urgency=medium
 
