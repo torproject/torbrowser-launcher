@@ -11,6 +11,8 @@
   /bin/bash r,
   /bin/dash ix,
   /bin/grep rix,
+  /bin/ln rix,
+  /bin/mkdir rix,
   /bin/ps rix,
   /bin/readlink ix,
   /bin/sed rix,
