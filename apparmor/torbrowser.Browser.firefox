@@ -21,13 +21,13 @@
   deny /etc/group r,
   deny /etc/mailcap r,
 
-  deny @{PROC}/[0-9]*/mountinfo r,
   deny @{PROC}/[0-9]*/task/** r,
   deny @{PROC}/[0-9]*/fd/ r,
 
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
+  @{PROC}/[0-9]*/mountinfo r,
   @{PROC}/[0-9]*/stat r,
   @{PROC}/[0-9]*/task/*/stat r,
   @{PROC}/sys/kernel/random/uuid r,
