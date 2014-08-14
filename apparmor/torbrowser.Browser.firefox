@@ -28,6 +28,7 @@
 
   deny /run/udev/** r,
   deny /sys/devices/** r,
+  deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
   ## Missing in <abstractions/user-download> #######
