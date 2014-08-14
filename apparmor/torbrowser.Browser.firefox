@@ -55,6 +55,7 @@
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/ r,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/** rwk,
 
+  /etc/mailcap r,
   /etc/mime.types r,
 
   /usr/share/ r,
