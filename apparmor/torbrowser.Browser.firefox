@@ -45,7 +45,7 @@
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Browser/profile.default/** rwk,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Data/Tor/* rwk,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/* mr,
-  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor rix,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor Px,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Desktop/ r,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Desktop/** rwk,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Downloads/ r,
