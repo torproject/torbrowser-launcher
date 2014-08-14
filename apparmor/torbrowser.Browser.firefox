@@ -3,8 +3,12 @@
 
 /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
   #include <abstractions/gnome>
-  #include <abstractions/audio>
   #include <abstractions/user-download>
+
+  # Comment out the following line if you don't want the Tor Browser
+  # to have direct access to your sound hardware. Note that "#include"
+  # is *not* a comment, it is valid AppArmor rules syntax.
+  #include <abstractions/audio>
 
   #dbus,
   network tcp,
