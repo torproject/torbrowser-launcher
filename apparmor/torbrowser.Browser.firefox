@@ -6,6 +6,7 @@
   #include <abstractions/audio>
   #include <abstractions/user-download>
 
+  #dbus,
   network tcp,
 
   deny /etc/host.conf r,
