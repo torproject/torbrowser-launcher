@@ -39,6 +39,7 @@
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/* r,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/.** rwk,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/.** rwk,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/ r,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/** r,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/*.so mr,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
