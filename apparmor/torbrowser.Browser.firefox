@@ -62,6 +62,8 @@
   /usr/share/mime/ r,
   /usr/share/themes/ r,
   /usr/share/applications/** rk,
+  /usr/share/gnome/applications/ r,
+  /usr/share/gnome/applications/kde4/ r,
   /usr/share/poppler/cMap/ r,
 
   ## Might flash a message when some packages are installed
