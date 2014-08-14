@@ -63,9 +63,6 @@
   /usr/share/gnome/applications/kde4/ r,
   /usr/share/poppler/cMap/ r,
 
-  ## Might flash a message when some packages are installed
-  #/usr/share/fontconfig/conf.avail/* r,
-  #/var/cache/fontconfig/ rk,
 
   # Should use abstractions/gstreamer instead once merged upstream
   /etc/udev/udev.conf r,
