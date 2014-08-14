@@ -64,6 +64,8 @@
   /usr/share/gnome/applications/kde4/ r,
   /usr/share/poppler/cMap/ r,
 
+  /sys/devices/system/cpu/ r,
+  /sys/devices/system/cpu/present r,
 
   # Should use abstractions/gstreamer instead once merged upstream
   /etc/udev/udev.conf r,
