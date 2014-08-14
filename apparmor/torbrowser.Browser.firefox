@@ -70,10 +70,10 @@
   #/usr/share/fontconfig/conf.avail/* r,
   #/var/cache/fontconfig/ rk,
 
-  ## KDE 4 ##
+  # KDE 4
   owner @{HOME}/.kde/share/config/* r,
 
-  ## Xfce4 ##
+  # Xfce4
   /etc/xfce4/defaults.list r,
   /usr/share/xfce4/applications/ r,
 }
