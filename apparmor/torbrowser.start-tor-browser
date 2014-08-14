@@ -8,9 +8,11 @@
 
 
   /bin/cat rix,
+  /bin/bash r,
   /bin/dash ix,
   /bin/grep rix,
   /bin/ps rix,
+  /bin/readlink ix,
   /bin/sed rix,
   /dev/pts/[0-9]* rw,
   /dev/tty rw,
@@ -34,6 +36,8 @@
   /usr/bin/getconf rix,
   /usr/bin/id rix,
   /usr/bin/ldd rix,
+  /usr/bin/realpath ix,
+  /usr/bin/zenity ix,
   /usr/lib{,32,64}/** mr,
   /usr/share/file/magic.mgc r,
   /usr/share/file/magic/ r,
