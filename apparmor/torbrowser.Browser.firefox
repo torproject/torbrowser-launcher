@@ -15,7 +15,6 @@
   deny /etc/resolv.conf r,
   deny /etc/passwd r,
   deny /etc/group r,
-  deny /etc/udev/udev.conf r,
   deny /etc/mailcap r,
 
   deny @{PROC}/[0-9]*/stat r,
@@ -26,8 +25,6 @@
   deny @{PROC}/[0-9]*/stat r,
   deny @{PROC}/[0-9]*/task/*/stat r,
 
-  deny /run/udev/** r,
-  deny /sys/devices/** r,
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
@@ -69,6 +66,12 @@
   ## Might flash a message when some packages are installed
   #/usr/share/fontconfig/conf.avail/* r,
   #/var/cache/fontconfig/ rk,
+
+  # Should use abstractions/gstreamer instead once merged upstream
+  /etc/udev/udev.conf r,
+  /run/udev/data/+pci:* r,
+  /sys/devices/pci[0-9]*/**/uevent r,
+  owner /{dev,run}/shm/shmfd-* rw,
 
   # KDE 4
   owner @{HOME}/.kde/share/config/* r,
