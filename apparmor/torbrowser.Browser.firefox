@@ -20,13 +20,14 @@
   deny @{PROC}/[0-9]*/stat r,
   deny @{PROC}/[0-9]*/mountinfo r,
   deny @{PROC}/[0-9]*/task/** r,
-  deny @{PROC}/sys/kernel/random/uuid r,
   deny @{PROC}/[0-9]*/fd/ r,
   deny @{PROC}/[0-9]*/stat r,
   deny @{PROC}/[0-9]*/task/*/stat r,
 
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
+
+  @{PROC}/sys/kernel/random/uuid r,
 
   ## Missing in <abstractions/user-download> #######
   # Without this line, access is denied to @{HOME},
