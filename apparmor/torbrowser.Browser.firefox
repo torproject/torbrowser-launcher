@@ -60,12 +60,9 @@
 
   /usr/share/ r,
   /usr/share/mime/ r,
-  /usr/share/mime/** r,
   /usr/share/themes/ r,
-  /usr/share/themes/** r,
   /usr/share/applications/** rk,
   /usr/share/poppler/cMap/ r,
-  /usr/share/poppler/cMap/** r,
 
   ## Might flash a message when some packages are installed
   #/usr/share/fontconfig/conf.avail/* r,
