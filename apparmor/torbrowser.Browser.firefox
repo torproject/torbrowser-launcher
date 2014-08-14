@@ -6,6 +6,8 @@
   #include <abstractions/audio>
   #include <abstractions/user-download>
 
+  network tcp,
+
   deny /etc/host.conf r,
   deny /etc/hosts r,
   deny /etc/nsswitch.conf r,
