@@ -1,4 +1,4 @@
-torbrowser-launcher (0.1.3-1) UNRELEASED; urgency=medium
+torbrowser-launcher (0.1.3-1) unstable; urgency=medium
 
   [ Ulrike Uhlig ]
   * New upstream version. (Closes: #757627)
