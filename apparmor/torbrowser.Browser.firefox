@@ -4,10 +4,10 @@
 /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
   #include <abstractions/gnome>
 
-  # Comment out the following line if you don't want the Tor Browser
-  # to have direct access to your sound hardware. Note that "#include"
-  # is *not* a comment, it is valid AppArmor rules syntax.
-  #include <abstractions/audio>
+  # Uncomment the following line if you don't want the Tor Browser
+  # to have direct access to your sound hardware. Note that this is not
+  # enough to have working sound support in Tor Browser.
+  # #include <abstractions/audio>
 
   # Uncomment the following lines if you want to give the Tor Browser read-write
   # access to most of your personal files.
