@@ -1,2 +1,18 @@
+# the hashes in this requirements file can be used by peep.
+
+# sha256: UNMM7nB3D9RNt86kIcsvt1ryR8OhzVSIXAazCnyF3SM
 Parsley==1.2
+
+# sha256: 9OuUqrPqnuzznO9G6Ht0J2XPDBnb5UT8XKIh5wBqdQ8
 txsocksx==1.13.0.1
+
+# sha256: vf2WGsIhb1xlsH8sOl5RFvZxO4wc8HbEABDGSBDSaWM
+Twisted==14.0.0
+
+# sha256: kcunt818uC9vTgI_53-U3D30rlKH_VXe8hSNwjLQx9o
+zope.interface==4.1.1
+
+# Note: PyGObject is also required, but it is not installable using pip. To
+# install torbrowser-launcher in a virtualenv, you'll need to create the
+# virtualenv with --system-site-packages and install PyGObject somehow. On
+# Debian you can get it from the python-gobject-2 package.
