@@ -14,6 +14,9 @@
 
   capability sys_ptrace,
 
+  # This script doesn't really need to read the interpreter that's running it.
+  deny /usr/bin/python{2,3}.[0-7]* r,
+
   /bin/{dash,grep,ps} rix,
   /dev/ r,
   /etc/magic r,
@@ -24,7 +27,7 @@
   @{HOME}/.local/share/torbrowser/ rw,
   @{HOME}/.local/share/torbrowser/** mrwk,
   @{HOME}/.local/share/torbrowser/gnupg_homedir/* l,
-  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser ux,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/,}start-tor-browser Px,
 
   @{PROC}/ r,
   @{PROC}/[0-9]*/{cmdline,mountinfo,stat,status} r,
@@ -34,7 +37,7 @@
   @{PROC}/uptime r,
   /usr/bin/ r,
   /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id} rix,
-  /usr/bin/torbrowser-launcher rux,
+  /usr/bin/torbrowser-launcher r,
   /usr/share/file/magic.mgc r,
   /usr/share/file/magic/ r,
   /usr/share/themes/** r,
