@@ -1,3 +1,10 @@
+torbrowser-launcher (0.1.4-2) UNRELEASED; urgency=medium
+
+  * Bump debian/compat to 9 and increase build-dependency to debhelper
+    >= 9.20120909~.
+
+ -- Holger Levsen <holger@debian.org>  Tue, 02 Sep 2014 12:57:56 -0400
+
 torbrowser-launcher (0.1.4-1) unstable; urgency=high
 
   [ Ulrike Uhlig ]
