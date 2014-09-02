@@ -1,9 +1,3 @@
-torbrowser-launcher (0.1.3-1~bpo70+1) wheezy-backports; urgency=low
-
-  * Rebuild for wheezy-backports.
-
- --  Ulrike Uhlig <u@451f.org>  Thu, 21 Aug 2014 12:37:59 +0200
-
 torbrowser-launcher (0.1.3-1) unstable; urgency=medium
 
   [ Ulrike Uhlig ]
