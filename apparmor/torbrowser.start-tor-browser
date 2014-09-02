@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-/home/*/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser {
+/home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/,}start-tor-browser {
   #include <abstractions/base>
   #include <abstractions/bash>
 
@@ -8,16 +8,23 @@
 
 
   /bin/cat rix,
+  /bin/bash r,
   /bin/dash ix,
   /bin/grep rix,
+  /bin/ln rix,
+  /bin/mkdir rix,
   /bin/ps rix,
+  /bin/readlink ix,
   /bin/sed rix,
   /dev/pts/[0-9]* rw,
   /dev/tty rw,
   /etc/magic r,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox Px,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/Tor/tor r,
-  owner @{HOME}/.torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser r,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/.config/ w,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/.config/ibus/ w,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/.config/ibus/bus w,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox Px,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Tor/tor r,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/,}start-tor-browser r,
   @{PROC}/ r,
   @{PROC}/[0-9]*/status r,
   @{PROC}/[0-9]*/stat r,
@@ -34,6 +41,8 @@
   /usr/bin/getconf rix,
   /usr/bin/id rix,
   /usr/bin/ldd rix,
+  /usr/bin/realpath ix,
+  /usr/bin/zenity ix,
   /usr/lib{,32,64}/** mr,
   /usr/share/file/magic.mgc r,
   /usr/share/file/magic/ r,

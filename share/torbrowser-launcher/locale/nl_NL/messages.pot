@@ -144,7 +144,7 @@ msgid ""
 msgstr ""
 
 #: torbrowser-launcher:617
-msgid "Firefox are is open, bringing to focus"
+msgid "Firefox is open, bringing to focus"
 msgstr "Firefox is open, wordt teruggebracht in focus"
 
 #: torbrowser-launcher:637
