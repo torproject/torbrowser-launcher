@@ -67,6 +67,10 @@ class DownloadErrorException(Exception):
     pass
 
 
+class TryOldUpdateCheckException(Exception):
+    pass
+
+
 class VerifyTorProjectCert(ClientContextFactory):
 
     def __init__(self, torproject_pem):
@@ -183,7 +187,8 @@ class TBLCommon:
                 'download_dir': tbb_cache+'/download',
                 'gnupg_homedir': tbb_local+'/gnupg_homedir',
                 'settings_file': tbb_config+'/settings',
-                'update_check_url': 'https://check.torproject.org/RecommendedTBBVersions',
+                'old_update_check_url': 'https://check.torproject.org/RecommendedTBBVersions',
+                'update_check_url': 'https://www.torproject.org/projects/torbrowser/RecommendedTBBVersions',
                 'update_check_file': tbb_cache+'/download/RecommendedTBBVersions',
                 'tbb': {
                     'dir': tbb_local+'/tbb/'+self.architecture,
@@ -775,6 +780,10 @@ class TBLLauncher:
             print _('Downloading'), self.common.paths['update_check_url']
             self.download('update check', self.common.paths['update_check_url'], self.common.paths['update_check_file'])
 
+        if task == 'download_old_update_check':
+            print _('Downloading'), self.common.paths['old_update_check_url']
+            self.download('update check', self.common.paths['old_update_check_url'], self.common.paths['update_check_file'])
+
         if task == 'attempt_update':
             print _('Checking to see if update is needed')
             self.attempt_update()
@@ -809,7 +818,7 @@ class TBLLauncher:
 
     def response_received(self, response):
         class FileDownloader(Protocol):
-            def __init__(self, common, file, total, progress, done_cb):
+            def __init__(self, common, file, url, total, progress, done_cb):
                 self.file = file
                 self.total = total
                 self.so_far = 0
@@ -817,6 +826,8 @@ class TBLLauncher:
                 self.all_done = done_cb
 
                 if response.code != 200:
+                    if response.code == 404 and url == common.paths['update_check_url']:
+                        raise TryOldUpdateCheckException
                     if common.settings['mirror'] != common.default_mirror:
                         raise TryDefaultMirrorException(_("Download Error: {0} {1}\n\nYou are currently using a non-default mirror:\n{2}\n\nWould you like to switch back to the default?").format(response.code, response.phrase, common.settings['mirror']))
                     else:
@@ -841,13 +852,19 @@ class TBLLauncher:
                 print _('Finished receiving body:'), reason.getErrorMessage()
                 self.all_done(reason)
 
-        dl = FileDownloader(self.common, self.file_download, response.length, self.progressbar, self.response_finished)
+        if hasattr(self, 'current_download_url'):
+            url = self.current_download_url
+        else:
+            url = None
+
+        dl = FileDownloader(self.common, self.file_download, url, response.length, self.progressbar, self.response_finished)
         response.deliverBody(dl)
 
     def response_finished(self, msg):
         if msg.check(ResponseDone):
             self.file_download.close()
             delattr(self, 'current_download_path')
+            delattr(self, 'current_download_url')
 
             # next task!
             self.run_task()
@@ -878,6 +895,13 @@ class TBLLauncher:
             else:
                 self.set_gui('error', str(f.value), [], False)
 
+        elif isinstance(f.value, TryOldUpdateCheckException):
+            f.trap(TryOldUpdateCheckException)
+            print 'New update check URL failed, trying old'
+            self.set_gui('task', _("Checking for Tor Browser update."),
+                         ['download_old_update_check',
+                          'attempt_update'])
+
         elif isinstance(f.value, ResponseFailed):
             for reason in f.value.reasons:
                 if isinstance(reason.value, OpenSSL.SSL.Error):
@@ -895,6 +919,7 @@ class TBLLauncher:
     def download(self, name, url, path):
         # keep track of current download
         self.current_download_path = path
+        self.current_download_url = url
 
         # initialize the progress bar
         mirror_url = url.format(self.common.settings['mirror'])
@@ -1109,6 +1134,7 @@ class TBLLauncher:
         if hasattr(self, 'current_download_path'):
             os.remove(self.current_download_path)
             delattr(self, 'current_download_path')
+            delattr(self, 'current_download_url')
         if reactor.running:
             reactor.stop()
 
