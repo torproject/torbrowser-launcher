@@ -1,5 +1,11 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.4
+
+* RecommendedTBBVersion URL change
+* Many AppArmor improvements
+* Allow installation into a virtualenv
+
 ## 0.1.3
 
 * Force installing stable release if available in RecommendedTBBVersions
