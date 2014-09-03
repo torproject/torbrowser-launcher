@@ -67,10 +67,6 @@ class DownloadErrorException(Exception):
     pass
 
 
-class TryOldUpdateCheckException(Exception):
-    pass
-
-
 class VerifyTorProjectCert(ClientContextFactory):
 
     def __init__(self, torproject_pem):
@@ -187,7 +183,6 @@ class TBLCommon:
                 'download_dir': tbb_cache+'/download',
                 'gnupg_homedir': tbb_local+'/gnupg_homedir',
                 'settings_file': tbb_config+'/settings',
-                'old_update_check_url': 'https://check.torproject.org/RecommendedTBBVersions',
                 'update_check_url': 'https://www.torproject.org/projects/torbrowser/RecommendedTBBVersions',
                 'update_check_file': tbb_cache+'/download/RecommendedTBBVersions',
                 'tbb': {
@@ -780,10 +775,6 @@ class TBLLauncher:
             print _('Downloading'), self.common.paths['update_check_url']
             self.download('update check', self.common.paths['update_check_url'], self.common.paths['update_check_file'])
 
-        if task == 'download_old_update_check':
-            print _('Downloading'), self.common.paths['old_update_check_url']
-            self.download('update check', self.common.paths['old_update_check_url'], self.common.paths['update_check_file'])
-
         if task == 'attempt_update':
             print _('Checking to see if update is needed')
             self.attempt_update()
@@ -826,8 +817,6 @@ class TBLLauncher:
                 self.all_done = done_cb
 
                 if response.code != 200:
-                    if response.code == 404 and url == common.paths['update_check_url']:
-                        raise TryOldUpdateCheckException
                     if common.settings['mirror'] != common.default_mirror:
                         raise TryDefaultMirrorException(_("Download Error: {0} {1}\n\nYou are currently using a non-default mirror:\n{2}\n\nWould you like to switch back to the default?").format(response.code, response.phrase, common.settings['mirror']))
                     else:
@@ -894,13 +883,6 @@ class TBLLauncher:
                 self.set_gui('error_try_default_mirror', _("DNS Lookup Error\n\nYou are currently using a non-default mirror:\n{0}\n\nWould you like to switch back to the default?").format(common.settings['mirror']), [], False)
             else:
                 self.set_gui('error', str(f.value), [], False)
-
-        elif isinstance(f.value, TryOldUpdateCheckException):
-            f.trap(TryOldUpdateCheckException)
-            print 'New update check URL failed, trying old'
-            self.set_gui('task', _("Checking for Tor Browser update."),
-                         ['download_old_update_check',
-                          'attempt_update'])
 
         elif isinstance(f.value, ResponseFailed):
             for reason in f.value.reasons:
