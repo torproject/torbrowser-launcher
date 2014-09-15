@@ -3,6 +3,7 @@
 /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/,}start-tor-browser {
   #include <abstractions/base>
   #include <abstractions/bash>
+  #include <abstractions/fonts>
 
   capability sys_ptrace,
 
