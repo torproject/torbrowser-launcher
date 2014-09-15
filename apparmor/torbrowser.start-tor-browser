@@ -11,7 +11,7 @@
 
   /bin/cat rix,
   /bin/bash r,
-  /bin/dash ix,
+  /bin/dash rix,
   /bin/grep rix,
   /bin/ln rix,
   /bin/mkdir rix,
