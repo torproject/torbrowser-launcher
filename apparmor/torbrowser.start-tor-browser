@@ -48,5 +48,6 @@
   /usr/lib{,32,64}/** mr,
   /usr/share/file/magic.mgc r,
   /usr/share/file/magic/ r,
+  /usr/share/zenity/zenity.ui r,
 
 }
