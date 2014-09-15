@@ -4,6 +4,7 @@
   #include <abstractions/base>
   #include <abstractions/bash>
   #include <abstractions/fonts>
+  #include <abstractions/freedesktop.org>
 
   capability sys_ptrace,
 
