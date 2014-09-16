@@ -1,9 +1,16 @@
-torbrowser-launcher (0.1.4-2) UNRELEASED; urgency=medium
+torbrowser-launcher (0.1.4-2) unstable; urgency=medium
 
+  * Team upload.
+
+  [ Holger Levsen ]
   * Bump debian/compat to 9 and increase build-dependency to debhelper
     >= 9.20120909~.
 
- -- Holger Levsen <holger@debian.org>  Tue, 02 Sep 2014 12:57:56 -0400
+  [ intrigeri ]
+  * Import AppArmor profiles updates from upstream (Closes: #761663).
+  * Fix short BSD license name in debian/copyright.
+
+ -- intrigeri <intrigeri@debian.org>  Mon, 15 Sep 2014 20:13:26 -0700
 
 torbrowser-launcher (0.1.4-1) unstable; urgency=high
 
