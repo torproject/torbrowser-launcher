@@ -1,0 +1,24 @@
+From: intrigeri <intrigeri@boum.org>
+Origin: https://github.com/micahflee/torbrowser-launcher/commit/aa831b7f51b8719d44dc83635629aaf3d5a6e482
+Date: Mon, 15 Sep 2014 16:50:45 +0000
+Subject: AppArmor: allow start-tor-browser to read
+ /usr/share/zenity/zenity.ui.
+
+When start-tor-browser runs zenity (under the start-tor-browser confinement),
+unsurprisingly that one needs to read its own files. On current Debian unstable,
+this includes /usr/share/zenity/zenity.ui.
+---
+ apparmor/torbrowser.start-tor-browser | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/apparmor/torbrowser.start-tor-browser b/apparmor/torbrowser.start-tor-browser
+index 78fcb1b..3ca6368 100644
+--- a/apparmor/torbrowser.start-tor-browser
++++ b/apparmor/torbrowser.start-tor-browser
+@@ -48,5 +48,6 @@
+   /usr/lib{,32,64}/** mr,
+   /usr/share/file/magic.mgc r,
+   /usr/share/file/magic/ r,
++  /usr/share/zenity/zenity.ui r,
+ 
+ }

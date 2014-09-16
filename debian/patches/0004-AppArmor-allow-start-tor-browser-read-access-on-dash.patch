@@ -1,0 +1,25 @@
+From: intrigeri <intrigeri@boum.org>
+Origin: https://github.com/micahflee/torbrowser-launcher/commit/ea3b6af185d734766905861f8f5a76ba84b515b1
+Date: Mon, 15 Sep 2014 16:49:47 +0000
+Subject: AppArmor: allow start-tor-browser read access on dash.
+
+We already do this for most other executable files start-tor-browser runs.
+No idea why it used to work without this permission, but oh well, it now
+needs it.
+---
+ apparmor/torbrowser.start-tor-browser | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/apparmor/torbrowser.start-tor-browser b/apparmor/torbrowser.start-tor-browser
+index 1f5fcf1..78fcb1b 100644
+--- a/apparmor/torbrowser.start-tor-browser
++++ b/apparmor/torbrowser.start-tor-browser
+@@ -11,7 +11,7 @@
+ 
+   /bin/cat rix,
+   /bin/bash r,
+-  /bin/dash ix,
++  /bin/dash rix,
+   /bin/grep rix,
+   /bin/ln rix,
+   /bin/mkdir rix,

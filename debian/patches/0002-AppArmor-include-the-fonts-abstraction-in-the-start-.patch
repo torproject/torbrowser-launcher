@@ -1,0 +1,24 @@
+From: intrigeri <intrigeri@boum.org>
+Origin: https://github.com/micahflee/torbrowser-launcher/commit/2173b6e81bfb43bded615fd8bf4fdfd7d24621fe
+Date: Mon, 15 Sep 2014 16:47:20 +0000
+Subject: AppArmor: include the fonts abstraction in the start-tor-browser
+ profile.
+
+Otherwise, when it runs zenity, fonts are garbled (each char is replaced with
+a square) on current Debian sid.
+---
+ apparmor/torbrowser.start-tor-browser | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/apparmor/torbrowser.start-tor-browser b/apparmor/torbrowser.start-tor-browser
+index 9c2e5e8..f0bc429 100644
+--- a/apparmor/torbrowser.start-tor-browser
++++ b/apparmor/torbrowser.start-tor-browser
+@@ -3,6 +3,7 @@
+ /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/,}start-tor-browser {
+   #include <abstractions/base>
+   #include <abstractions/bash>
++  #include <abstractions/fonts>
+ 
+   capability sys_ptrace,
+ 
