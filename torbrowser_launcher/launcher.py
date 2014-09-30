@@ -153,7 +153,7 @@ class Launcher:
             elif installed_version < latest_version:
                 print _('TBB is out of date, attempting to upgrade to {0}'.format(latest_version))
                 # there is a tbb upgrade available
-                self.set_gui('task', _("Your Tor Browser is out of date."),
+                self.set_gui('task', _("Your Tor Browser is out of date. Upgrading from {0} to {1}.".format(installed_version, latest_version)),
                              ['download_sha256',
                               'download_sha256_sig',
                               'download_tarball',
@@ -167,7 +167,7 @@ class Launcher:
         # not installed
         else:
             print _('TBB is not installed, attempting to install {0}'.format(latest_version))
-            self.set_gui('task', _("Downloading and installing Tor Browser."),
+            self.set_gui('task', _("Downloading and installing Tor Browser for the first time."),
                          ['download_sha256',
                           'download_sha256_sig',
                           'download_tarball',
