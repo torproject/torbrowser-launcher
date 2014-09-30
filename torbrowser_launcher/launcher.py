@@ -497,6 +497,9 @@ class Launcher:
             versions = json.load(open(self.common.paths['update_check_file']))
             latest = None
 
+            # TODO: after TBB 4.0 is released, refactor this section
+            #       to not filter linux versions (#132)
+
             # filter linux versions
             valid = []
             for version in versions:
@@ -504,18 +507,20 @@ class Launcher:
                     valid.append(str(version))
             valid.sort()
             if len(valid):
-                if len(valid) == 1:
-                    latest = valid.pop()
+                versions = valid
+
+            if len(versions) == 1:
+                latest = versions.pop()
+            else:
+                stable = []
+                # remove alphas/betas
+                for version in versions:
+                    if '-alpha-' not in version and '-beta-' not in version:
+                        stable.append(version)
+                if len(stable):
+                    latest = stable.pop()
                 else:
-                    stable = []
-                    # remove alphas/betas
-                    for version in valid:
-                        if '-alpha-' not in version and '-beta-' not in version:
-                            stable.append(version)
-                    if len(stable):
-                        latest = stable.pop()
-                    else:
-                        latest = valid.pop()
+                    latest = versions.pop()
 
             if latest:
                 self.common.settings['latest_version'] = latest[:-len('-Linux')]
