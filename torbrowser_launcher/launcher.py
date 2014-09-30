@@ -523,7 +523,11 @@ class Launcher:
                     latest = versions.pop()
 
             if latest:
-                self.common.settings['latest_version'] = latest[:-len('-Linux')]
+                latest = str(latest)
+                if latest.endswith('-Linux'):
+                    latest = latest.rstrip('-Linux')
+
+                self.common.settings['latest_version'] = latest
                 self.common.settings['last_update_check_timestamp'] = int(time.time())
                 self.common.settings['check_for_updates'] = False
                 self.common.save_settings()
