@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma
+import os, subprocess, time, json, tarfile, hashlib, lzma, threading
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
@@ -611,22 +611,26 @@ class Launcher:
         self.run_task()
 
     def run(self, run_next_task=True):
-        devnull = open('/dev/null', 'w')
-        subprocess.Popen([self.common.paths['tbb']['start']], stdout=devnull, stderr=devnull)
-
         # play modem sound?
         if self.common.settings['modem_sound']:
-            try:
-                import pygame
-                pygame.mixer.init()
-                sound = pygame.mixer.Sound(self.common.paths['modem_sound'])
-                sound.play()
-                time.sleep(10)
-            except ImportError:
-                md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-pygame package is missing, the modem sound is unavailable."))
-                md.set_position(gtk.WIN_POS_CENTER)
-                md.run()
-                md.destroy()
+            def play_modem_sound():
+                try:
+                    import pygame
+                    pygame.mixer.init()
+                    sound = pygame.mixer.Sound(self.common.paths['modem_sound'])
+                    sound.play()
+                    time.sleep(10)
+                except ImportError:
+                    md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-pygame package is missing, the modem sound is unavailable."))
+                    md.set_position(gtk.WIN_POS_CENTER)
+                    md.run()
+                    md.destroy()
+
+            t = threading.Thread(target=play_modem_sound)
+            t.start()
+
+        # run Tor Browser
+        subprocess.call([self.common.paths['tbb']['start']])
 
         if run_next_task:
             self.run_task()
