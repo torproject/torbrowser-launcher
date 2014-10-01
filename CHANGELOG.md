@@ -1,5 +1,14 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.5
+
+* Split source code into several files
+* Several AppArmor updates
+* Prepare for upcoming RecommendedTBBVersion format change
+* More verbose UI when updating
+* No longer detaches start-tor-browser as separate process
+* Temporarily disable AppArmor profiles in Ubuntu
+
 ## 0.1.4
 
 * RecommendedTBBVersion URL change
