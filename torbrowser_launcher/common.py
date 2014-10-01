@@ -131,7 +131,7 @@ class Common:
                     'local': tbb_local,
                 },
                 'old_data_dir': old_tbb_data,
-                'tbl_bin': __file__,
+                'tbl_bin': sys.argv[0],
                 'icon_file': os.path.join(os.path.dirname(SHARE), 'pixmaps/torbrowser80.xpm'),
                 'torproject_pem': os.path.join(SHARE, 'torproject.pem'),
                 'erinn_key': os.path.join(SHARE, 'erinn.asc'),
