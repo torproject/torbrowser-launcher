@@ -27,10 +27,11 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from distutils.core import setup
-import os
-import sys
+import os, sys, subprocess
 SHARE = 'share'
 
+# detect linux distribution
+distro = subprocess.check_output(['lsb_release', '-i']).split()[-1]
 
 def file_list(path):
     files = []
@@ -47,13 +48,15 @@ for root, dirs, files in os.walk(SHARE):
     datafiles.append((os.path.join(sys.prefix, root),
                       [os.path.join(root, f) for f in files]))
 
-if not hasattr(sys, 'real_prefix'):
-    # we're not in a virtualenv, so we can probably write to /etc
-    datafiles += [('/etc/apparmor.d/', [
-        'apparmor/torbrowser.Browser.firefox',
-        'apparmor/torbrowser.start-tor-browser',
-        'apparmor/torbrowser.Tor.tor',
-        'apparmor/usr.bin.torbrowser-launcher'])]
+# disable shipping apparmor profiles until they work in ubuntu (#128)
+if distro != 'Ubuntu':
+    if not hasattr(sys, 'real_prefix'):
+        # we're not in a virtualenv, so we can probably write to /etc
+        datafiles += [('/etc/apparmor.d/', [
+            'apparmor/torbrowser.Browser.firefox',
+            'apparmor/torbrowser.start-tor-browser',
+            'apparmor/torbrowser.Tor.tor',
+            'apparmor/usr.bin.torbrowser-launcher'])]
 
 setup(
     name='torbrowser-launcher',
