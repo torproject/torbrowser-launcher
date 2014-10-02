@@ -1,5 +1,0 @@
-0001-Grant-the-browser-read-access-on-its-profile-directo.patch
-0002-AppArmor-include-the-fonts-abstraction-in-the-start-.patch
-0003-AppArmor-include-the-freedesktop.org-abstraction-in-.patch
-0004-AppArmor-allow-start-tor-browser-read-access-on-dash.patch
-0005-AppArmor-allow-start-tor-browser-to-read-usr-share-z.patch

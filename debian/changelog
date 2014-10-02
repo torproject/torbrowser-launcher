@@ -1,3 +1,12 @@
+torbrowser-launcher (0.1.5-1) UNRELEASED; urgency=medium
+
+  [ Ulrike Uhlig ]
+  * New upstream version. (Closes: #763739)
+    - no longer detach application (Closes: #756901)
+  * Delete apparmor patches which were fixed upstream.
+
+ -- Ulrike Uhlig <u@451f.org>  Thu, 02 Oct 2014 18:59:37 +0200
+
 torbrowser-launcher (0.1.4-2) unstable; urgency=medium
 
   * Team upload.
