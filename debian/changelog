@@ -5,6 +5,9 @@ torbrowser-launcher (0.1.5-1) UNRELEASED; urgency=medium
     - no longer detach application (Closes: #756901)
   * Delete apparmor patches which were fixed upstream.
 
+  [ Holger Levsen ]
+  * Force usage of python 2.7. 
+
  -- Ulrike Uhlig <u@451f.org>  Thu, 02 Oct 2014 18:59:37 +0200
 
 torbrowser-launcher (0.1.4-2) unstable; urgency=medium
