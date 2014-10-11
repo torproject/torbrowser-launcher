@@ -37,7 +37,7 @@ def main():
         tor_browser_launcher_version = buf.read().strip()
 
     print _('Tor Browser Launcher')
-    print _('By Micah Lee, licensed under BSD')
+    print _('By Micah Lee, licensed under MIT')
     print _('version {0}').format(tor_browser_launcher_version)
     print 'https://github.com/micahflee/torbrowser-launcher'
 
