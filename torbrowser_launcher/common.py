@@ -146,7 +146,7 @@ class Common:
                 'tbb': {
                     'dir': tbb_local+'/tbb/'+self.architecture,
                     'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
-                    'versions': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Docs/sources/versions',
+                    'versions': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/sources/versions',
                 },
             }
 
@@ -286,5 +286,3 @@ class Common:
         # bring to front
         if win_id:
             subprocess.call(['wmctrl', '-i', '-a', win_id])
-
-
