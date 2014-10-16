@@ -27,11 +27,11 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from distutils.core import setup
-import os, sys, subprocess
+import os, sys, platform
 SHARE = 'share'
 
 # detect linux distribution
-distro = subprocess.check_output(['lsb_release', '-i']).split()[-1]
+distro = platform.dist()[0]
 
 def file_list(path):
     files = []
