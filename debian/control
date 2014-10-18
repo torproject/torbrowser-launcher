@@ -10,7 +10,7 @@ X-Python-Version: >= 2.7
 Standards-Version: 3.9.6
 Homepage: https://micahflee.com/torbrowser-launcher/
 Vcs-Git: git://anonscm.debian.org/collab-maint/torbrowser-launcher.git
-Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/torbrowser-launcher.git
+Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/torbrowser-launcher.git
 
 Package: torbrowser-launcher
 Architecture: i386 amd64
