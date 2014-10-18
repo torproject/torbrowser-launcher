@@ -5,7 +5,7 @@ Uploaders: Jacob Appelbaum <jacob@appelbaum.net>,
  Holger Levsen <holger@debian.org>
 Section: contrib/python
 Priority: optional
-Build-Depends: python-all (>= 2.7.3-4), debhelper (>= 9.20120909~), dh-apparmor
+Build-Depends: python-all (>= 2.7.3-4), debhelper (>= 9.20120909~), dh-apparmor, lsb-release
 X-Python-Version: >= 2.7
 Standards-Version: 3.9.5
 Homepage: https://micahflee.com/torbrowser-launcher/
