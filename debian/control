@@ -7,7 +7,7 @@ Section: contrib/python
 Priority: optional
 Build-Depends: python-all (>= 2.7.3-4), debhelper (>= 9.20120909~), dh-apparmor, lsb-release
 X-Python-Version: >= 2.7
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 Homepage: https://micahflee.com/torbrowser-launcher/
 Vcs-Git: git://anonscm.debian.org/collab-maint/torbrowser-launcher.git
 Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/torbrowser-launcher.git

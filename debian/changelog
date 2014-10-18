@@ -1,6 +1,7 @@
 torbrowser-launcher (0.1.5-2) UNRELEASED; urgency=medium
 
   * Add lsb-release to build-depends.
+  * Bump standards version to 3.9.6. 
 
  -- Holger Levsen <holger@debian.org>  Sat, 18 Oct 2014 12:33:00 +0200
 
