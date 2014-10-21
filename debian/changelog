@@ -1,7 +1,13 @@
+torbrowser-launcher (0.1.6-1) UNRELEASED; urgency=medium
+
+  * New upstream version.
+
+ --  Ulrike Uhlig <u@451f.org>  Tue, 21 Oct 2014 23:05:16 +0200
+
 torbrowser-launcher (0.1.5-2) unstable; urgency=medium
 
   * Add lsb-release to build-depends.
-  * Bump standards version to 3.9.6. 
+  * Bump standards version to 3.9.6.
   * Switch Vcs-Browser: to cgit URL.
 
  -- Holger Levsen <holger@debian.org>  Sat, 18 Oct 2014 21:54:31 +0200
