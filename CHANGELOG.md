@@ -1,5 +1,11 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.6
+
+* Updated licensing confusion to just be MIT in all locations
+* Fixed bug related to TBB 4.0's new folder structure
+* Updated .desktop files to comply with standards
+
 ## 0.1.5
 
 * Split source code into several files

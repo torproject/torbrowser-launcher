@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Tor Browser Settings
 Comment=Tor Browser Launcher Settings
 Exec=/usr/bin/torbrowser-launcher -settings
