@@ -1,6 +1,9 @@
 torbrowser-launcher (0.1.6-1) unstable; urgency=medium
 
-  * New upstream version (Closes: #766302)
+  * New upstream version. (Closes: #766302)
+  * debian/copyright:
+    * upstream marked license as being MIT.
+    * upstream extended copyright to 2014.
 
  -- Ulrike Uhlig <u@451f.org>  Sun, 26 Oct 2014 15:23:58 +0100
 
