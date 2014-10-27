@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, sys, platform, subprocess, locale, pickle, psutil
+import os, sys, platform, subprocess, locale, pickle, psutil, re
 
 import pygtk
 pygtk.require('2.0')
@@ -39,6 +39,16 @@ gettext.install('torbrowser-launcher', os.path.join(SHARE, 'locale'))
 
 from twisted.internet import gtk2reactor
 gtk2reactor.install()
+
+
+# We're looking for output which:
+#
+#   1. The first portion must be `[GNUPG:] IMPORT_OK`
+#   2. The second must be an integer between [0, 15], inclusive
+#   3. The third must be an uppercased hex-encoded 160-bit fingerprint
+gnupg_import_ok_pattern = re.compile(
+    "(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})")
+
 
 class Common:
 
@@ -150,6 +160,12 @@ class Common:
                 },
             }
 
+        self.fingerprints = {}
+
+        # Add the expected fingerprint for imported keys:
+        if self.paths['erinn_key']:
+            self.fingerprints['erinn_key'] = '8738A680B84B3031A630F2DB416F061063FEE659'
+
     # create a directory
     @staticmethod
     def mkdir(path):
@@ -172,10 +188,59 @@ class Common:
             self.mkdir(self.paths['gnupg_homedir'])
         self.import_keys()
 
+    def import_key_and_check_status(self, key):
+        """Import a GnuPG key and check that the operation was successful.
+
+        :param str key: A string specifying the key's filepath from
+            ``Common.paths``, as well as its fingerprint in
+            ``Common.fingerprints``.
+        :rtype: bool
+        :returns: ``True`` if the key is now within the keyring (or was
+            previously and hasn't changed). ``False`` otherwise.
+        """
+        success = False
+
+        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                              '--homedir', self.paths['gnupg_homedir'],
+                              '--import', self.paths[key]],
+                             stderr=subprocess.PIPE)
+        p.wait()
+
+        output = p.stderr.read()
+        match = gnupg_import_ok_pattern.match(output)
+        if match:
+            # The output must match everything in the
+            # ``gnupg_import_ok_pattern``, as well as the expected fingerprint:
+            if match.group().find(self.fingerprints[key]) >= 0:
+                success = True
+
+        return success
+
     # import gpg keys
     def import_keys(self):
+        """Import all GnuPG keys.
+
+        :rtype: bool
+        :returns: ``True`` if all keys were successfully imported; ``False``
+            otherwise.
+        """
+        keys = ['erinn_key',]
+        all_imports_succeeded = True
+
         print _('Importing keys')
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key']]).wait()
+        for key in keys:
+            imported = self.import_key_and_check_status(key)
+            if not imported:
+                print _('Could not import key with fingerprint: %s.'
+                        % self.fingerprints[key])
+                all_imports_succeeded = False
+
+        if all_imports_succeeded:
+            print _('Successfully imported all keys.')
+        else:
+            print _('Not all keys were imported successfully!')
+
+        return all_imports_succeeded
 
     # load mirrors
     def load_mirrors(self):
