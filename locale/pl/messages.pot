@@ -159,4 +159,4 @@ msgstr "Launcher Przeglądarki Tora"
 
 #: torbrowser-launcher:567
 msgid "version {0}"
-msgstr "wersja {"
+msgstr "wersja {0}"
