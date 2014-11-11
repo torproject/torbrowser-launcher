@@ -47,7 +47,7 @@ class Common:
         self.tbl_version = tbl_version
 
         # initialize the app
-        self.default_mirror = 'https://www.torproject.org/dist/'
+        self.default_mirror = 'https://dist.torproject.org/'
         self.discover_arch_lang()
         self.build_paths()
         for d in self.paths['dirs']:
