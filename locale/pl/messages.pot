@@ -1,0 +1,162 @@
+# Tor Browser Launcher
+# Copyright (C) 2013 Micah Lee <micah@micahflee.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"POT-Creation-Date: 2013-04-03 10:49+PDT\n"
+"PO-Revision-Date: 2014-05-02 20:41+0100\n"
+"Last-Translator: AreYouLoco? <areyouloco@paranoici.org>\n"
+"Language-Team: none\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: torbrowser-launcher:70
+msgid "Checking for Tor Browser update."
+msgstr "Sprawdzanie aktualizacji dla Przeglądarki Tora."
+
+#: torbrowser-launcher:76
+msgid "Checked for update within 24 hours, skipping"
+msgstr "Sprawdzono aktualizacje w przeciągu ostatnich 24 godzin, pomijanie"
+
+#: torbrowser-launcher:80
+msgid "Error loading settings. Delete ~/.torbrowser and try again."
+msgstr "Błąd ładowania ustawień. Usuń ~/.torbrowser i spróbój ponownie."
+
+#: torbrowser-launcher:85
+msgid "Tor Browser"
+msgstr "Przeglądarka Tora"
+
+#: torbrowser-launcher:105
+msgid "Your Tor Browser is out of date."
+msgstr "Twoja Przeglądarka Tora jest nieaktualna."
+
+#: torbrowser-launcher:113
+msgid ""
+"Something is wrong. The version of Tor Browser Bundle you have installed is "
+"newer than the current version?"
+msgstr ""
+"Coś poszło nie tak. Wersja Przeglądarki Tora, którą masz zainstalowaną jest "
+"nowsza od aktualnej?"
+
+#: torbrowser-launcher:120
+msgid "Installing Tor Browser."
+msgstr "Instalowanie Przeglądarki Tora."
+
+#: torbrowser-launcher:127
+msgid "Downloading and installing Tor Browser."
+msgstr "Pobieranie i instalowanie Przeglądarki Tora."
+
+#: torbrowser-launcher:166
+msgid "Error creating {0}"
+msgstr "Błąd przy tworzeniu {0}"
+
+#: torbrowser-launcher:168 torbrowser-launcher:215
+msgid "{0} is not writable"
+msgstr "{0} jest tylko do odczytu"
+
+#: torbrowser-launcher:212
+msgid "Cannot create directory {0}"
+msgstr "Nie można stworzyć {0}"
+
+#: torbrowser-launcher:222
+msgid "Creating GnuPG homedir"
+msgstr "Tworzenie katalogu głównego GnuPG"
+
+#: torbrowser-launcher:225
+msgid "Importing keys"
+msgstr "Importowanie kluczy"
+
+#: torbrowser-launcher:345 torbrowser-launcher:353 torbrowser-launcher:357
+msgid "Downloading"
+msgstr "Pobieranie"
+
+#: torbrowser-launcher:349
+msgid "Checking to see if update is needed"
+msgstr "Sprawdzanie czy potrzebna jest aktualizacja"
+
+#: torbrowser-launcher:361
+msgid "Verifying signature"
+msgstr "Weryfikowanie podpisu"
+
+#: torbrowser-launcher:365
+msgid "Extracting"
+msgstr "Rozpakowywanie"
+
+#: torbrowser-launcher:369
+msgid "Running"
+msgstr "Uruchamianie"
+
+#: torbrowser-launcher:373
+msgid "Starting download over again"
+msgstr "Ponowne rozpoczynanie pobierania"
+
+#: torbrowser-launcher:398
+msgid "Downloaded"
+msgstr "Pobrano"
+
+#: torbrowser-launcher:401
+msgid "Finished receiving body:"
+msgstr "Zakończono odbieranie głównej części:"
+
+#: torbrowser-launcher:418
+msgid "Download error"
+msgstr "Błąd pobierania"
+
+#: torbrowser-launcher:419
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"Błąd przy rozpoczynaniu pobierania:\n"
+"\n"
+"{0}\n"
+"\n"
+"Czy jesteś podłąćzony do internetu?"
+
+#: torbrowser-launcher:426
+msgid "Downloading {0}"
+msgstr "Pobieranie {0}"
+
+#: torbrowser-launcher:461 torbrowser-launcher:465
+msgid "Error checking for updates."
+msgstr "Błąd przy sprawdzaniu aktualizacji."
+
+#: torbrowser-launcher:474
+msgid "Verifying Signature"
+msgstr "Weryfikowanie Podpisu"
+
+#: torbrowser-launcher:483
+msgid ""
+"SIGNATURE VERIFICATION FAILED!\n"
+"\n"
+"You might be under attack, or there might just be a networking problem. "
+"Click Start try the download again."
+msgstr ""
+"WERYFIKACJA PODPISU NIEUDANA!\n"
+"\n"
+"Możesz być atakowany, lub mogą być to tylko problemy z połączeniem. Naciśnij "
+"Start aby pobrać ponownie."
+
+#: torbrowser-launcher:493
+msgid "Installing"
+msgstr "Instalowanie"
+
+#: torbrowser-launcher:519
+msgid "Downloading Tor Browser Bundle over again."
+msgstr "Ponowne pobieranie Tor Browser Bundle"
+
+#: torbrowser-launcher:566
+msgid "Tor Browser Launcher"
+msgstr "Launcher Przeglądarki Tora"
+
+#: torbrowser-launcher:567
+msgid "version {0}"
+msgstr "wersja {0}"
