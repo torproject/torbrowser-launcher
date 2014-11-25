@@ -626,6 +626,11 @@ class Launcher:
             t = threading.Thread(target=play_modem_sound)
             t.start()
 
+        # hide the TBL window (#151)
+        self.window.hide()
+        while gtk.events_pending():
+            gtk.main_iteration_do(True)
+
         # run Tor Browser
         subprocess.call([self.common.paths['tbb']['start']])
 
