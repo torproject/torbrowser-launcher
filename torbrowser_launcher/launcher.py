@@ -497,9 +497,6 @@ class Launcher:
             versions = json.load(open(self.common.paths['update_check_file']))
             latest = None
 
-            # TODO: after TBB 4.0 is released, refactor this section
-            #       to not filter linux versions (#132)
-
             # filter linux versions
             valid = []
             for version in versions:
