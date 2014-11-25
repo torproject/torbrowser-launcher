@@ -63,9 +63,10 @@ class VerifyTorProjectCert(ClientContextFactory):
         return cert.digest('sha256') == self.torproject_ca.digest('sha256')
 
 class Launcher:
-    def __init__(self, common):
+    def __init__(self, common, url_list):
         print _('Starting launcher dialog')
         self.common = common
+        self.url_list = url_list
 
         # init launcher
         self.set_gui(None, '', [])
@@ -633,7 +634,10 @@ class Launcher:
                 gtk.main_iteration_do(True)
 
         # run Tor Browser
-        subprocess.call([self.common.paths['tbb']['start']])
+        if len(self.url_list) == 0:
+            subprocess.call([self.common.paths['tbb']['start']])
+        else:
+            subprocess.call([self.common.paths['tbb']['start'], '-allow-remote'] + self.url_list)
 
         if run_next_task:
             self.run_task()
