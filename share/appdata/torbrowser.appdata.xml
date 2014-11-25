@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2014 Micah Lee <micah@micahflee.com> -->
 <application>
- <id type="desktop">torbrowser-launcher.desktop</id>
+ <id type="desktop">torbrowser.desktop</id>
  <metadata_license>CC0-1.0</metadata_license>
  <project_license>MIT</project_license>
  <name>Tor Browser Launcher</name>
