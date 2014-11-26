@@ -1,5 +1,13 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.7
+
+* You can now pass URLs into TBL, and set it as your default browser
+* Hides TBL window before launching TBB
+* Default mirror switched to https://dist.torproject.org/
+* Added AppData file to look better in software centers
+* Exclude AppArmor profiles in Ubuntu, where they're broken
+
 ## 0.1.6
 
 * Updated licensing confusion to just be MIT in all locations
