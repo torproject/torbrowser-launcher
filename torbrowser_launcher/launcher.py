@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma, threading
+import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
@@ -39,6 +39,11 @@ import OpenSSL
 import pygtk
 pygtk.require('2.0')
 import gtk
+
+
+gnupg_goodsig_pattern = re.compile("(\[GNUPG\:\]) (GOODSIG) .*")
+gnupg_validsig_pattern = re.compile("(\[GNUPG\:\]) (VALIDSIG) ([A-F0-9]{40}) .*")
+
 
 class TryStableException(Exception):
     pass
@@ -552,14 +557,30 @@ class Launcher:
 
         verified = False
         # check the sha256 file's sig, and also take the sha256 of the tarball and compare
-        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sha256_sig_file']])
+        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                              '--homedir', self.common.paths['gnupg_homedir'],
+                              '--verify', self.common.paths['sha256_sig_file']],
+                             stderr=subprocess.PIPE)
         self.pulse_until_process_exits(p)
-        if p.returncode == 0:
-            # compare with sha256 of the tarball
-            tarball_sha256 = hashlib.sha256(open(self.common.paths['tarball_file'], 'r').read()).hexdigest()
-            for line in open(self.common.paths['sha256_file'], 'r').readlines():
-                if tarball_sha256.lower() in line.lower() and self.common.paths['tarball_filename'] in line:
-                    verified = True
+        output = p.stderr.read()
+
+        goodsig_match = gnupg_goodsig_pattern.search(output)
+        validsig_match = gnupg_validsig_pattern.search(output)
+
+        if goodsig_match and validsig_match:
+            try:
+                sig_made_by_fingerprint = validsig_match.groups()[2]
+            except IndexError:
+                pass
+            else:
+                if sig_made_by_fingerprint == self.common.fingerprints['erinn_key']:
+                    # compare with sha256 of the tarball
+                    tarball_sha256 = hashlib.sha256(
+                        open(self.common.paths['tarball_file'], 'r').read()).hexdigest()
+                    for line in open(self.common.paths['sha256_file'], 'r').readlines():
+                        if ((tarball_sha256.lower() in line.lower()) and
+                            (self.common.paths['tarball_filename'] in line)):
+                            verified = True
 
         if verified:
             self.run_task()
