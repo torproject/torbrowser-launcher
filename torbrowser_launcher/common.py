@@ -182,10 +182,7 @@ class Common:
     def load_mirrors(self):
         self.mirrors = []
         for srcfile in self.paths['mirrors_txt']:
-            if os.path.exists(srcfile):
-                print "Successfully loaded mirrors from %s" % srcfile
-            elif not os.path.exists(srcfile):
-                print "Warning: can't load mirrors from %s" % srcfile
+            if not os.path.exists(srcfile):
                 continue
             for mirror in open(srcfile, 'r').readlines():
                 if mirror.strip() not in self.mirrors:
