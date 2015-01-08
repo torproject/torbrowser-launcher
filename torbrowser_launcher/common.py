@@ -134,7 +134,7 @@ class Common:
                 'tbl_bin': sys.argv[0],
                 'icon_file': os.path.join(os.path.dirname(SHARE), 'pixmaps/torbrowser80.xpm'),
                 'torproject_pem': os.path.join(SHARE, 'torproject.pem'),
-                'erinn_key': os.path.join(SHARE, 'erinn.asc'),
+                'signing_keys': [os.path.join(SHARE, 'erinn.asc'), os.path.join(SHARE, 'tor-browser-developers.asc')],
                 'mirrors_txt': [os.path.join(SHARE, 'mirrors.txt'),
                                 tbb_config+'/mirrors.txt'],
                 'modem_sound': os.path.join(SHARE, 'modem.ogg'),
@@ -175,7 +175,8 @@ class Common:
     # import gpg keys
     def import_keys(self):
         print _('Importing keys')
-        subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', self.paths['erinn_key']]).wait()
+        for key in self.paths['signing_keys']:
+            subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', key).wait()
 
     # load mirrors
     def load_mirrors(self):
