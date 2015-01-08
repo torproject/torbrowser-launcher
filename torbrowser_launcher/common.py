@@ -176,7 +176,7 @@ class Common:
     def import_keys(self):
         print _('Importing keys')
         for key in self.paths['signing_keys']:
-            subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', key).wait()
+            subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', key]).wait()
 
     # load mirrors
     def load_mirrors(self):
