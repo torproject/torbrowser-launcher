@@ -1,5 +1,12 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.8
+
+* Added new Tor Browser signing key
+* Fixed removing alpha/beta code due to change in RecommendedTBBVersions syntax
+* Fixed opening links in TBB if you originally opened TBB without clicking a link
+
+
 ## 0.1.7
 
 * You can now pass URLs into TBL, and set it as your default browser
