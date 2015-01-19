@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma, threading
+import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
@@ -513,7 +513,7 @@ class Launcher:
                 stable = []
                 # remove alphas/betas
                 for version in versions:
-                    if '-alpha-' not in version and '-beta-' not in version:
+                    if not re.search(r'a\d-Linux', version) and not re.search(r'b\d-Linux', version):
                         stable.append(version)
                 if len(stable):
                     latest = stable.pop()
