@@ -95,6 +95,15 @@ class Settings:
             self.update_checkbox.set_active(False)
         self.update_checkbox.show()
 
+        # accept links
+        self.accept_links = gtk.CheckButton(_("Allow opening links with Tor Browser\n(this doesn't work if you use Firefox)"))
+        self.settings_box.pack_start(self.accept_links, True, True, 0)
+        if self.common.settings['accept_links']:
+            self.accept_links.set_active(True)
+        else:
+            self.accept_links.set_active(False)
+        self.accept_links.show()
+
         # modem sound
         self.modem_checkbox = gtk.CheckButton(_("Play modem sound, because Tor is slow :]"))
         self.settings_box.pack_start(self.modem_checkbox, True, True, 0)
@@ -213,6 +222,7 @@ class Settings:
         # checkbox options
         self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
         self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
+        self.common.settings['accept_links'] = self.accept_links.get_active()
         self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
 
         # figure out the selected mirror

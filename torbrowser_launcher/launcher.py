@@ -634,7 +634,10 @@ class Launcher:
                 gtk.main_iteration_do(True)
 
         # run Tor Browser
-        subprocess.call([self.common.paths['tbb']['start'], '-allow-remote'] + self.url_list)
+        if self.common.settings['accept_links']:
+            subprocess.call([self.common.paths['tbb']['start'], '-allow-remote'] + self.url_list)
+        else:
+            subprocess.call([self.common.paths['tbb']['start']])
 
         if run_next_task:
             self.run_task()

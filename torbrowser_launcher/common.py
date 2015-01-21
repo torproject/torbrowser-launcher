@@ -198,7 +198,8 @@ class Common:
             'check_for_updates': False,
             'modem_sound': False,
             'last_update_check_timestamp': 0,
-            'mirror': self.default_mirror
+            'mirror': self.default_mirror,
+            'accept_links': False
         }
 
         if os.path.isfile(self.paths['settings_file']):
