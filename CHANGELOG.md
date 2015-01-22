@@ -1,5 +1,9 @@
 # Tor Browser Launcher Changelog
 
+## 0.1.9
+
+* Added option to disable accepting links, to workaround Firefox/Tor Browser issue
+
 ## 0.1.8
 
 * Added new Tor Browser signing key
