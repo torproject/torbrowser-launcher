@@ -65,6 +65,7 @@
 
   /sys/devices/system/cpu/ r,
   /sys/devices/system/cpu/present r,
+  deny /sys/devices/virtual/block/*/uevent r,
 
   # Should use abstractions/gstreamer instead once merged upstream
   /etc/udev/udev.conf r,
