@@ -1,5 +1,12 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.0
+
+* Fix critical bug with new location of start-tor-browser
+* Silenced some AppArmor denied events from logs
+* Print less console output
+* Remove support for accepting links
+
 ## 0.1.9
 
 * Added option to disable accepting links, to workaround Firefox/Tor Browser issue
