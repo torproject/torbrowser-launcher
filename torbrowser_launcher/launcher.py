@@ -634,10 +634,7 @@ class Launcher:
                 gtk.main_iteration_do(True)
 
         # run Tor Browser
-        if self.common.settings['accept_links']:
-            subprocess.call([self.common.paths['tbb']['start'], '-allow-remote'] + self.url_list)
-        else:
-            subprocess.call([self.common.paths['tbb']['start']])
+        subprocess.call([self.common.paths['tbb']['start'], '--detach'])
 
         if run_next_task:
             self.run_task()
@@ -674,4 +671,3 @@ class Launcher:
             delattr(self, 'current_download_url')
         if reactor.running:
             reactor.stop()
-

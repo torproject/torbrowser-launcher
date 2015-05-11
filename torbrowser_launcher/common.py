@@ -145,7 +145,7 @@ class Common:
                 'update_check_file': tbb_cache+'/download/RecommendedTBBVersions',
                 'tbb': {
                     'dir': tbb_local+'/tbb/'+self.architecture,
-                    'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser',
+                    'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/start-tor-browser',
                     'versions': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/sources/versions',
                 },
             }
@@ -198,8 +198,7 @@ class Common:
             'check_for_updates': False,
             'modem_sound': False,
             'last_update_check_timestamp': 0,
-            'mirror': self.default_mirror,
-            'accept_links': False
+            'mirror': self.default_mirror
         }
 
         if os.path.isfile(self.paths['settings_file']):
