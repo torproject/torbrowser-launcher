@@ -6,7 +6,7 @@ Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier to 
 * Automatically updating (while preserving your bookmarks and preferences)
 * Verifying the TBB's [GnuPG signature](http://www.gnupg.org/gph/en/manual/x135.html)
 * Includes AppArmor profiles to make a Tor Browser compromise not as bad
-* Adding a "Tor Browser" application launcher to your desktop environment's menu, and letting you set Tor Browser as your default browser
+* Adding a "Tor Browser" application launcher to your desktop environment's menu
 * Optionally playing a modem sound when you open Tor Browser (because Tor is so slow)
 
 Tor Browser Launcher is included in Ubuntu 14.10+, Debian 8+, and Fedora 20+. To install it in any other distribution, see the [build instructions](/BUILD.md).
@@ -21,7 +21,7 @@ Tor Browser Launcher allows you to set Tor Browser as your default web browser. 
 
 You can only use Tor Browser as your default browser if you don't use Firefox at the same time. Other browser (such as Iceweasel, Chromium, or Chrome) will work fine. You must check "Allow opening links with Tor Browser" in the settings to enable it.
 
-## Installing in Ubuntu 14.04 and earlier
+## Installing in Ubuntu 14.04 and later
 
 I've created a PPA where I'm maintaining torbrowser-launcher binaries. You can install in an Ubuntu-based distribution like this:
 
