@@ -34,7 +34,6 @@ import gtk
 
 class Settings:
     def __init__(self, common):
-        print _('Starting settings dialog')
         self.common = common
 
         # set up the window

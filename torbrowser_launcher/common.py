@@ -43,7 +43,6 @@ gtk2reactor.install()
 class Common:
 
     def __init__(self, tbl_version):
-        print _('Initializing Tor Browser Launcher')
         self.tbl_version = tbl_version
 
         # initialize the app
@@ -174,9 +173,8 @@ class Common:
 
     # import gpg keys
     def import_keys(self):
-        print _('Importing keys')
         for key in self.paths['signing_keys']:
-            subprocess.Popen(['/usr/bin/gpg', '--homedir', self.paths['gnupg_homedir'], '--import', key]).wait()
+            subprocess.Popen(['/usr/bin/gpg', '--quiet', '--homedir', self.paths['gnupg_homedir'], '--import', key]).wait()
 
     # load mirrors
     def load_mirrors(self):
