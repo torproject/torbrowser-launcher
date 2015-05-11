@@ -6,4 +6,3 @@ Terminal=false
 Type=Application
 Icon=/usr/share/pixmaps/torbrowser80.xpm
 Categories=Network;WebBrowser;
-MimeType=x-scheme-handler/http;x-scheme-handler/https;
