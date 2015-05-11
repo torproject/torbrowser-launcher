@@ -6,6 +6,7 @@
 * Silenced some AppArmor denied events from logs
 * Print less console output
 * Remove support for accepting links
+* Added better support for updating over Tor in Fedora
 
 ## 0.1.9
 
