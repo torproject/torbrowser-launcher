@@ -144,7 +144,8 @@ class Common:
                 'update_check_file': tbb_cache+'/download/RecommendedTBBVersions',
                 'tbb': {
                     'dir': tbb_local+'/tbb/'+self.architecture,
-                    'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/start-tor-browser',
+                    'dir_tbb': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language,
+                    'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser.desktop',
                     'versions': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/sources/versions',
                 },
             }
