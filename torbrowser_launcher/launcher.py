@@ -631,7 +631,7 @@ class Launcher:
                 gtk.main_iteration_do(True)
 
         # run Tor Browser
-        subprocess.call([self.common.paths['tbb']['start'], '--detach'])
+        subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
 
         if run_next_task:
             self.run_task()
