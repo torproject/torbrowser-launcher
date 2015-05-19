@@ -54,7 +54,6 @@ if distro != 'Ubuntu':
         # we're not in a virtualenv, so we can probably write to /etc
         datafiles += [('/etc/apparmor.d/', [
             'apparmor/torbrowser.Browser.firefox',
-            'apparmor/torbrowser.start-tor-browser',
             'apparmor/torbrowser.Tor.tor',
             'apparmor/usr.bin.torbrowser-launcher'])]
 

@@ -27,7 +27,7 @@
   @{HOME}/.local/share/torbrowser/ rw,
   @{HOME}/.local/share/torbrowser/** mrwk,
   @{HOME}/.local/share/torbrowser/gnupg_homedir/* l,
-  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/,}start-tor-browser Px,
+  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/start-tor-browser.desktop Ux,
 
   @{PROC}/ r,
   @{PROC}/[0-9]*/{cmdline,mountinfo,stat,status} r,
