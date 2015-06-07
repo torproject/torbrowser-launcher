@@ -3,7 +3,7 @@
 Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier to maintain and use for GNU/Linux users. You install ```torbrowser-launcher``` from your distribution's package manager and it handles everything else, including:
 
 * Downloading the most recent version of TBB for you, in your language and for your architecture
-* Automatically updating (while preserving your bookmarks and preferences)
+* Automatically updating (not preserving your bookmarks and preferences)
 * Verifying the TBB's [GnuPG signature](http://www.gnupg.org/gph/en/manual/x135.html)
 * Includes AppArmor profiles to make a Tor Browser compromise not as bad
 * Adding a "Tor Browser" application launcher to your desktop environment's menu
