@@ -21,4 +21,6 @@
 
   # OnionShare compatibility
   /tmp/onionshare/** rw,
+
+  #include <local/torbrowser.Tor.tor>
 }

@@ -49,4 +49,6 @@
 
   # including abstractions/audio is not enough to play modem sound
   /usr/bin/pulseaudio Pixr,
+
+  #include <local/usr.bin.torbrowser-launcher>
 }

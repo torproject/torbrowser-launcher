@@ -84,4 +84,6 @@
   # Xfce4
   /etc/xfce4/defaults.list r,
   /usr/share/xfce4/applications/ r,
+
+  #include <local/torbrowser.Browser.firefox>
 }
