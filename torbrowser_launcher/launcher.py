@@ -30,9 +30,12 @@ import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
+from twisted.web.iweb import IPolicyForHTTPS
 from twisted.internet.protocol import Protocol
-from twisted.internet.ssl import ClientContextFactory
+from twisted.internet.ssl import CertificateOptions
+from twisted.internet._sslverify import ClientTLSOptions
 from twisted.internet.error import DNSLookupError
+from zope.interface import implementer
 
 import OpenSSL
 
@@ -49,18 +52,29 @@ class TryDefaultMirrorException(Exception):
 class DownloadErrorException(Exception):
     pass
 
-class VerifyTorProjectCert(ClientContextFactory):
+class TorProjectCertificateOptions(CertificateOptions):
     def __init__(self, torproject_pem):
+        CertificateOptions.__init__(self)
         self.torproject_ca = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, open(torproject_pem, 'r').read())
 
     def getContext(self, host, port):
-        ctx = ClientContextFactory.getContext(self)
+        ctx = CertificateOptions.getContext(self)
         ctx.set_verify_depth(0)
         ctx.set_verify(OpenSSL.SSL.VERIFY_PEER | OpenSSL.SSL.VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
         return ctx
 
     def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
         return cert.digest('sha256') == self.torproject_ca.digest('sha256')
+
+@implementer(IPolicyForHTTPS)
+class TorProjectPolicyForHTTPS:
+    def __init__(self, torproject_pem):
+        self.torproject_pem = torproject_pem
+
+    def creatorForNetloc(self, hostname, port):
+        certificateOptions = TorProjectCertificateOptions(self.torproject_pem)
+        return ClientTLSOptions(hostname.decode('utf-8'),
+                                certificateOptions.getContext(hostname, port))
 
 class Launcher:
     def __init__(self, common, url_list):
@@ -451,12 +465,12 @@ class Launcher:
 
             # default mirror gets certificate pinning, only for requests that use the mirror
             if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
-                agent = SOCKS5Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']), proxyEndpoint=torEndpoint)
+                agent = SOCKS5Agent(reactor, TorProjectPolicyForHTTPS(self.common.paths['torproject_pem']), proxyEndpoint=torEndpoint)
             else:
                 agent = SOCKS5Agent(reactor, proxyEndpoint=torEndpoint)
         else:
             if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
-                agent = Agent(reactor, VerifyTorProjectCert(self.common.paths['torproject_pem']))
+                agent = Agent(reactor, TorProjectPolicyForHTTPS(self.common.paths['torproject_pem']))
             else:
                 agent = Agent(reactor)
 
