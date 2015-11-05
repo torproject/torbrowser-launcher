@@ -140,8 +140,8 @@ class Common:
                 'download_dir': tbb_cache+'/download',
                 'gnupg_homedir': tbb_local+'/gnupg_homedir',
                 'settings_file': tbb_config+'/settings',
-                'update_check_url': 'https://www.torproject.org/projects/torbrowser/RecommendedTBBVersions',
-                'update_check_file': tbb_cache+'/download/RecommendedTBBVersions',
+                'update_check_url': 'https://dist.torproject.org/torbrowser/update_2/release/Linux_x86_64-gcc3/x/en-US',
+                'update_check_file': tbb_cache+'/download/release.xml',
                 'tbb': {
                     'dir': tbb_local+'/tbb/'+self.architecture,
                     'dir_tbb': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language,
