@@ -1,8 +1,9 @@
 [Desktop Entry]
 Name=Tor Browser Settings
+GenericName=Tor
 Comment=Tor Browser Launcher Settings
-Exec=/usr/bin/torbrowser-launcher --settings
+Exec=torbrowser-launcher --settings
 Terminal=false
 Type=Application
-Icon=/usr/share/pixmaps/torbrowser80.xpm
+Icon=torbrowser80.xpm
 Categories=Network;WebBrowser;
