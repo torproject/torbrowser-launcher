@@ -1,5 +1,13 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.1
+
+* Stop using RecommendedTBBVersions and start using more reliable "release" channel XML
+* Converted settings file from pickle format to JSON
+* Download tarball signatures to verify, rather than SHA256SUMS and signature
+* Implemented IPolicyForHTTPS to prevent twisted-related crashes in Debian
+* Some AppArmor fixes
+
 ## 0.2.0
 
 * Fix critical bug with new location of start-tor-browser
