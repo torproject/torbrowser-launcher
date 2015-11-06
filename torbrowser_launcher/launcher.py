@@ -37,6 +37,8 @@ from twisted.internet._sslverify import ClientTLSOptions
 from twisted.internet.error import DNSLookupError
 from zope.interface import implementer
 
+import xml.etree.ElementTree as ET
+
 import OpenSSL
 
 import pygtk
@@ -502,38 +504,19 @@ class Launcher:
         subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
+    def get_stable_version(self):
+        tree = ET.parse(self.common.paths['update_check_file'])
+        for up in tree.getroot():
+            if up.tag == 'update' and up.attrib['appVersion']:
+                return up.attrib['appVersion']
+        return None
+
     def attempt_update(self):
         # load the update check file
         try:
-            versions = json.load(open(self.common.paths['update_check_file']))
-            latest = None
-
-            # filter linux versions
-            valid = []
-            for version in versions:
-                if '-Linux' in version:
-                    valid.append(str(version))
-            valid.sort()
-            if len(valid):
-                versions = valid
-
-            if len(versions) == 1:
-                latest = versions.pop()
-            else:
-                stable = []
-                # remove alphas/betas
-                for version in versions:
-                    if not re.search(r'a\d-Linux', version) and not re.search(r'b\d-Linux', version):
-                        stable.append(version)
-                if len(stable):
-                    latest = stable.pop()
-                else:
-                    latest = versions.pop()
-
+            latest = self.get_stable_version()
             if latest:
                 latest = str(latest)
-                if latest.endswith('-Linux'):
-                    latest = latest.rstrip('-Linux')
 
                 self.common.settings['latest_version'] = latest
                 self.common.settings['last_update_check_timestamp'] = int(time.time())
