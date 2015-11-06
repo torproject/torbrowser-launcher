@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, sys, platform, subprocess, locale, pickle, psutil
+import os, sys, platform, subprocess, locale, pickle, json, psutil
 
 import pygtk
 pygtk.require('2.0')
@@ -139,7 +139,8 @@ class Common:
                 'modem_sound': os.path.join(SHARE, 'modem.ogg'),
                 'download_dir': tbb_cache+'/download',
                 'gnupg_homedir': tbb_local+'/gnupg_homedir',
-                'settings_file': tbb_config+'/settings',
+                'settings_file': tbb_config+'/settings.json',
+                'settings_file_pickle': tbb_config+'/settings',
                 'update_check_url': 'https://www.torproject.org/projects/torbrowser/RecommendedTBBVersions',
                 'update_check_file': tbb_cache+'/download/RecommendedTBBVersions',
                 'tbb': {
@@ -201,22 +202,8 @@ class Common:
         }
 
         if os.path.isfile(self.paths['settings_file']):
-            settings = pickle.load(open(self.paths['settings_file']))
+            settings = json.load(open(self.paths['settings_file']))
             resave = False
-
-            # settings migrations
-            if settings['tbl_version'] <= '0.1.0':
-                print '0.1.0 migration'
-                settings['installed_version'] = settings['installed_version']['stable']
-                settings['latest_version'] = settings['latest_version']['stable']
-                resave = True
-
-                # make new tbb folder
-                self.mkdir(self.paths['tbb']['dir'])
-                old_tbb_dir = self.paths['old_data_dir']+'/tbb/stable/'+self.architecture+'/tor-browser_'+self.language
-                new_tbb_dir = self.paths['tbb']['dir']+'/tor-browser_'+self.language
-                if os.path.isdir(old_tbb_dir):
-                    os.rename(old_tbb_dir, new_tbb_dir)
 
             # make sure settings file is up-to-date
             for setting in default_settings:
@@ -233,13 +220,20 @@ class Common:
             if resave:
                 self.save_settings()
 
+        # if settings file is still using old pickle format, convert to json
+        elif os.path.isfile(self.paths['settings_file_pickle']):
+            self.settings = pickle.load(open(self.paths['settings_file_pickle']))
+            self.save_settings()
+            os.remove(self.paths['settings_file_pickle'])
+            self.load_settings()
+
         else:
             self.settings = default_settings
             self.save_settings()
 
     # save settings
     def save_settings(self):
-        pickle.dump(self.settings, open(self.paths['settings_file'], 'w'))
+        json.dump(self.settings, open(self.paths['settings_file'], 'w'))
         return True
 
     # get the process id of a program
