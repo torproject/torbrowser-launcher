@@ -118,10 +118,9 @@ class Common:
             self.paths['tarball_filename'] = tarball_filename
 
             # sig
-            self.paths['sha256_file'] = tbb_cache+'/download/sha256sums.txt'
-            self.paths['sha256_sig_file'] = tbb_cache+'/download/sha256sums.txt.asc'
-            self.paths['sha256_url'] = '{0}torbrowser/'+tbb_version+'/sha256sums.txt'
-            self.paths['sha256_sig_url'] = '{0}torbrowser/'+tbb_version+'/sha256sums.txt.asc'
+            self.paths['sig_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename+'.asc'
+            self.paths['sig_file'] = tbb_cache+'/download/'+tarball_filename+'.asc'
+            self.paths['sig_filename'] = tarball_filename+'.asc'
         else:
             self.paths = {
                 'dirs': {
