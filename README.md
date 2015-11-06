@@ -31,3 +31,7 @@ sudo apt-get update
 sudo apt-get install torbrowser-launcher
 ```
 
+## Installing on Qubes OS
+
+If you're interested in using this launcher in [Qubes OS](https://qubes-os.org) read the following post [Using Tor Browser Launcher in Qubes](https://micahflee.com/2014/05/using-tor-browser-launcher-in-qubes/) for detailed instructions
+
