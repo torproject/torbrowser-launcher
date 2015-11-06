@@ -133,7 +133,7 @@ class Common:
                 'tbl_bin': sys.argv[0],
                 'icon_file': os.path.join(os.path.dirname(SHARE), 'pixmaps/torbrowser80.xpm'),
                 'torproject_pem': os.path.join(SHARE, 'torproject.pem'),
-                'signing_keys': [os.path.join(SHARE, 'erinn.asc'), os.path.join(SHARE, 'tor-browser-developers.asc')],
+                'signing_keys': [os.path.join(SHARE, 'tor-browser-developers.asc')],
                 'mirrors_txt': [os.path.join(SHARE, 'mirrors.txt'),
                                 tbb_config+'/mirrors.txt'],
                 'modem_sound': os.path.join(SHARE, 'modem.ogg'),
