@@ -2,7 +2,7 @@
 
 ## 0.2.2
 
-* Tor Browser Lanucher no longer attempts to auto-update, now that Tor Browser has this feature
+* Tor Browser Launcher no longer attempts to auto-update, now that Tor Browser has this feature
 * System Tor is now an optional dependency
 * Fix issue where downloads fail because of unicode URLs
 * Removed window management code that stopped working many releases ago, and removed wmctrl dependency
