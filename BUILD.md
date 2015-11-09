@@ -12,7 +12,7 @@ Then install dependencies, build a package, and install:
 ### Debian, Ubuntu, Linux Mint, etc.
 
 ```sh
-sudo apt-get install build-essential dh-python python-all python-stdeb python-gtk2 python-psutil python-twisted python-lzma python-txsocksx wmctrl gnupg fakeroot xz-utils tor
+sudo apt-get install build-essential dh-python python-all python-stdeb python-gtk2 python-psutil python-twisted python-lzma python-txsocksx gnupg fakeroot xz-utils tor
 ./build_deb.sh
 sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 ```
@@ -22,7 +22,7 @@ Optionally you can install `python-pygame` if you want to play a modem sound whi
 ### Red Hat, Fedora, CentOS, etc.
 
 ```sh
-sudo yum install python-psutil python-twisted wmctrl gnupg fakeroot rpm-build python-txsocksx tor pygtk2
+sudo yum install python-psutil python-twisted gnupg fakeroot rpm-build python-txsocksx tor pygtk2
 ./build_rpm.sh
 sudo yum install dist/torbrowser-launcher-*.rpm
 ```

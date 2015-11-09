@@ -100,15 +100,6 @@ class Launcher:
                 self.common.settings['update_over_tor'] = False
                 self.common.save_settings()
 
-        # is firefox already running?
-        if self.common.settings['installed_version']:
-            firefox_pid = self.common.get_pid('./Browser/firefox')
-            if firefox_pid:
-                print _('Firefox is open, bringing to focus')
-                # bring firefox to front
-                self.common.bring_window_to_front(firefox_pid)
-                return
-
         # check for updates?
         check_for_updates = False
         if self.common.settings['check_for_updates']:

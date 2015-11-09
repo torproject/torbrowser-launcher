@@ -36,7 +36,7 @@
   @{PROC}/tty/drivers r,
   @{PROC}/uptime r,
   /usr/bin/ r,
-  /usr/bin/{gpg,wmctrl,dirname,expr,file,getconf,id} rix,
+  /usr/bin/{gpg,dirname,expr,file,getconf,id} rix,
   /usr/bin/torbrowser-launcher r,
   /usr/share/file/magic.mgc r,
   /usr/share/file/magic/ r,

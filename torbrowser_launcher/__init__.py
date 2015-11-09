@@ -53,13 +53,6 @@ def main():
 
     common = Common(tor_browser_launcher_version)
 
-    # is torbrowser-launcher already running?
-    tbl_pid = common.get_pid(common.paths['tbl_bin'], True)
-    if tbl_pid:
-        print _('Tor Browser Launcher is already running (pid {0}), bringing to front').format(tbl_pid)
-        common.bring_window_to_front(tbl_pid)
-        sys.exit()
-
     if settings:
         # settings mode
         app = Settings(common)
