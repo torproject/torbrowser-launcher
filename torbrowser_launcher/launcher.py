@@ -447,7 +447,10 @@ class Launcher:
         self.current_download_url = url
 
         mirror_url = url.format(self.common.settings['mirror'])
-        mirror_url = unicodedata.normalize('NFKD', mirror_url).encode('ascii','ignore') # fix for #205
+
+        # convert mirror_url from unicode to string, if needed (#205)
+        if isinstance(mirror_url, unicode):
+            mirror_url = unicodedata.normalize('NFKD', mirror_url).encode('ascii','ignore')
 
         # initialize the progress bar
         self.progressbar.set_fraction(0)
