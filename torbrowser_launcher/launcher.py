@@ -161,12 +161,6 @@ class Launcher:
 
         start = self.common.paths['tbb']['start']
         if os.path.isfile(start) and os.access(start, os.X_OK):
-            self.set_gui('task', _("testing verify"),
-                         ['verify',
-                          'extract',
-                          'run'])
-            return
-
             if installed_version == latest_version:
                 print _('Latest version of TBB is installed, launching')
                 # current version of tbb is installed, launch it
