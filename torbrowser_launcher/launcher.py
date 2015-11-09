@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re
+import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicodedata
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
@@ -446,8 +446,10 @@ class Launcher:
         self.current_download_path = path
         self.current_download_url = url
 
-        # initialize the progress bar
         mirror_url = url.format(self.common.settings['mirror'])
+        mirror_url = unicodedata.normalize('NFKD', mirror_url).encode('ascii','ignore') # fix for #205
+
+        # initialize the progress bar
         self.progressbar.set_fraction(0)
         self.progressbar.set_text(_('Downloading {0}').format(name))
         self.progressbar.show()
