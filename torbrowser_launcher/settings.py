@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import subprocess, time
+import subprocess, time, shutil
 
 import pygtk
 pygtk.require('2.0')
@@ -58,41 +58,32 @@ class Settings:
         self.hbox.pack_start(self.settings_box, True, True, 0)
         self.settings_box.show()
 
-        self.labels_box = gtk.VBox(False, 10)
-        self.hbox.pack_start(self.labels_box, True, True, 0)
-        self.labels_box.show()
+        self.status_box = gtk.VBox(False, 10)
+        self.hbox.pack_start(self.status_box, True, True, 0)
+        self.status_box.show()
 
-        # download over tor
+        # download over system tor
         try:
             import txsocksx
             self.txsocks_found = True
         except ImportError:
             self.txsocks_found = False
-        self.tor_update_checkbox = gtk.CheckButton(_("Download updates over Tor (recommended)"))
+        self.tor_download_checkbox = gtk.CheckButton(_("Download over system Tor"))
         if self.txsocks_found:
-            self.tor_update_checkbox.set_tooltip_text(_("This option is only available when using a system wide Tor installation."))
+            self.tor_download_checkbox.set_tooltip_text(_("This option is only available when using a system wide Tor installation."))
         else:
-            self.tor_update_checkbox.set_tooltip_text(_("This option requires the python-txsocksx package."))
+            self.tor_download_checkbox.set_tooltip_text(_("This option requires the python-txsocksx package."))
 
-        self.settings_box.pack_start(self.tor_update_checkbox, True, True, 0)
-        if self.common.settings['update_over_tor'] and self.txsocks_found:
-            self.tor_update_checkbox.set_active(True)
+        self.settings_box.pack_start(self.tor_download_checkbox, True, True, 0)
+        if self.common.settings['download_over_tor'] and self.txsocks_found:
+            self.tor_download_checkbox.set_active(True)
         else:
-            self.tor_update_checkbox.set_active(False)
+            self.tor_download_checkbox.set_active(False)
 
         if self.txsocks_found == False:
-            self.tor_update_checkbox.set_sensitive(False)
+            self.tor_download_checkbox.set_sensitive(False)
 
-        self.tor_update_checkbox.show()
-
-        # check for updates
-        self.update_checkbox = gtk.CheckButton(_("Check for updates next launch"))
-        self.settings_box.pack_start(self.update_checkbox, True, True, 0)
-        if self.common.settings['check_for_updates']:
-            self.update_checkbox.set_active(True)
-        else:
-            self.update_checkbox.set_active(False)
-        self.update_checkbox.show()
+        self.tor_download_checkbox.show()
 
         # modem sound
         self.modem_checkbox = gtk.CheckButton(_("Play modem sound, because Tor is slow :]"))
@@ -110,22 +101,33 @@ class Settings:
             self.modem_checkbox.set_tooltip_text(_("This option requires python-pygame to be installed"))
         self.modem_checkbox.show()
 
-        # labels
-        if(self.common.settings['installed_version']):
-            self.label1 = gtk.Label(_('Installed version:\n{0}').format(self.common.settings['installed_version']))
+        # status
+        if(self.common.settings['installed']):
+            self.status_label = gtk.Label(_('Status: Installed'))
         else:
-            self.label1 = gtk.Label(_('Not installed'))
-        self.label1.set_line_wrap(True)
-        self.labels_box.pack_start(self.label1, True, True, 0)
-        self.label1.show()
+            self.status_label = gtk.Label(_('Status: Not Installed'))
+        self.status_label.set_line_wrap(True)
+        self.status_box.pack_start(self.status_label, True, True, 0)
+        self.status_label.show()
 
-        if(self.common.settings['last_update_check_timestamp'] > 0):
-            self.label1 = gtk.Label(_('Last checked for updates:\n{0}').format(time.strftime("%B %d, %Y %I:%M %P", time.gmtime(self.common.settings['last_update_check_timestamp']))))
+        if(self.common.settings['installed']):
+           # reinstall button
+            reinstall_image = gtk.Image()
+            reinstall_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
+            self.reinstall_button = gtk.Button(_("Reinstall Tor Browser"))
+            self.reinstall_button.set_image(reinstall_image)
+            self.reinstall_button.connect("clicked", self.reinstall, None)
+            self.status_box.add(self.reinstall_button)
+            self.reinstall_button.show()
         else:
-            self.label1 = gtk.Label(_('Never checked for updates'))
-        self.label1.set_line_wrap(True)
-        self.labels_box.pack_start(self.label1, True, True, 0)
-        self.label1.show()
+            # install button
+            install_image = gtk.Image()
+            install_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
+            self.install_button = gtk.Button(_("Install Tor Browser"))
+            self.install_button.set_image(install_image)
+            self.install_button.connect("clicked", self.install, None)
+            self.status_box.add(self.install_button)
+            self.install_button.show()
 
         # mirrors
         self.mirrors_box = gtk.HBox(False, 10)
@@ -152,15 +154,6 @@ class Settings:
         self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
         self.box.pack_start(self.button_box, True, True, 0)
         self.button_box.show()
-
-        # save and launch button
-        save_launch_image = gtk.Image()
-        save_launch_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
-        self.save_launch_button = gtk.Button(_("Launch Tor Browser"))
-        self.save_launch_button.set_image(save_launch_image)
-        self.save_launch_button.connect("clicked", self.save_launch, None)
-        self.button_box.add(self.save_launch_button)
-        self.save_launch_button.show()
 
         # save and exit button
         save_exit_image = gtk.Image()
@@ -193,12 +186,19 @@ class Settings:
         else:
             value = False
 
-        self.tor_update_checkbox.set_active(value)
-        self.tor_update_checkbox.set_sensitive(value)
+        self.tor_download_checkbox.set_active(value)
+        self.tor_download_checkbox.set_sensitive(value)
 
-    # save and launch
-    def save_launch(self, widget, data=None):
+    # install
+    def install(self, widget, data=None):
         self.save()
+        subprocess.Popen([self.common.paths['tbl_bin']])
+        self.destroy(False)
+
+    # launch
+    def reinstall(self, widget, data=None):
+        self.save()
+        shutil.rmtree(self.common.paths['tbb']['dir'])
         subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
@@ -210,8 +210,7 @@ class Settings:
     # save settings
     def save(self):
         # checkbox options
-        self.common.settings['update_over_tor'] = self.tor_update_checkbox.get_active()
-        self.common.settings['check_for_updates'] = self.update_checkbox.get_active()
+        self.common.settings['download_over_tor'] = self.tor_download_checkbox.get_active()
         self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
 
         # figure out the selected mirror

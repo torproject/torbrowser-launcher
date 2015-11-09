@@ -191,18 +191,18 @@ class Common:
     def load_settings(self):
         default_settings = {
             'tbl_version': self.tbl_version,
-            'installed_version': False,
-            'latest_version': '0',
-            'update_over_tor': True,
-            'check_for_updates': False,
+            'installed': False,
+            'download_over_tor': False,
             'modem_sound': False,
-            'last_update_check_timestamp': 0,
             'mirror': self.default_mirror
         }
 
         if os.path.isfile(self.paths['settings_file']):
             settings = json.load(open(self.paths['settings_file']))
             resave = False
+
+            # detect installed
+            settings['installed'] = os.path.isfile(self.paths['tbb']['start'])
 
             # make sure settings file is up-to-date
             for setting in default_settings:
