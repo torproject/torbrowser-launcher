@@ -1,5 +1,13 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.2
+
+* Tor Browser Lanucher no longer attempts to auto-update, now that Tor Browser has this feature
+* System Tor is now an optional dependency
+* Fix issue where downloads fail because of unicode URLs
+* Removed window management code that stopped working many releases ago, and removed wmctrl dependency
+* Removed test code that caused signature verification to happen at the wrong time
+
 ## 0.2.1
 
 * Stop using RecommendedTBBVersions and start using more reliable "release" channel XML
