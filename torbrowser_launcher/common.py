@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, sys, platform, subprocess, locale, pickle, json, psutil
+import os, sys, platform, subprocess, locale, pickle, json, psutil, unicodedata
 
 import pygtk
 pygtk.require('2.0')
@@ -88,6 +88,9 @@ class Common:
 
     # build all relevant paths
     def build_paths(self, tbb_version=None):
+        # ensure that tbb_version is a string and not unicode
+        tbb_version = unicodedata.normalize('NFKD', tbb_version).encode('ascii','ignore')
+
         homedir = os.getenv('HOME')
         if not homedir:
             homedir = '/tmp/.torbrowser-'+os.getenv('USER')
