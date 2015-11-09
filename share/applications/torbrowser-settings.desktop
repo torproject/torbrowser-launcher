@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Tor Browser Settings
+Name=Tor Browser Launcher Settings
 GenericName=Tor
 Comment=Tor Browser Launcher Settings
 Exec=torbrowser-launcher --settings
