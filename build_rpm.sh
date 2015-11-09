@@ -6,7 +6,7 @@ VERSION=`cat share/torbrowser-launcher/version`
 rm -r build dist
 
 # build binary package
-python setup.py bdist_rpm --requires="python-psutil, python-twisted, python-txsocksx, gnupg, fakeroot, tor, pygtk2"
+python setup.py bdist_rpm --requires="python-psutil, python-twisted, gnupg, fakeroot, pygtk2"
 
 # install it
 echo ""
