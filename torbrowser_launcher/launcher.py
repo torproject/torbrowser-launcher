@@ -86,42 +86,37 @@ class Launcher:
         # init launcher
         self.set_gui(None, '', [])
         self.launch_gui = True
-        self.common.build_paths(self.common.settings['latest_version'])
+        
+        # if Tor Browser is not installed, detect latest version, download, and install
+        if not self.common.settings['installed']:
+            # if downloading over Tor, include txsocksx
+            if self.common.settings['download_over_tor']:
+                try:
+                    import txsocksx
+                    print _('Downloading over Tor')
+                except ImportError:
+                    md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-txsocksx package is missing, downloads will not happen over tor"))
+                    md.set_position(gtk.WIN_POS_CENTER)
+                    md.run()
+                    md.destroy()
+                    self.common.settings['download_over_tor'] = False
+                    self.common.save_settings()
 
-        if self.common.settings['update_over_tor']:
-            try:
-                import txsocksx
-                print _('Updating over Tor')
-            except ImportError:
-                md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-txsocksx package is missing, downloads will not happen over tor"))
-                md.set_position(gtk.WIN_POS_CENTER)
-                md.run()
-                md.destroy()
-                self.common.settings['update_over_tor'] = False
-                self.common.save_settings()
-
-        # check for updates?
-        check_for_updates = False
-        if self.common.settings['check_for_updates']:
-            check_for_updates = True
-
-        if not check_for_updates:
-            # how long was it since the last update check?
-            # 86400 seconds = 24 hours
-            current_timestamp = int(time.time())
-            if current_timestamp - self.common.settings['last_update_check_timestamp'] >= 86400:
-                check_for_updates = True
-
-        if check_for_updates:
-            # check for update
-            print 'Checking for update'
-            self.set_gui('task', _("Checking for Tor Browser update."),
-                         ['download_update_check',
-                          'attempt_update'])
+            # download and install
+            print _("Downloading and installing Tor Browser for the first time.")
+            self.set_gui('task', _("Downloading and installing Tor Browser for the first time."),
+                         ['download_version_check',
+                          'set_version',
+                          'download_sig',
+                          'download_tarball',
+                          'verify',
+                          'extract',
+                          'run'])
+        
         else:
-            # no need to check for update
-            print _('Checked for update within 24 hours, skipping')
-            self.start_launcher()
+            # Tor Browser is already installed, so run
+            self.run(False)
+            self.launch_gui = False
 
         if self.launch_gui:
             # set up the window
@@ -135,50 +130,6 @@ class Launcher:
 
             # build the rest of the UI
             self.build_ui()
-
-    # download or run TBB
-    def start_launcher(self):
-        # is TBB already installed?
-        latest_version = self.common.settings['latest_version']
-        installed_version = self.common.settings['installed_version']
-
-        # verify installed version for newer versions of TBB (#58)
-        if installed_version >= '3.0':
-            versions_filename = self.common.paths['tbb']['versions']
-            if os.path.exists(versions_filename):
-                for line in open(versions_filename):
-                    if 'TORBROWSER_VERSION' in line:
-                        installed_version = line.lstrip('TORBROWSER_VERSION=').strip()
-
-        start = self.common.paths['tbb']['start']
-        if os.path.isfile(start) and os.access(start, os.X_OK):
-            if installed_version == latest_version:
-                print _('Latest version of TBB is installed, launching')
-                # current version of tbb is installed, launch it
-                self.run(False)
-                self.launch_gui = False
-            elif installed_version < latest_version:
-                print _('TBB is out of date, attempting to upgrade to {0}'.format(latest_version))
-                # there is a tbb upgrade available
-                self.set_gui('task', _("Your Tor Browser is out of date. Upgrading from {0} to {1}.".format(installed_version, latest_version)),
-                             ['download_sig',
-                              'download_tarball',
-                              'verify',
-                              'extract',
-                              'run'])
-            else:
-                # for some reason the installed tbb is newer than the current version?
-                self.set_gui('error', _("Something is wrong. The version of Tor Browser Bundle you have installed is newer than the current version?"), [])
-
-        # not installed
-        else:
-            print _('TBB is not installed, attempting to install {0}'.format(latest_version))
-            self.set_gui('task', _("Downloading and installing Tor Browser for the first time."),
-                         ['download_sig',
-                          'download_tarball',
-                          'verify',
-                          'extract',
-                          'run'])
 
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
@@ -310,13 +261,20 @@ class Launcher:
         # get ready for the next task
         self.gui_task_i += 1
 
-        if task == 'download_update_check':
-            print _('Downloading'), self.common.paths['update_check_url']
-            self.download('update check', self.common.paths['update_check_url'], self.common.paths['update_check_file'])
-
-        if task == 'attempt_update':
-            print _('Checking to see if update is needed')
-            self.attempt_update()
+        if task == 'download_version_check':
+            print _('Downloading'), self.common.paths['version_check_url']
+            self.download('version check', self.common.paths['version_check_url'], self.common.paths['version_check_file'])
+        
+        if task == 'set_version':
+            version = self.get_stable_version() 
+            if version:
+                self.common.build_paths(self.get_stable_version())
+                print _('Latest version: {}').format(version)
+                self.run_task()
+            else:
+                self.set_gui('error', _("Error detecting Tor Browser version."), [], False)
+                self.clear_ui()
+                self.build_ui()
 
         elif task == 'download_sig':
             print _('Downloading'), self.common.paths['sig_url'].format(self.common.settings['mirror'])
@@ -422,7 +380,7 @@ class Launcher:
             for reason in f.value.reasons:
                 if isinstance(reason.value, OpenSSL.SSL.Error):
                     # TODO: add the ability to report attack by posting bug to trac.torproject.org
-                    if not self.common.settings['update_over_tor']:
+                    if not self.common.settings['download_over_tor']:
                         self.set_gui('error_try_tor', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack. Try the download again using Tor?'), [], False)
                     else:
                         self.set_gui('error', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack.'), [], False)
@@ -449,7 +407,7 @@ class Launcher:
         self.progressbar.show()
         self.refresh_gtk()
 
-        if self.common.settings['update_over_tor']:
+        if self.common.settings['download_over_tor']:
             from twisted.internet.endpoints import TCP4ClientEndpoint
             from txsocksx.http import SOCKS5Agent
 
@@ -488,44 +446,18 @@ class Launcher:
         self.destroy(False)
 
     def try_tor(self, widget, data=None):
-        # set update_over_tor to true and relaunch TBL
-        self.common.settings['update_over_tor'] = True
+        # set download_over_tor to true and relaunch TBL
+        self.common.settings['download_over_tor'] = True
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)
 
     def get_stable_version(self):
-        tree = ET.parse(self.common.paths['update_check_file'])
+        tree = ET.parse(self.common.paths['version_check_file'])
         for up in tree.getroot():
             if up.tag == 'update' and up.attrib['appVersion']:
-                return up.attrib['appVersion']
+                return str(up.attrib['appVersion'])
         return None
-
-    def attempt_update(self):
-        # load the update check file
-        try:
-            latest = self.get_stable_version()
-            if latest:
-                latest = str(latest)
-
-                self.common.settings['latest_version'] = latest
-                self.common.settings['last_update_check_timestamp'] = int(time.time())
-                self.common.settings['check_for_updates'] = False
-                self.common.save_settings()
-                self.common.build_paths(self.common.settings['latest_version'])
-                self.start_launcher()
-
-            else:
-                # failed to find the latest version
-                self.set_gui('error', _("Error checking for updates."), [], False)
-
-        except:
-            # not a valid JSON object
-            self.set_gui('error', _("Error checking for updates."), [], False)
-
-        # now start over
-        self.clear_ui()
-        self.build_ui()
 
     def verify(self):
         # initialize the progress bar
@@ -581,10 +513,6 @@ class Launcher:
             self.clear_ui()
             self.build_ui()
             return
-
-        # installation is finished, so save installed_version
-        self.common.settings['installed_version'] = self.common.settings['latest_version']
-        self.common.save_settings()
 
         self.run_task()
 
