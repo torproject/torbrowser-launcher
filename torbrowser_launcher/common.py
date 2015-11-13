@@ -110,7 +110,7 @@ class Common:
                 arch = 'linux64'
             else:
                 arch = 'linux32'
-            tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
+            tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_ALL.tar.xz'
 
             # tarball
             self.paths['tarball_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename
