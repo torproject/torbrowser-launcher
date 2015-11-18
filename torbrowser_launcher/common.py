@@ -37,6 +37,10 @@ SHARE = os.getenv('TBL_SHARE', sys.prefix+'/share/torbrowser-launcher')
 import gettext
 gettext.install('torbrowser-launcher', os.path.join(SHARE, 'locale'))
 
+# Hackaround for https://github.com/micahflee/torbrowser-launcher/issues/91
+# prevent packages installed by pip or setuptools from being read by
+# pkg_resources and tripping up apparmor
+sys.path = [dir for dir in sys.path if "/usr/local/" not in dir]
 from twisted.internet import gtk2reactor
 gtk2reactor.install()
 
