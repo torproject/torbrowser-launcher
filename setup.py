@@ -65,11 +65,9 @@ setup(
     url='https://www.github.com/micahflee/torbrowser-launcher',
     platforms=['GNU/Linux'],
     license='MIT',
-    description='A program to help you download, keep updated, and run the Tor Browser Bundle',
+    description='A program to help you securely download and run Tor Browser',
     long_description="""
-Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier to maintain and use for GNU/Linux users. You install torbrowser-launcher from your distribution's package manager and it handles downloading the most recent version of TBB for you, in your language and for your architecture. It also adds a "Tor Browser" application launcher to your operating system's menu, and lets you set Tor Browser as your default web browser.
-
-When you first launch Tor Browser Launcher, it will download TBB from https://www.torproject.org/, extract it in your home directory, and execute it. When you run it after that it will just execute TBB. When you open Tor Browser after an update, it will download the newer version of TBB for you and extract it over your old TBB directory, so you will maintain your TBB bookmarks and always be running the latest version.
+Tor Browser Launcher is intended to make Tor Browser easier to install and use for GNU/Linux users. You install torbrowser-launcher from your distribution's package manager and it handles downloading the most recent version of Tor Browser for you, in your language and for your architecture. It also adds a "Tor Browser" application launcher to your operating system's menu. When you first launch Tor Browser Launcher, it will download Tor Browser from https://www.torproject.org/, extract it in your home directory, and execute it. When you run it after that it will just launch Tor Browser.
 """,
     packages=['torbrowser_launcher'],
     scripts=['torbrowser-launcher'],
