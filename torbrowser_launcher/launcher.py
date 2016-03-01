@@ -32,7 +32,7 @@ from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFaile
 from twisted.web.http_headers import Headers
 from twisted.web.iweb import IPolicyForHTTPS
 from twisted.internet.protocol import Protocol
-from twisted.internet.error import DNSLookupError
+from twisted.internet.error import DNSLookupError, ConnectionRefusedError
 
 import xml.etree.ElementTree as ET
 
@@ -362,6 +362,13 @@ class Launcher:
                         self.set_gui('error_try_tor', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack. Try the download again using Tor?'), [], False)
                     else:
                         self.set_gui('error', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack.'), [], False)
+
+        elif isinstance(f.value, ConnectionRefusedError) and self.common.settings['download_over_tor']:
+            # If we're using Tor, we'll only get this error when we fail to
+            # connect to the SOCKS server.  If the connection fails at the
+            # remote end, we'll get txsocksx.errors.ConnectionRefused.
+            addr = self.common.settings['tor_socks_address']
+            self.set_gui('error', _("Error connecting to Tor at {0}").format(addr), [], False)
 
         else:
             self.set_gui('error', _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(f.value), [], False)
