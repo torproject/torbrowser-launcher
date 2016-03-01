@@ -32,10 +32,7 @@ from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFaile
 from twisted.web.http_headers import Headers
 from twisted.web.iweb import IPolicyForHTTPS
 from twisted.internet.protocol import Protocol
-from twisted.internet.ssl import CertificateOptions
-from twisted.internet._sslverify import ClientTLSOptions
 from twisted.internet.error import DNSLookupError
-from zope.interface import implementer
 
 import xml.etree.ElementTree as ET
 
@@ -54,30 +51,6 @@ class TryDefaultMirrorException(Exception):
 class DownloadErrorException(Exception):
     pass
 
-class TorProjectCertificateOptions(CertificateOptions):
-    def __init__(self, torproject_pem):
-        CertificateOptions.__init__(self)
-        self.torproject_ca = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, open(torproject_pem, 'r').read())
-
-    def getContext(self, host, port):
-        ctx = CertificateOptions.getContext(self)
-        ctx.set_verify_depth(0)
-        ctx.set_verify(OpenSSL.SSL.VERIFY_PEER | OpenSSL.SSL.VERIFY_FAIL_IF_NO_PEER_CERT, self.verifyHostname)
-        return ctx
-
-    def verifyHostname(self, connection, cert, errno, depth, preverifyOK):
-        return cert.digest('sha256') == self.torproject_ca.digest('sha256')
-
-@implementer(IPolicyForHTTPS)
-class TorProjectPolicyForHTTPS:
-    def __init__(self, torproject_pem):
-        self.torproject_pem = torproject_pem
-
-    def creatorForNetloc(self, hostname, port):
-        certificateOptions = TorProjectCertificateOptions(self.torproject_pem)
-        return ClientTLSOptions(hostname.decode('utf-8'),
-                                certificateOptions.getContext(hostname, port))
-
 class Launcher:
     def __init__(self, common, url_list):
         self.common = common
@@ -86,7 +59,7 @@ class Launcher:
         # init launcher
         self.set_gui(None, '', [])
         self.launch_gui = True
-        
+
         # if Tor Browser is not installed, detect latest version, download, and install
         if not self.common.settings['installed']:
             # if downloading over Tor, include txsocksx
@@ -112,7 +85,7 @@ class Launcher:
                           'verify',
                           'extract',
                           'run'])
-        
+
         else:
             # Tor Browser is already installed, so run
             self.run(False)
@@ -264,9 +237,9 @@ class Launcher:
         if task == 'download_version_check':
             print _('Downloading'), self.common.paths['version_check_url']
             self.download('version check', self.common.paths['version_check_url'], self.common.paths['version_check_file'])
-        
+
         if task == 'set_version':
-            version = self.get_stable_version() 
+            version = self.get_stable_version()
             if version:
                 self.common.build_paths(self.get_stable_version())
                 print _('Latest version: {}').format(version)
@@ -414,15 +387,9 @@ class Launcher:
             torEndpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 9050)
 
             # default mirror gets certificate pinning, only for requests that use the mirror
-            if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
-                agent = SOCKS5Agent(reactor, TorProjectPolicyForHTTPS(self.common.paths['torproject_pem']), proxyEndpoint=torEndpoint)
-            else:
-                agent = SOCKS5Agent(reactor, proxyEndpoint=torEndpoint)
+            agent = SOCKS5Agent(reactor, proxyEndpoint=torEndpoint)
         else:
-            if self.common.settings['mirror'] == self.common.default_mirror and '{0}' in url:
-                agent = Agent(reactor, TorProjectPolicyForHTTPS(self.common.paths['torproject_pem']))
-            else:
-                agent = Agent(reactor)
+            agent = Agent(reactor)
 
         # actually, agent needs to follow redirect
         agent = RedirectAgent(agent)
