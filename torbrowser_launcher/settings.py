@@ -101,6 +101,21 @@ class Settings:
             self.modem_checkbox.set_tooltip_text(_("This option requires python-pygame to be installed"))
         self.modem_checkbox.show()
 
+        # Tor SOCKS address
+        self.tor_addr_box = gtk.HBox(False, 10)
+        self.settings_box.pack_start(self.tor_addr_box, True, True, 0)
+        self.tor_addr_box.show()
+
+        self.tor_addr_label = gtk.Label(_('Tor server'))
+        self.tor_addr_label.set_line_wrap(True)
+        self.tor_addr_box.pack_start(self.tor_addr_label, True, True, 0)
+        self.tor_addr_label.show()
+
+        self.tor_addr = gtk.Entry()
+        self.tor_addr.set_text(self.common.settings['tor_socks_address'])
+        self.tor_addr_box.pack_start(self.tor_addr, True, True, 0)
+        self.tor_addr.show()
+
         # status
         if(self.common.settings['installed']):
             self.status_label = gtk.Label(_('Status: Installed'))
@@ -212,6 +227,7 @@ class Settings:
         # checkbox options
         self.common.settings['download_over_tor'] = self.tor_download_checkbox.get_active()
         self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
+        self.common.settings['tor_socks_address'] = self.tor_addr.get_text()
 
         # figure out the selected mirror
         self.common.settings['mirror'] = self.common.mirrors[self.mirrors.get_active()]

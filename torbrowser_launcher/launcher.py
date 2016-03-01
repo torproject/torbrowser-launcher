@@ -386,10 +386,10 @@ class Launcher:
         self.refresh_gtk()
 
         if self.common.settings['download_over_tor']:
-            from twisted.internet.endpoints import TCP4ClientEndpoint
+            from twisted.internet.endpoints import clientFromString
             from txsocksx.http import SOCKS5Agent
 
-            torEndpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 9050)
+            torEndpoint = clientFromString(reactor, self.common.settings['tor_socks_address'])
 
             # default mirror gets certificate pinning, only for requests that use the mirror
             agent = SOCKS5Agent(reactor, proxyEndpoint=torEndpoint)

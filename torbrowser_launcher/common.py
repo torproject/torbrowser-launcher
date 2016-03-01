@@ -194,6 +194,7 @@ class Common:
             'installed': False,
             'download_over_tor': False,
             'modem_sound': False,
+            'tor_socks_address': 'tcp:127.0.0.1:9050',
             'mirror': self.default_mirror
         }
 
