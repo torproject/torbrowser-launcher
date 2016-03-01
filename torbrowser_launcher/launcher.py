@@ -56,6 +56,9 @@ class Launcher:
         self.common = common
         self.url_list = url_list
 
+        # this is the current version of Tor Browser, which should get updated with every release
+        self.min_version = '5.5.2'
+
         # init launcher
         self.set_gui(None, '', [])
         self.launch_gui = True
@@ -92,7 +95,11 @@ class Launcher:
             self.launch_gui = False
 
         if self.launch_gui:
-            # set up the window
+            # build the rest of the UI
+            self.build_ui()
+
+    def configure_window(self):
+        if not hasattr(self, 'window'):
             self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
             self.window.set_title(_("Tor Browser"))
             self.window.set_icon_from_file(self.common.paths['icon_file'])
@@ -100,9 +107,6 @@ class Launcher:
             self.window.set_border_width(10)
             self.window.connect("delete_event", self.delete_event)
             self.window.connect("destroy", self.destroy)
-
-            # build the rest of the UI
-            self.build_ui()
 
     # there are different GUIs that might appear, this sets which one we want
     def set_gui(self, gui, message, tasks, autostart=True):
@@ -129,6 +133,7 @@ class Launcher:
         self.clear_ui()
 
         self.box = gtk.VBox(False, 20)
+        self.configure_window()
         self.window.add(self.box)
 
         if 'error' in self.gui:
@@ -483,7 +488,31 @@ class Launcher:
 
         self.run_task()
 
+    def check_min_version(self):
+        installed_version = None
+        for line in open(self.common.paths['tbb']['versions']).readlines():
+            if line.startswith('TORBROWSER_VERSION='):
+                installed_version = line.split('=')[1].strip()
+                break
+
+        if self.min_version <= installed_version:
+            return True
+
+        return False
+
     def run(self, run_next_task=True):
+        # don't run if it isn't at least the minimum version
+        if not self.check_min_version():
+            message =  _("The version of Tor Browser you have installed is earlier than it should be, which could be a sign of an attack!")
+            print message
+
+            md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _(message))
+            md.set_position(gtk.WIN_POS_CENTER)
+            md.run()
+            md.destroy()
+
+            return
+
         # play modem sound?
         if self.common.settings['modem_sound']:
             def play_modem_sound():
