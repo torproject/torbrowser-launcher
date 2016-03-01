@@ -71,7 +71,7 @@ class Common:
 
         # figure out the language
         available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
-        default_locale = locale.getdefaultlocale()[0]
+        default_locale = locale.getlocale(locale.LC_MESSAGES)[0]
         if default_locale is None:
             self.language = 'en-US'
         else:
