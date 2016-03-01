@@ -67,10 +67,9 @@ setup(
     license='MIT',
     description='A program to help you securely download and run Tor Browser',
     long_description="""
-Tor Browser Launcher is intended to make Tor Browser easier to install and use for GNU/Linux users. You install torbrowser-launcher from your distribution's package manager and it handles downloading the most recent version of Tor Browser for you, in your language and for your architecture. It also adds a "Tor Browser" application launcher to your operating system's menu. When you first launch Tor Browser Launcher, it will download Tor Browser from https://www.torproject.org/, extract it in your home directory, and execute it. When you run it after that it will just launch Tor Browser.
+Tor Browser Launcher is intended to make Tor Browser easier to install and use for GNU/Linux users. You install torbrowser-launcher from your distribution's package manager and it handles securely downloading the most recent version of Tor Browser for you, in your language and for your architecture. It also adds a "Tor Browser" application launcher to your operating system's menu. When you first launch Tor Browser Launcher, it will download Tor Browser from https://www.torproject.org/, verify the PGP signature, extract it in your home directory, and launch it. When you run it after that it will just launch Tor Browser.
 """,
     packages=['torbrowser_launcher'],
     scripts=['torbrowser-launcher'],
     data_files=datafiles
 )
-
