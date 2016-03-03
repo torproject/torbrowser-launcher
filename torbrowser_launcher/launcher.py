@@ -205,7 +205,7 @@ class Launcher:
             # exit button
             exit_image = gtk.Image()
             exit_image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
-            self.exit_button = gtk.Button(_("Exit"))
+            self.exit_button = gtk.Button(_("Cancel"))
             self.exit_button.set_image(exit_image)
             self.exit_button.connect("clicked", self.destroy, None)
             self.button_box.add(self.exit_button)
