@@ -28,6 +28,8 @@
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
+  /usr/share/glib-2.0/schemas/gschemas.compiled r,
+
   @{PROC}/[0-9]*/mountinfo r,
   @{PROC}/[0-9]*/stat r,
   @{PROC}/[0-9]*/task/*/stat r,
