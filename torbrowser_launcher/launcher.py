@@ -435,7 +435,14 @@ class Launcher:
         tree = ET.parse(self.common.paths['version_check_file'])
         for up in tree.getroot():
             if up.tag == 'update' and up.attrib['appVersion']:
-                return str(up.attrib['appVersion'])
+                version = str(up.attrib['appVersion'])
+
+                # make sure the version does not contain directory traversal attempts
+                # e.g. "5.5.3", "6.0a", "6.0a-hardned" are valid but "../../../../.." is invalid
+                if not re.match(r'^[a-z0-9\.\-]+$', version):
+                    return None
+
+                return version
         return None
 
     def verify(self):
