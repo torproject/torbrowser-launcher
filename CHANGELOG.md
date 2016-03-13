@@ -1,5 +1,9 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.4
+
+* Fix signature verification bypass attack, reported by Jann Horn
+
 ## 0.2.3
 
 * Removed certificate pinning to https://www.torproject.org to avoid issues with upcoming certificate change, and hard-coded minimum Tor Browser version in the release
