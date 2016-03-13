@@ -447,7 +447,7 @@ class Launcher:
         # verify the PGP signature
         verified = False
         FNULL = open(os.devnull, 'w')
-        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sig_file']], stdout=FNULL, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sig_file'], self.common.paths['tarball_file']], stdout=FNULL, stderr=subprocess.STDOUT)
         self.pulse_until_process_exits(p)
         if p.returncode == 0:
             verified = True
