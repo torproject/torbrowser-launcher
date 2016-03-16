@@ -2,7 +2,7 @@
 
 ## 0.2.4
 
-* Fix signature verification bypass attack, reported by Jann Horn
+* Fix signature verification bypass attack, reported by Jann Horn (CVE-2016-3180)
 
 ## 0.2.3
 
