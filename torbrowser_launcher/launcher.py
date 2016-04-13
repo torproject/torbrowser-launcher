@@ -30,7 +30,6 @@ import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicod
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
-from twisted.web.iweb import IPolicyForHTTPS
 from twisted.internet.protocol import Protocol
 from twisted.internet.error import DNSLookupError, ConnectionRefusedError
 
