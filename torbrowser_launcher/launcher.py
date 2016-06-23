@@ -54,6 +54,7 @@ class Launcher:
     def __init__(self, common, url_list):
         self.common = common
         self.url_list = url_list
+        self.force_redownload = False
 
         # this is the current version of Tor Browser, which should get updated with every release
         self.min_version = '5.5.2'
@@ -259,7 +260,10 @@ class Launcher:
 
         elif task == 'download_tarball':
             print _('Downloading'), self.common.paths['tarball_url'].format(self.common.settings['mirror'])
-            self.download('tarball', self.common.paths['tarball_url'], self.common.paths['tarball_file'])
+            if not self.force_redownload and os.path.exists(self.common.paths['tarball_file']):
+                self.run_task()
+            else:
+                self.download('tarball', self.common.paths['tarball_url'], self.common.paths['tarball_file'])
 
         elif task == 'verify':
             print _('Verifying signature')
@@ -565,6 +569,7 @@ class Launcher:
 
     # start over and download TBB again
     def start_over(self):
+        self.force_redownload = True # Overwrite any existing file
         self.label.set_text(_("Downloading Tor Browser Bundle over again."))
         self.gui_tasks = ['download_tarball', 'verify', 'extract', 'run']
         self.gui_task_i = 0
