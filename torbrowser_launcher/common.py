@@ -70,6 +70,10 @@ class Common:
         self.architecture = 'x86_64' if '64' in platform.architecture()[0] else 'i686'
 
         # figure out the language
+        if hasattr(self, 'settings') and self.settings['force_en-US']:
+            self.language = 'en-US'
+            return
+
         available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
         default_locale = locale.getlocale(locale.LC_MESSAGES)[0]
         if default_locale is None:
@@ -195,7 +199,8 @@ class Common:
             'download_over_tor': False,
             'modem_sound': False,
             'tor_socks_address': 'tcp:127.0.0.1:9050',
-            'mirror': self.default_mirror
+            'mirror': self.default_mirror,
+            'force_en-US': False,
         }
 
         if os.path.isfile(self.paths['settings_file']):

@@ -101,6 +101,16 @@ class Settings:
             self.modem_checkbox.set_tooltip_text(_("This option requires python-pygame to be installed"))
         self.modem_checkbox.show()
 
+        # force en-US, only display if language isn't already en-US
+        if self.common.language != 'en-US':
+            self.force_en_checkbox = gtk.CheckButton(_("Force downloading English version of Tor Browser"))
+            if self.common.settings['force_en-US']:
+                self.force_en_checkbox.set_active(True)
+            else:
+                self.force_en_checkbox.set_active(False)
+            self.settings_box.pack_start(self.force_en_checkbox, True, True, 0)
+            self.force_en_checkbox.show()
+
         # Tor SOCKS address
         self.tor_addr_box = gtk.HBox(False, 10)
         self.settings_box.pack_start(self.tor_addr_box, True, True, 0)
@@ -227,6 +237,7 @@ class Settings:
         # checkbox options
         self.common.settings['download_over_tor'] = self.tor_download_checkbox.get_active()
         self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
+        self.common.settings['force_en-US'] = self.force_en_checkbox.get_active()
         self.common.settings['tor_socks_address'] = self.tor_addr.get_text()
 
         # figure out the selected mirror
