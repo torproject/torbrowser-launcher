@@ -64,7 +64,7 @@ class Launcher:
         self.launch_gui = True
 
         # if Tor Browser is not installed, detect latest version, download, and install
-        if not self.common.settings['installed']:
+        if not self.common.settings['installed'] or not self.check_min_version():
             # if downloading over Tor, include txsocksx
             if self.common.settings['download_over_tor']:
                 try:
@@ -78,9 +78,16 @@ class Launcher:
                     self.common.settings['download_over_tor'] = False
                     self.common.save_settings()
 
+            # different message if downloading for the first time, or because your installed version is too low
+            download_message = ""
+            if not self.common.settings['installed']:
+                download_message = _("Downloading and installing Tor Browser for the first time.")
+            elif not self.check_min_version():
+                download_message = _("Your version of Tor Browser is out-of-date. Downloading and installing the newest version.")
+
             # download and install
-            print _("Downloading and installing Tor Browser for the first time.")
-            self.set_gui('task', _("Downloading and installing Tor Browser for the first time."),
+            print download_message
+            self.set_gui('task', download_message,
                          ['download_version_check',
                           'set_version',
                           'download_sig',
