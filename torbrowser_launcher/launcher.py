@@ -57,7 +57,7 @@ class Launcher:
         self.force_redownload = False
 
         # this is the current version of Tor Browser, which should get updated with every release
-        self.min_version = '5.5.2'
+        self.min_version = '6.0.2'
 
         # init launcher
         self.set_gui(None, '', [])
