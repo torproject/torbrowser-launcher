@@ -212,14 +212,14 @@ class Common:
                              stderr=subprocess.PIPE)
         p.wait()
 
-        output = p.stderr.read()
-        print "---output begin---\n{}\n---output end---".format(output)
-        match = gnupg_import_ok_pattern.match(output)
-        if match:
-            # The output must match everything in the
-            # ``gnupg_import_ok_pattern``, as well as the expected fingerprint:
-            if match.group().find(self.fingerprints[key]) >= 0:
-                success = True
+        for output in p.stderr.readlines():
+            match = gnupg_import_ok_pattern.match(output)
+            if match:
+                # The output must match everything in the
+                # ``gnupg_import_ok_pattern``, as well as the expected fingerprint:
+                if match.group().find(self.fingerprints[key]) >= 0:
+                    success = True
+                    break
 
         return success
 
@@ -231,12 +231,6 @@ class Common:
         :returns: ``True`` if all keys were successfully imported; ``False``
             otherwise.
         """
-
-        # run "gpg --list-keys" first, to create an empty keyring before importing
-        #subprocess.call(['/usr/bin/gpg',
-        #    '--homedir', self.paths['gnupg_homedir'],
-        #    '--list-secret-keys'])
-
         keys = ['tor_browser_developers',]
         all_imports_succeeded = True
 
