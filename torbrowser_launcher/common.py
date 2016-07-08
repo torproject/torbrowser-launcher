@@ -234,7 +234,6 @@ class Common:
         keys = ['tor_browser_developers',]
         all_imports_succeeded = True
 
-        print _('Importing keys')
         for key in keys:
             imported = self.import_key_and_check_status(key)
             if not imported:
@@ -242,9 +241,7 @@ class Common:
                         % self.fingerprints[key])
                 all_imports_succeeded = False
 
-        if all_imports_succeeded:
-            print _('Successfully imported all keys.')
-        else:
+        if not all_imports_succeeded:
             print _('Not all keys were imported successfully!')
 
         return all_imports_succeeded
