@@ -70,10 +70,6 @@ class Common:
         self.architecture = 'x86_64' if '64' in platform.architecture()[0] else 'i686'
 
         # figure out the language
-        if hasattr(self, 'settings') and self.settings['force_en-US']:
-            self.language = 'en-US'
-            return
-
         available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
         default_locale = locale.getlocale(locale.LC_MESSAGES)[0]
         if default_locale is None:
@@ -114,7 +110,12 @@ class Common:
                 arch = 'linux64'
             else:
                 arch = 'linux32'
-            tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+self.language+'.tar.xz'
+
+            if hasattr(self, 'settings') and self.settings['force_en-US']:
+                language = 'en-US'
+            else:
+                language = self.language
+            tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+language+'.tar.xz'
 
             # tarball
             self.paths['tarball_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename
