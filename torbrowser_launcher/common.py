@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, sys, platform, subprocess, locale, pickle, json, psutil
+import os, sys, platform, subprocess, locale, pickle, json, psutil, re
 
 import pygtk
 pygtk.require('2.0')
@@ -39,6 +39,16 @@ gettext.install('torbrowser-launcher', os.path.join(SHARE, 'locale'))
 
 from twisted.internet import gtk2reactor
 gtk2reactor.install()
+
+
+# We're looking for output which:
+#
+#   1. The first portion must be `[GNUPG:] IMPORT_OK`
+#   2. The second must be an integer between [0, 15], inclusive
+#   3. The third must be an uppercased hex-encoded 160-bit fingerprint
+gnupg_import_ok_pattern = re.compile(
+    "(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})")
+
 
 class Common:
 
@@ -137,7 +147,9 @@ class Common:
                 'tbl_bin': sys.argv[0],
                 'icon_file': os.path.join(os.path.dirname(SHARE), 'pixmaps/torbrowser.png'),
                 'torproject_pem': os.path.join(SHARE, 'torproject.pem'),
-                'signing_keys': [os.path.join(SHARE, 'tor-browser-developers.asc')],
+                'signing_keys': {
+                    'tor_browser_developers': os.path.join(SHARE, 'tor-browser-developers.asc')
+                },
                 'mirrors_txt': [os.path.join(SHARE, 'mirrors.txt'),
                                 tbb_config+'/mirrors.txt'],
                 'modem_sound': os.path.join(SHARE, 'modem.ogg'),
@@ -154,6 +166,11 @@ class Common:
                     'versions': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/sources/versions',
                 },
             }
+
+        # Add the expected fingerprint for imported keys:
+        self.fingerprints = {
+            'tor_browser_developers': 'EF6E286DDA85EA2A4BA7DE684E2C6E8793298290'
+        }
 
     # create a directory
     @staticmethod
@@ -177,10 +194,66 @@ class Common:
             self.mkdir(self.paths['gnupg_homedir'])
         self.import_keys()
 
+    def import_key_and_check_status(self, key):
+        """Import a GnuPG key and check that the operation was successful.
+
+        :param str key: A string specifying the key's filepath from
+            ``Common.paths``, as well as its fingerprint in
+            ``Common.fingerprints``.
+        :rtype: bool
+        :returns: ``True`` if the key is now within the keyring (or was
+            previously and hasn't changed). ``False`` otherwise.
+        """
+        success = False
+
+        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                              '--homedir', self.paths['gnupg_homedir'],
+                              '--import', self.paths['signing_keys'][key]],
+                             stderr=subprocess.PIPE)
+        p.wait()
+
+        output = p.stderr.read()
+        print "---output begin---\n{}\n---output end---".format(output)
+        match = gnupg_import_ok_pattern.match(output)
+        if match:
+            # The output must match everything in the
+            # ``gnupg_import_ok_pattern``, as well as the expected fingerprint:
+            if match.group().find(self.fingerprints[key]) >= 0:
+                success = True
+
+        return success
+
     # import gpg keys
     def import_keys(self):
-        for key in self.paths['signing_keys']:
-            subprocess.Popen(['/usr/bin/gpg', '--quiet', '--homedir', self.paths['gnupg_homedir'], '--import', key]).wait()
+        """Import all GnuPG keys.
+
+        :rtype: bool
+        :returns: ``True`` if all keys were successfully imported; ``False``
+            otherwise.
+        """
+
+        # run "gpg --list-keys" first, to create an empty keyring before importing
+        #subprocess.call(['/usr/bin/gpg',
+        #    '--homedir', self.paths['gnupg_homedir'],
+        #    '--list-secret-keys'])
+
+        keys = ['tor_browser_developers',]
+        all_imports_succeeded = True
+
+        print _('Importing keys')
+        for key in keys:
+            imported = self.import_key_and_check_status(key)
+            if not imported:
+                print _('Could not import key with fingerprint: %s.'
+                        % self.fingerprints[key])
+                all_imports_succeeded = False
+
+        if all_imports_succeeded:
+            print _('Successfully imported all keys.')
+        else:
+            print _('Not all keys were imported successfully!')
+
+        return all_imports_succeeded
 
     # load mirrors
     def load_mirrors(self):
