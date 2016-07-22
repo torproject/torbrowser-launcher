@@ -237,7 +237,10 @@ class Settings:
         # checkbox options
         self.common.settings['download_over_tor'] = self.tor_download_checkbox.get_active()
         self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
-        self.common.settings['force_en-US'] = self.force_en_checkbox.get_active()
+        if hasattr(self, 'force_en_checkbox'):
+            self.common.settings['force_en-US'] = self.force_en_checkbox.get_active()
+        else:
+            self.common.settings['force_en-US'] = False
         self.common.settings['tor_socks_address'] = self.tor_addr.get_text()
 
         # figure out the selected mirror
