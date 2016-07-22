@@ -1,5 +1,9 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.6
+
+* Fixed bug related to fallback to English feature that caused Settings to crash
+
 ## 0.2.5
 
 * Fix issue where Tor Browser Launcher failed to launch if currently installed version of Tor Browser was too old
