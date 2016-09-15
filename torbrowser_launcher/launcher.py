@@ -47,6 +47,9 @@ class TryStableException(Exception):
 class TryDefaultMirrorException(Exception):
     pass
 
+class TryForcingEnglishException(Exception):
+    pass
+
 class DownloadErrorException(Exception):
     pass
 
@@ -57,14 +60,14 @@ class Launcher:
         self.force_redownload = False
 
         # this is the current version of Tor Browser, which should get updated with every release
-        self.min_version = '5.5.2'
+        self.min_version = '6.0.2'
 
         # init launcher
         self.set_gui(None, '', [])
         self.launch_gui = True
 
         # if Tor Browser is not installed, detect latest version, download, and install
-        if not self.common.settings['installed']:
+        if not self.common.settings['installed'] or not self.check_min_version():
             # if downloading over Tor, include txsocksx
             if self.common.settings['download_over_tor']:
                 try:
@@ -78,9 +81,16 @@ class Launcher:
                     self.common.settings['download_over_tor'] = False
                     self.common.save_settings()
 
+            # different message if downloading for the first time, or because your installed version is too low
+            download_message = ""
+            if not self.common.settings['installed']:
+                download_message = _("Downloading and installing Tor Browser for the first time.")
+            elif not self.check_min_version():
+                download_message = _("Your version of Tor Browser is out-of-date. Downloading and installing the newest version.")
+
             # download and install
-            print _("Downloading and installing Tor Browser for the first time.")
-            self.set_gui('task', _("Downloading and installing Tor Browser for the first time."),
+            print download_message
+            self.set_gui('task', download_message,
                          ['download_version_check',
                           'set_version',
                           'download_sig',
@@ -159,6 +169,8 @@ class Launcher:
                     self.yes_button.connect("clicked", self.try_stable, None)
                 elif self.gui == 'error_try_default_mirror':
                     self.yes_button.connect("clicked", self.try_default_mirror, None)
+                elif self.gui == 'error_try_forcing_english':
+                    self.yes_button.connect("clicked", self.try_forcing_english, None)
                 elif self.gui == 'error_try_tor':
                     self.yes_button.connect("clicked", self.try_tor, None)
                 self.button_box.add(self.yes_button)
@@ -293,6 +305,8 @@ class Launcher:
                 if response.code != 200:
                     if common.settings['mirror'] != common.default_mirror:
                         raise TryDefaultMirrorException(_("Download Error: {0} {1}\n\nYou are currently using a non-default mirror:\n{2}\n\nWould you like to switch back to the default?").format(response.code, response.phrase, common.settings['mirror']))
+                    elif common.language != 'en-US' and not common.settings['force_en-US']:
+                        raise TryForcingEnglishException(_("Download Error: {0} {1}\n\nWould you like to try the English version of Tor Browser instead?").format(response.code, response.phrase))
                     else:
                         raise DownloadErrorException(_("Download Error: {0} {1}").format(response.code, response.phrase))
 
@@ -345,6 +359,10 @@ class Launcher:
         elif isinstance(f.value, TryDefaultMirrorException):
             f.trap(TryDefaultMirrorException)
             self.set_gui('error_try_default_mirror', str(f.value), [], False)
+
+        elif isinstance(f.value, TryForcingEnglishException):
+            f.trap(TryForcingEnglishException)
+            self.set_gui('error_try_forcing_english', str(f.value), [], False)
 
         elif isinstance(f.value, DownloadErrorException):
             f.trap(DownloadErrorException)
@@ -423,6 +441,13 @@ class Launcher:
     def try_default_mirror(self, widget, data=None):
         # change mirror to default and relaunch TBL
         self.common.settings['mirror'] = self.common.default_mirror
+        self.common.save_settings()
+        subprocess.Popen([self.common.paths['tbl_bin']])
+        self.destroy(False)
+
+    def try_forcing_english(self, widget, data=None):
+        # change force english to true and relaunch TBL
+        self.common.settings['force_en-US'] = True
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
         self.destroy(False)

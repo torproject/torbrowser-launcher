@@ -1,5 +1,18 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.6
+
+* Fixed bug related to fallback to English feature that caused Settings to crash
+
+## 0.2.5
+
+* Fix issue where Tor Browser Launcher failed to launch if currently installed version of Tor Browser was too old
+* If Tor Browser download isn't available in your language, fallback to English
+* Avoid re-downloading tarball if it's already present
+* Verify GnuPG importing keys using status-fd rather than exit codes
+* Various AppArmor improvements
+* Removed unused dependency
+
 ## 0.2.4
 
 * Fix signature verification bypass attack, reported by Jann Horn (CVE-2016-3180)
