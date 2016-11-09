@@ -26,6 +26,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import print_function
+
 import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicodedata
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
@@ -72,7 +74,7 @@ class Launcher:
             if self.common.settings['download_over_tor']:
                 try:
                     import txsocksx
-                    print _('Downloading over Tor')
+                    print(_('Downloading over Tor'))
                 except ImportError:
                     md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-txsocksx package is missing, downloads will not happen over tor"))
                     md.set_position(gtk.WIN_POS_CENTER)
@@ -89,7 +91,7 @@ class Launcher:
                 download_message = _("Your version of Tor Browser is out-of-date. Downloading and installing the newest version.")
 
             # download and install
-            print download_message
+            print(download_message)
             self.set_gui('task', download_message,
                          ['download_version_check',
                           'set_version',
@@ -252,14 +254,14 @@ class Launcher:
         self.gui_task_i += 1
 
         if task == 'download_version_check':
-            print _('Downloading'), self.common.paths['version_check_url']
+            print(_('Downloading'), self.common.paths['version_check_url'])
             self.download('version check', self.common.paths['version_check_url'], self.common.paths['version_check_file'])
 
         if task == 'set_version':
             version = self.get_stable_version()
             if version:
                 self.common.build_paths(self.get_stable_version())
-                print _('Latest version: {}').format(version)
+                print(_('Latest version: {}').format(version))
                 self.run_task()
             else:
                 self.set_gui('error', _("Error detecting Tor Browser version."), [], False)
@@ -267,30 +269,30 @@ class Launcher:
                 self.build_ui()
 
         elif task == 'download_sig':
-            print _('Downloading'), self.common.paths['sig_url'].format(self.common.settings['mirror'])
+            print(_('Downloading'), self.common.paths['sig_url'].format(self.common.settings['mirror']))
             self.download('signature', self.common.paths['sig_url'], self.common.paths['sig_file'])
 
         elif task == 'download_tarball':
-            print _('Downloading'), self.common.paths['tarball_url'].format(self.common.settings['mirror'])
+            print(_('Downloading'), self.common.paths['tarball_url'].format(self.common.settings['mirror']))
             if not self.force_redownload and os.path.exists(self.common.paths['tarball_file']):
                 self.run_task()
             else:
                 self.download('tarball', self.common.paths['tarball_url'], self.common.paths['tarball_file'])
 
         elif task == 'verify':
-            print _('Verifying signature')
+            print(_('Verifying signature'))
             self.verify()
 
         elif task == 'extract':
-            print _('Extracting'), self.common.paths['tarball_filename']
+            print(_('Extracting'), self.common.paths['tarball_filename'])
             self.extract()
 
         elif task == 'run':
-            print _('Running'), self.common.paths['tbb']['start']
+            print(_('Running'), self.common.paths['tbb']['start'])
             self.run()
 
         elif task == 'start_over':
-            print _('Starting download over again')
+            print(_('Starting download over again'))
             self.start_over()
 
     def response_received(self, response):
@@ -346,11 +348,11 @@ class Launcher:
             self.run_task()
 
         else:
-            print "FINISHED", msg
+            print("FINISHED", msg)
             ## FIXME handle errors
 
     def download_error(self, f):
-        print _("Download error:"), f.value, type(f.value)
+        print(_("Download error:"), f.value, type(f.value))
 
         if isinstance(f.value, TryStableException):
             f.trap(TryStableException)
@@ -546,7 +548,7 @@ class Launcher:
         # don't run if it isn't at least the minimum version
         if not self.check_min_version():
             message =  _("The version of Tor Browser you have installed is earlier than it should be, which could be a sign of an attack!")
-            print message
+            print(message)
 
             md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _(message))
             md.set_position(gtk.WIN_POS_CENTER)
