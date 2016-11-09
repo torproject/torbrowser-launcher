@@ -28,9 +28,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 import os, sys, argparse
 
-from common import Common, SHARE
-from settings import Settings
-from launcher import Launcher
+from .common import Common, SHARE
+from .settings import Settings
+from .launcher import Launcher
 
 def main():
     # parse arguments
