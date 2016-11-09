@@ -103,7 +103,7 @@ class Common:
             homedir = '/tmp/.torbrowser-'+os.getenv('USER')
             if not os.path.exists(homedir):
                 try:
-                    os.mkdir(homedir, 0700)
+                    os.mkdir(homedir, 0o700)
                 except:
                     self.set_gui('error', _("Error creating {0}").format(homedir), [], False)
         if not os.access(homedir, os.W_OK):
@@ -177,7 +177,7 @@ class Common:
     def mkdir(path):
         try:
             if not os.path.exists(path):
-                os.makedirs(path, 0700)
+                os.makedirs(path, 0o700)
                 return True
         except:
             print _("Cannot create directory {0}").format(path)
