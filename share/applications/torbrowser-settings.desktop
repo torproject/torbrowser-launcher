@@ -1,7 +1,13 @@
 [Desktop Entry]
 Name=Tor Browser Launcher Settings
+Name[fr]=Tor Browser Launcher configurations
+Name[nl]=Tor Browser Launcher Instellingen
+Name[ru]=Tor Browser (настройки запуска)
 GenericName=Tor
 Comment=Tor Browser Launcher Settings
+Comment[fr]=Tor Browser Launcher configurations
+Comment[nl]=Tor Browser Launcher Instellingen
+Comment[ru]=Tor Browser (настройки запуска)
 Exec=torbrowser-launcher --settings
 Terminal=false
 Type=Application
