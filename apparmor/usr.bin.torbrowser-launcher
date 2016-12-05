@@ -17,7 +17,7 @@
   # This script doesn't really need to read the interpreter that's running it.
   deny /usr/bin/python{2,3}.[0-7]* r,
 
-  /bin/{dash,grep,ps} rix,
+  /{usr/,}bin/{dash,grep,ps} rix,
   /dev/ r,
   /etc/magic r,
   @{HOME}/.config/torbrowser/ rw,
