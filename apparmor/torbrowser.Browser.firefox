@@ -83,6 +83,10 @@
   /sys/devices/pci[0-9]*/**/uevent r,
   owner /{dev,run}/shm/shmfd-* rw,
 
+  # Deny access to DRM nodes, that's granted by the X abstraction, which is
+  # sourced by the gnome abstraction, that we include.
+  deny /dev/dri/** rwklx,
+
   # KDE 4
   owner @{HOME}/.kde/share/config/* r,
 
