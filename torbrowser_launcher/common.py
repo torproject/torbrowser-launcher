@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, sys, platform, subprocess, locale, pickle, json, psutil, re
+import os, sys, platform, subprocess, locale, pickle, json, re
 
 import pygtk
 pygtk.require('2.0')
