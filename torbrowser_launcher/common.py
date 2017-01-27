@@ -35,7 +35,7 @@ import gtk
 SHARE = os.getenv('TBL_SHARE', sys.prefix+'/share/torbrowser-launcher')
 
 import gettext
-gettext.install('torbrowser-launcher', os.path.join(SHARE, 'locale'))
+gettext.install('torbrowser-launcher')
 
 from twisted.internet import gtk2reactor
 gtk2reactor.install()

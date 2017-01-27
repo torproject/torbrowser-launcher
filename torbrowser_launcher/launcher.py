@@ -278,7 +278,7 @@ class Launcher:
                 self.download('tarball', self.common.paths['tarball_url'], self.common.paths['tarball_file'])
 
         elif task == 'verify':
-            print _('Verifying signature')
+            print _('Verifying Signature')
             self.verify()
 
         elif task == 'extract':
@@ -304,11 +304,11 @@ class Launcher:
 
                 if response.code != 200:
                     if common.settings['mirror'] != common.default_mirror:
-                        raise TryDefaultMirrorException(_("Download Error: {0} {1}\n\nYou are currently using a non-default mirror:\n{2}\n\nWould you like to switch back to the default?").format(response.code, response.phrase, common.settings['mirror']))
+                        raise TryDefaultMirrorException((_("Download Error:") +  " {0} {1}\n\n" + _("You are currently using a non-default mirror") + ":\n{2}\n\n" + _("Would you like to switch back to the default?")).format(response.code, response.phrase, common.settings['mirror']))
                     elif common.language != 'en-US' and not common.settings['force_en-US']:
-                        raise TryForcingEnglishException(_("Download Error: {0} {1}\n\nWould you like to try the English version of Tor Browser instead?").format(response.code, response.phrase))
+                        raise TryForcingEnglishException((_("Download Error:") + " {0} {1}\n\n" + _("Would you like to try the English version of Tor Browser instead?")).format(response.code, response.phrase))
                     else:
-                        raise DownloadErrorException(_("Download Error: {0} {1}").format(response.code, response.phrase))
+                        raise DownloadErrorException((_("Download Error:") + " {0} {1}").format(response.code, response.phrase))
 
             def dataReceived(self, bytes):
                 self.file.write(bytes)
@@ -350,7 +350,7 @@ class Launcher:
             ## FIXME handle errors
 
     def download_error(self, f):
-        print _("Download error:"), f.value, type(f.value)
+        print _("Download Error:"), f.value, type(f.value)
 
         if isinstance(f.value, TryStableException):
             f.trap(TryStableException)
@@ -371,7 +371,7 @@ class Launcher:
         elif isinstance(f.value, DNSLookupError):
             f.trap(DNSLookupError)
             if common.settings['mirror'] != common.default_mirror:
-                self.set_gui('error_try_default_mirror', _("DNS Lookup Error\n\nYou are currently using a non-default mirror:\n{0}\n\nWould you like to switch back to the default?").format(common.settings['mirror']), [], False)
+                self.set_gui('error_try_default_mirror', (_("DNS Lookup Error") + "\n\n" + _("You are currently using a non-default mirror") + ":\n{0}\n\n" + _("Would you like to switch back to the default?")).format(common.settings['mirror']), [], False)
             else:
                 self.set_gui('error', str(f.value), [], False)
 
@@ -380,7 +380,7 @@ class Launcher:
                 if isinstance(reason.value, OpenSSL.SSL.Error):
                     # TODO: add the ability to report attack by posting bug to trac.torproject.org
                     if not self.common.settings['download_over_tor']:
-                        self.set_gui('error_try_tor', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack. Try the download again using Tor?'), [], False)
+                        self.set_gui('error_try_tor', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack.') + " " + _('Try the download again using Tor?'), [], False)
                     else:
                         self.set_gui('error', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack.'), [], False)
 
@@ -409,7 +409,7 @@ class Launcher:
 
         # initialize the progress bar
         self.progressbar.set_fraction(0)
-        self.progressbar.set_text(_('Downloading {0}').format(name))
+        self.progressbar.set_text(_('Downloading') + ' {0}'.format(name))
         self.progressbar.show()
         self.refresh_gtk()
 

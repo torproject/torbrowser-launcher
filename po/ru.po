@@ -1,0 +1,271 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-12-02 15:14+0400\n"
+"PO-Revision-Date: 2016-12-02 17:52+0400\n"
+"Last-Translator: Andrey Kunitsyn <contact@libnaru.so>\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: __init__.py:49
+msgid "Tor Browser Launcher"
+msgstr "Программа запуска Tor Browser"
+
+#: __init__.py:50
+msgid "By Micah Lee, licensed under MIT"
+msgstr "Написана Micah Lee и распространяется по лицензии MIT"
+
+#: __init__.py:51
+#, python-brace-format
+msgid "version {0}"
+msgstr "версия {0}"
+
+#: common.py:108
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "Ошибка создания {0}"
+
+#: common.py:110 common.py:186
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "Нельзя записать в {0}"
+
+#: common.py:183
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "Нельзя создать каталог {0}"
+
+#: common.py:193
+msgid "Creating GnuPG homedir"
+msgstr "Создание домашнего каталога GnuPG"
+
+#: common.py:240
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "Не удалось импортировать ключ с отпечатком: %s."
+
+#: common.py:245
+msgid "Not all keys were imported successfully!"
+msgstr "Не все ключи были успешно импортированы!"
+
+#: launcher.py:75
+msgid "Downloading over Tor"
+msgstr "Загружать через Tor"
+
+#: launcher.py:77
+msgid ""
+"The python-txsocksx package is missing, downloads will not happen over tor"
+msgstr ""
+"Пакет python-txsocks отсутствует, загрузка не будет производиться через Tor"
+
+#: launcher.py:87
+msgid "Downloading and installing Tor Browser for the first time."
+msgstr "Загрузка и установка Tor Browser в первый раз"
+
+#: launcher.py:89
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading and installing the "
+"newest version."
+msgstr "Ваша версия Tor Browser устарела. Загрузка и установка новой версии."
+
+#: launcher.py:114
+msgid "Tor Browser"
+msgstr "Tor Browser"
+
+#: launcher.py:210
+msgid "Start"
+msgstr "Запуск"
+
+#: launcher.py:220 settings.py:195
+msgid "Cancel"
+msgstr "Отмена"
+
+#: launcher.py:255 launcher.py:270 launcher.py:274 launcher.py:412
+msgid "Downloading"
+msgstr "Загрузка"
+
+#: launcher.py:262
+msgid "Latest version: {}"
+msgstr "Последняя версия: {}"
+
+#: launcher.py:265
+msgid "Error detecting Tor Browser version."
+msgstr "Ошибка сверки версии Tor Browser."
+
+#: launcher.py:281 launcher.py:479
+msgid "Verifying Signature"
+msgstr "Сверка подписи"
+
+#: launcher.py:285
+msgid "Extracting"
+msgstr "Распаковка"
+
+#: launcher.py:289
+msgid "Running"
+msgstr "Запуск"
+
+#: launcher.py:293
+msgid "Starting download over again"
+msgstr "Начинать загрузку снова"
+
+#: launcher.py:307 launcher.py:309 launcher.py:311 launcher.py:353
+msgid "Download Error:"
+msgstr "Ошибка загрузки:"
+
+#: launcher.py:307 launcher.py:374
+msgid "You are currently using a non-default mirror"
+msgstr "Вы используете нестандартное зеркало"
+
+#: launcher.py:307 launcher.py:374
+msgid "Would you like to switch back to the default?"
+msgstr "Вы бы хотели вернуться к стандартному?"
+
+#: launcher.py:309
+msgid "Would you like to try the English version of Tor Browser instead?"
+msgstr "Вы хотели бы вместо этого попробовать английскую версию Tor Browser?"
+
+#: launcher.py:326
+msgid "Downloaded"
+msgstr "Загружено"
+
+#: launcher.py:374
+msgid "DNS Lookup Error"
+msgstr "Ошибка запроса DNS"
+
+#: launcher.py:383 launcher.py:385
+msgid ""
+"The SSL certificate served by https://www.torproject.org is invalid! You may "
+"be under attack."
+msgstr ""
+"SSL-сертификат находящейся на https://www.torproject.org недействителен! Вы "
+"можете быть атакованы."
+
+#: launcher.py:383
+msgid "Try the download again using Tor?"
+msgstr "Загрузить снова через Tor?"
+
+#: launcher.py:392
+#, python-brace-format
+msgid "Error connecting to Tor at {0}"
+msgstr "Ошибка подключения к Tor через {0}"
+
+#: launcher.py:395
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"Ошибка при запуске загрузки:\n"
+"\n"
+"{0}\n"
+"\n"
+"Вы подключены к сети?"
+
+#: launcher.py:494
+msgid ""
+"SIGNATURE VERIFICATION FAILED!\n"
+"\n"
+"You might be under attack, or there might just be a networking problem. "
+"Click Start try the download again."
+msgstr ""
+"ОШИБКА СВЕРКИ ПОДПИСИ!\n"
+"\n"
+"Вы можете бы быть под атакой, или имеют место проблемы с сетью. Нажмите "
+"кнопку Пуск и попробуйте снова."
+
+#: launcher.py:504
+msgid "Installing"
+msgstr "Установка"
+
+#: launcher.py:526
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Программа запуска Tor Browser не понимает формат файла {0}"
+
+#: launcher.py:548
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr ""
+"Вы установили новую версию Tor Browser раньше, чем это должно быть. Это "
+"может быть атакой!"
+
+#: launcher.py:568
+msgid "The python-pygame package is missing, the modem sound is unavailable."
+msgstr "Пакет python-pygame не найден, звуки модема недоступны."
+
+#: launcher.py:598
+msgid "Downloading Tor Browser Bundle over again."
+msgstr "Загрузка Tor Browser Bundle снова."
+
+#: settings.py:41
+msgid "Tor Browser Launcher Settings"
+msgstr "Настройка программы запуска Tor Browser"
+
+#: settings.py:71
+msgid "Download over system Tor"
+msgstr "Скачать через Tor"
+
+#: settings.py:73
+msgid ""
+"This option is only available when using a system wide Tor installation."
+msgstr "Эта опция доступна только при установки Tor в систему."
+
+#: settings.py:75
+msgid "This option requires the python-txsocksx package."
+msgstr "Эта опция требует пакет python-txsocksx."
+
+#: settings.py:89
+msgid "Play modem sound, because Tor is slow :]"
+msgstr "Играть звуки модема, если Tor слишком медленный :]"
+
+#: settings.py:101
+msgid "This option requires python-pygame to be installed"
+msgstr "Эта опция требует установленный python-pygame"
+
+#: settings.py:106
+msgid "Force downloading English version of Tor Browser"
+msgstr "Загружать только английскую версию Tor Browser"
+
+#: settings.py:119
+msgid "Tor server"
+msgstr "Сервер Tor"
+
+#: settings.py:131
+msgid "Status: Installed"
+msgstr "Статус: установлен"
+
+#: settings.py:133
+msgid "Status: Not Installed"
+msgstr "Статус: не установлен"
+
+#: settings.py:142
+msgid "Reinstall Tor Browser"
+msgstr "Переустановить Tor Browser"
+
+#: settings.py:151
+msgid "Install Tor Browser"
+msgstr "Установить Tor Browser"
+
+#: settings.py:162
+msgid "Mirror"
+msgstr "Зеркало"
+
+#: settings.py:186
+msgid "Save & Exit"
+msgstr "Сохранить и выйти"

@@ -27,7 +27,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 from distutils.core import setup
-import os, sys, platform
+import os, sys, platform, subprocess
 SHARE = 'share'
 
 # detect linux distribution
@@ -39,6 +39,25 @@ def file_list(path):
         if os.path.isfile(path+'/'+filename):
             files.append(path+'/'+filename)
     return files
+
+def create_mo_files():
+    po_dir = 'po/'
+    if not os.path.exists(po_dir):
+        return []
+    domain = 'torbrowser-launcher'
+    mo_files = []
+    po_files = [f
+                for f in next(os.walk(po_dir))[2]
+                if os.path.splitext(f)[1] == '.po']
+    for po_file in po_files:
+        filename, extension = os.path.splitext(po_file)
+        mo_file = domain + '.mo'
+        mo_dir = 'share/locale/' + filename + '/LC_MESSAGES/'
+        subprocess.call('mkdir -p ' + mo_dir, shell=True)
+        msgfmt_cmd = 'msgfmt {} -o {}'.format(po_dir + po_file, mo_dir + mo_file)
+        subprocess.call(msgfmt_cmd, shell=True)
+        mo_files.append(mo_dir + mo_file)
+    return mo_files
 
 with open(os.path.join(SHARE, 'torbrowser-launcher/version')) as buf:
     version = buf.read().strip()
@@ -56,6 +75,8 @@ if distro != 'Ubuntu':
             'apparmor/torbrowser.Browser.firefox',
             'apparmor/torbrowser.Tor.tor',
             'apparmor/usr.bin.torbrowser-launcher'])]
+
+datafiles += [('/usr/share/locale/', create_mo_files())]
 
 setup(
     name='torbrowser-launcher',
