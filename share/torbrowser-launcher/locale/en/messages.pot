@@ -1,5 +1,5 @@
 # Tor Browser Launcher
-# Copyright (C) 2013-2014 Micah Lee <micah@micahflee.com>
+# Copyright (C) 2013-2017 Micah Lee <micah@micahflee.com>
 #
 #, fuzzy
 msgid ""

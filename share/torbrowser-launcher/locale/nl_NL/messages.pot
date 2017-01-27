@@ -1,5 +1,5 @@
 # Tor Browser Launcher
-# Copyright (C) 2013-2014 Lazlo Westerhof <hello@lazlo.me>
+# Copyright (C) 2013-2017 Lazlo Westerhof <hello@lazlo.me>
 #
 msgid ""
 msgstr ""
