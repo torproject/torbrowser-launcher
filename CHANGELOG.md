@@ -1,5 +1,11 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.7
+
+* Updated Tor Browser signing key because they added a new subkey and verification was failing
+* Updated AppArmor profiles
+* Improved localization, and added Russian
+
 ## 0.2.6
 
 * Fixed bug related to fallback to English feature that caused Settings to crash
