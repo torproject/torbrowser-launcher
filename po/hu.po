@@ -1,0 +1,274 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-16 00:17+0100\n"
+"PO-Revision-Date: 2017-02-16 00:55+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.8\n"
+"Last-Translator: Barcza Károly <kbarcza@blackpanther.hu>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: hu_HU\n"
+
+#: __init__.py:49
+msgid "Tor Browser Launcher"
+msgstr "Tor böngésző indító"
+
+#: __init__.py:50
+msgid "By Micah Lee, licensed under MIT"
+msgstr "Micah Lee által MIT licenc alatt"
+
+#: __init__.py:51
+#, python-brace-format
+msgid "version {0}"
+msgstr "verzió {0}"
+
+#: common.py:108
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "Hiba a(z) {0} létrehozásakor"
+
+#: common.py:110 common.py:186
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "{0} nem írható"
+
+#: common.py:183
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "Nem sikerült a(z) {0} létrehozása"
+
+#: common.py:193
+msgid "Creating GnuPG homedir"
+msgstr "GnuPG könyvtár létrehozása"
+
+#: common.py:240
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "Nem lehetett importálni a kulcsot ujjlenyomattal: %s."
+
+#: common.py:245
+msgid "Not all keys were imported successfully!"
+msgstr ""
+
+#: launcher.py:75
+msgid "Downloading over Tor"
+msgstr "Letöltés Tor-on keresztül"
+
+#: launcher.py:77
+msgid ""
+"The python-txsocksx package is missing, downloads will not happen over tor"
+msgstr ""
+"A python-txsocksx csoamag nem található, a letöltés nem fog megtörténni a "
+"tor-on"
+
+#: launcher.py:87
+msgid "Downloading and installing Tor Browser for the first time."
+msgstr "Tor böngésző letöltése és telepítése első alkalommal."
+
+#: launcher.py:89
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading and installing the "
+"newest version."
+msgstr ""
+"A Tor böngésző verziója elavult. Töltsük le és telepítsük a legfrissebb "
+"változatot."
+
+#: launcher.py:114
+msgid "Tor Browser"
+msgstr "Tor böngésző"
+
+#: launcher.py:210
+msgid "Start"
+msgstr "Elindítás"
+
+#: launcher.py:220 settings.py:195
+msgid "Cancel"
+msgstr "Megszakít"
+
+#: launcher.py:255 launcher.py:270 launcher.py:274 launcher.py:412
+msgid "Downloading"
+msgstr "Letöltés"
+
+#: launcher.py:262
+msgid "Latest version: {}"
+msgstr "Legújabb változat: {}"
+
+#: launcher.py:265
+msgid "Error detecting Tor Browser version."
+msgstr "Hiba a Tor böngésző verzió felsimerésekor"
+
+#: launcher.py:281 launcher.py:479
+msgid "Verifying Signature"
+msgstr "Aláírás ellenőrzése"
+
+#: launcher.py:285
+msgid "Extracting"
+msgstr "Kibontás"
+
+#: launcher.py:289
+msgid "Running"
+msgstr "Fut"
+
+#: launcher.py:293
+msgid "Starting download over again"
+msgstr "Újra letöltés indítása"
+
+#: launcher.py:307 launcher.py:309 launcher.py:311 launcher.py:353
+msgid "Download Error:"
+msgstr "Hiba a letöltésben:"
+
+#: launcher.py:307 launcher.py:374
+msgid "You are currently using a non-default mirror"
+msgstr "Jelenleg használt tükörszerver nem az alapértelmezett"
+
+#: launcher.py:307 launcher.py:374
+msgid "Would you like to switch back to the default?"
+msgstr "Valóban szeretnéd visszaváltani alapértelmezettre?"
+
+#: launcher.py:309
+msgid "Would you like to try the English version of Tor Browser instead?"
+msgstr "Ehelyett megpróbálod a Tor böngésző angol változatát ?"
+
+#: launcher.py:326
+msgid "Downloaded"
+msgstr "Letöltve"
+
+#: launcher.py:374
+msgid "DNS Lookup Error"
+msgstr "DNS feloldási hiba"
+
+#: launcher.py:383 launcher.py:385
+msgid ""
+"The SSL certificate served by https://www.torproject.org is invalid! You may "
+"be under attack."
+msgstr ""
+"A ttps://www.torproject.org által adott SSL tanúsítvány érvénytelen! Lehet, "
+"hogy támadás alatt vagy."
+
+#: launcher.py:383
+msgid "Try the download again using Tor?"
+msgstr "Megpróbálod újra a Tor letöltését?"
+
+#: launcher.py:392
+#, python-brace-format
+msgid "Error connecting to Tor at {0}"
+msgstr "Hiba a  Tör csatlakozáskor itt {0}"
+
+#: launcher.py:395
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"Sikertelen a letöltés indítása:\n"
+"\n"
+"{0}\n"
+"\n"
+"Csatlakozva vagy az internethez?"
+
+#: launcher.py:494
+msgid ""
+"SIGNATURE VERIFICATION FAILED!\n"
+"\n"
+"You might be under attack, or there might just be a networking problem. "
+"Click Start try the download again."
+msgstr ""
+"ALÁÍRÁS ELLENŐRZÉSE SIKERTELEN\n"
+"\n"
+"Lehet, hogy támadás alatt vagy, vagy előfordulhat egy hálózati probléma is. "
+"Kattints az indításra az újbóli letöltéshez."
+
+#: launcher.py:504
+msgid "Installing"
+msgstr "Telepítés.."
+
+#: launcher.py:526
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Tor böngésző indító nem érti a(z) {0} fájl formátumot."
+
+#: launcher.py:548
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr ""
+"A Tor böngésződ verziója egy korábbi verzió mint amilyennek lennie kellene, "
+"ami lehet egy támadás jele!"
+
+#: launcher.py:568
+msgid "The python-pygame package is missing, the modem sound is unavailable."
+msgstr "A python-pygame csomag nem található, a modem hang nem elérhető."
+
+#: launcher.py:598
+msgid "Downloading Tor Browser Bundle over again."
+msgstr "Tör böngészőcsomag letöltése újra."
+
+#: settings.py:41
+msgid "Tor Browser Launcher Settings"
+msgstr "Tör böngésző indító beállítások"
+
+#: settings.py:71
+msgid "Download over system Tor"
+msgstr "Letöltés rendszer Tor-on keresztül"
+
+#: settings.py:73
+msgid ""
+"This option is only available when using a system wide Tor installation."
+msgstr ""
+"Ehhez az opció akkor elérhető amikor használatban van a rendszer szintű Tor."
+
+#: settings.py:75
+msgid "This option requires the python-txsocksx package."
+msgstr "Ehhez az opcióhoz szükséges a python-txsocksx csomag"
+
+#: settings.py:89
+msgid "Play modem sound, because Tor is slow :]"
+msgstr "Modem hang lejátszása, mert a Tor lassú :]"
+
+#: settings.py:101
+msgid "This option requires python-pygame to be installed"
+msgstr "Ehhez az opcióhoz szükséges  hogy a python-pygame telepítve legyen"
+
+#: settings.py:106
+msgid "Force downloading English version of Tor Browser"
+msgstr "Kényszerítse a Tor angol változatának letöltését"
+
+#: settings.py:119
+msgid "Tor server"
+msgstr "Tor-szerver"
+
+#: settings.py:131
+msgid "Status: Installed"
+msgstr "Állapot: Telepített"
+
+#: settings.py:133
+msgid "Status: Not Installed"
+msgstr "Állapot: Nincs telepítve"
+
+#: settings.py:142
+msgid "Reinstall Tor Browser"
+msgstr "Tor böngésző úratelepítése"
+
+#: settings.py:151
+msgid "Install Tor Browser"
+msgstr "Tor-böngésző telepítése"
+
+#: settings.py:162
+msgid "Mirror"
+msgstr "Tükrözés"
+
+#: settings.py:186
+msgid "Save & Exit"
+msgstr "Mentés és kilépés"
