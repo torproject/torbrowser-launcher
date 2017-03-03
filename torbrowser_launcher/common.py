@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, sys, platform, subprocess, locale, pickle, json, re
+import os, sys, platform, subprocess, locale, pickle, json, re, gpg
 
 import pygtk
 pygtk.require('2.0')
@@ -196,32 +196,30 @@ class Common:
 
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.
-
+        
         :param str key: A string specifying the key's filepath from
-            ``Common.paths``, as well as its fingerprint in
-            ``Common.fingerprints``.
+            ``Common.paths``
         :rtype: bool
         :returns: ``True`` if the key is now within the keyring (or was
             previously and hasn't changed). ``False`` otherwise.
         """
-        success = False
-
-        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
-                              '--homedir', self.paths['gnupg_homedir'],
-                              '--import', self.paths['signing_keys'][key]],
-                             stderr=subprocess.PIPE)
-        p.wait()
-
-        for output in p.stderr.readlines():
-            match = gnupg_import_ok_pattern.match(output)
-            if match:
-                # The output must match everything in the
-                # ``gnupg_import_ok_pattern``, as well as the expected fingerprint:
-                if match.group().find(self.fingerprints[key]) >= 0:
-                    success = True
-                    break
-
-        return success
+        with gpg.Context() as c:
+            # change home directory of current gpg context to torbrowser's gpg home
+            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
+            
+            # try to gpg import key data
+            impkey = self.paths['signing_keys'][key]
+            c.op_import(gpg.Data(file=impkey))
+            
+            # store import results, if any then return result
+            result = c.op_import_result()
+            if result:
+                assert not result.considered == 0
+                assert result.no_user_id == 0
+                assert result.not_imported == 0
+                return True
+            else:
+                return False
 
     # import gpg keys
     def import_keys(self):
