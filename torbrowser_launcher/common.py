@@ -196,7 +196,6 @@ class Common:
 
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.
-        
         :param str key: A string specifying the key's filepath from
             ``Common.paths``
         :rtype: bool
@@ -209,14 +208,14 @@ class Common:
             
             # try to gpg import key data
             impkey = self.paths['signing_keys'][key]
-            c.op_import(gpg.Data(file=impkey))
-            
+            if os.path.isfile(impkey):
+                c.op_import(gpg.Data(file=impkey))
+            else:
+                print _("Signing key not found")
+        
             # store import results, if any then return result
             result = c.op_import_result()
             if result:
-                assert not result.considered == 0
-                assert result.no_user_id == 0
-                assert result.not_imported == 0
                 return True
             else:
                 return False
@@ -224,7 +223,6 @@ class Common:
     # import gpg keys
     def import_keys(self):
         """Import all GnuPG keys.
-
         :rtype: bool
         :returns: ``True`` if all keys were successfully imported; ``False``
             otherwise.
