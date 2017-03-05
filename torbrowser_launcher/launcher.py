@@ -486,7 +486,7 @@ class Launcher:
             
             try:
                 c.verify(signature=sig, signed_data=signed)
-            except Exception as e:
+            except:
                 self.set_gui('task', _("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again."), ['start_over'], False)
                 self.clear_ui()
                 self.build_ui()
