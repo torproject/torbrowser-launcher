@@ -193,21 +193,15 @@ class Common:
             previously and hasn't changed). ``False`` otherwise.
         """
         with gpg.Context() as c:
-            # change home directory of current gpg context to torbrowser's gpg home
             c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
             
-            # store import keyfile full path
             impkey = self.paths['signing_keys'][key]
-            # check the keyfile exists before importing
             if os.path.isfile(impkey):
                 c.op_import(gpg.Data(file=impkey))
             else:
                 print _("Signing key not found")
         
-            # store import results, if any
             result = c.op_import_result()
-            # if op_import_results returned results and the expected fingerprint
-            # is matched in the results, return true. Otherwise return false.
             if (result and self.fingerprints[key] in result.imports[0].fpr):
                 return True
             else:
