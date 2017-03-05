@@ -26,7 +26,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicodedata
+import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicodedata, gpg
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
@@ -474,29 +474,24 @@ class Launcher:
         return None
 
     def verify(self):
-        # initialize the progress bar
         self.progressbar.set_fraction(0)
         self.progressbar.set_text(_('Verifying Signature'))
         self.progressbar.show()
-
-        # verify the PGP signature
-        verified = False
-        FNULL = open(os.devnull, 'w')
-        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sig_file'], self.common.paths['tarball_file']], stdout=FNULL, stderr=subprocess.STDOUT)
-        self.pulse_until_process_exits(p)
-        if p.returncode == 0:
-            verified = True
-
-        if verified:
-            self.run_task()
-        else:
-            # TODO: add the ability to report attack by posting bug to trac.torproject.org
-            self.set_gui('task', _("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again."), ['start_over'], False)
-            self.clear_ui()
-            self.build_ui()
-
-            if not reactor.running:
-                reactor.run()
+        
+        with gpg.Context() as c:
+            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
+            
+            sig = gpg.Data(file=self.common.paths['sig_file'])
+            signed = gpg.Data(file=self.common.paths['tarball_file'])
+            
+            try:
+                c.verify(signature=sig, signed_data=signed)
+            except Exception as e:
+                self.set_gui('task', _("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again."), ['start_over'], False)
+                self.clear_ui()
+                self.build_ui()
+            else:
+                self.run_task()
 
     def extract(self):
         # initialize the progress bar

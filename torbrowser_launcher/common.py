@@ -196,16 +196,16 @@ class Common:
             c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
             
             impkey = self.paths['signing_keys'][key]
-            if os.path.isfile(impkey):
+            try:
                 c.op_import(gpg.Data(file=impkey))
-            else:
-                print _("Signing key not found")
-        
-            result = c.op_import_result()
-            if (result and self.fingerprints[key] in result.imports[0].fpr):
-                return True
-            else:
+            except:
                 return False
+            else:
+                result = c.op_import_result()
+                if (result and self.fingerprints[key] in result.imports[0].fpr):
+                    return True
+                else:
+                    return False
 
     # import gpg keys
     def import_keys(self):
