@@ -472,11 +472,17 @@ class Launcher:
 
                 return version
         return None
-
+    
     def verify(self):
         self.progressbar.set_fraction(0)
         self.progressbar.set_text(_('Verifying Signature'))
         self.progressbar.show()
+        
+        def gui_raise_sigerror(self, error_string):
+            sigerror = "SIGNATURE VERIFICATION FAILED!\n\nError Code: " + error_string + "\n\nYou might be under attack, there might be a network\nproblem, or you may be missing a recently added\nTor Browser verification key.\n\nFor support, report the above error code.\nClick Start to try again."
+            self.set_gui('task', sigerror, ['start_over'], False)
+            self.clear_ui()
+            self.build_ui()
         
         with gpg.Context() as c:
             c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
@@ -486,13 +492,15 @@ class Launcher:
             
             try:
                 c.verify(signature=sig, signed_data=signed)
-            except:
-                self.set_gui('task', _("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again."), ['start_over'], False)
-                self.clear_ui()
-                self.build_ui()
+            except gpg.errors.BadSignatures as e:
+                result = str(e).split(": ")
+                if result[1] == 'Bad signature':
+                    gui_raise_sigerror(self, str(e))
+                elif result[1] == 'No public key':
+                    gui_raise_sigerror(self, str(e))
             else:
                 self.run_task()
-
+                
     def extract(self):
         # initialize the progress bar
         self.progressbar.set_fraction(0)
