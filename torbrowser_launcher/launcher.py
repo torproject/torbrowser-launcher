@@ -500,7 +500,7 @@ class Launcher:
                     gui_raise_sigerror(self, str(e))
             else:
                 self.run_task()
-                
+
     def extract(self):
         # initialize the progress bar
         self.progressbar.set_fraction(0)
