@@ -472,7 +472,7 @@ class Launcher:
 
                 return version
         return None
-    
+
     def verify(self):
         self.progressbar.set_fraction(0)
         self.progressbar.set_text(_('Verifying Signature'))
