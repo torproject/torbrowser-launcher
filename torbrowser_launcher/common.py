@@ -26,7 +26,23 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, sys, platform, subprocess, locale, pickle, json, re, gpg
+import os
+import sys
+import platform
+import subprocess
+import locale
+import pickle
+import json
+import re
+
+try:
+    import gpg
+except ImportError:
+    try:
+        import gpgme as gpg
+    except ImportError:
+        gpg_support = False
+        print('You need the gpgme Python bindings installed to verify integrity of downloaded archives.')
 
 import pygtk
 pygtk.require('2.0')
@@ -202,7 +218,7 @@ class Common:
                 return False
             else:
                 result = c.op_import_result()
-                if (result and self.fingerprints[key] in result.imports[0].fpr):
+                if result and self.fingerprints[key] in result.imports[0].fpr:
                     return True
                 else:
                     return False

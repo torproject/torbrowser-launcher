@@ -26,12 +26,31 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicodedata, gpg
+import os
+import subprocess
+import time
+import json
+import tarfile
+import hashlib
+import lzma
+import threading
+import re
+import unicodedata
+
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
 from twisted.internet.error import DNSLookupError, ConnectionRefusedError
+
+try:
+    import gpg
+except ImportError:
+    try:
+        import gpgme as gpg
+    except ImportError:
+        gpg_support = False
+        print('You need the gpgme Python bindings installed to verify integrity of downloaded archives.')
 
 import xml.etree.ElementTree as ET
 
