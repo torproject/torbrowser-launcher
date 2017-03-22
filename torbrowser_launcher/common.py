@@ -38,11 +38,7 @@ import re
 try:
     import gpg
 except ImportError:
-    try:
-        import gpgme as gpg
-    except ImportError:
-        gpg_support = False
-        print('You need the gpgme Python bindings installed to verify integrity of downloaded archives.')
+    gpgme_support = False
 
 import pygtk
 pygtk.require('2.0')
@@ -55,6 +51,15 @@ gettext.install('torbrowser-launcher')
 
 from twisted.internet import gtk2reactor
 gtk2reactor.install()
+
+# We're looking for output which:
+#
+#  1. The first portion must be `[GNUPG:] IMPORT_OK`
+#  2. The second must be an integer between [0, 15], inclusive
+#  3. The third must be an uppercased hex-encoded 160-bit fingerprint
+gnupg_import_ok_pattern = re.compile(
+    "(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})")
+
 
 class Common:
 
@@ -208,20 +213,38 @@ class Common:
         :returns: ``True`` if the key is now within the keyring (or was
             previously and hasn't changed). ``False`` otherwise.
         """
-        with gpg.Context() as c:
-            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
-            
-            impkey = self.paths['signing_keys'][key]
-            try:
-                c.op_import(gpg.Data(file=impkey))
-            except:
-                return False
-            else:
-                result = c.op_import_result()
-                if result and self.fingerprints[key] in result.imports[0].fpr:
-                    return True
-                else:
+        if gpgme_support:
+            with gpg.Context() as c:
+                c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
+
+                impkey = self.paths['signing_keys'][key]
+                try:
+                    c.op_import(gpg.Data(file=impkey))
+                except:
                     return False
+                else:
+                    result = c.op_import_result()
+                    if result and self.fingerprints[key] in result.imports[0].fpr:
+                        return True
+                    else:
+                        return False
+        else:
+            success = False
+
+            p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                                  '--homedir', self.paths['gnupg_homedir'],
+                                  '--import', self.paths['signing_keys'][key]],
+                                 stderr=subprocess.PIPE)
+            p.wait()
+
+            for output in p.stderr.readlines():
+                match = gnupg_import_ok_pattern.match(output)
+                if match:
+                    if match.group().find(self.fingerprints[key]) >= 0:
+                        success = True
+                        break
+
+            return success
 
     # import gpg keys
     def import_keys(self):

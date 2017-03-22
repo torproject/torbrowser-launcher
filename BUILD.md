@@ -12,7 +12,7 @@ Then install dependencies, build a package, and install:
 ### Debian, Ubuntu, Linux Mint, etc.
 
 ```sh
-sudo apt-get install build-essential dh-python python-all python-stdeb python-gtk2 python-twisted python-lzma python-txsocksx gnupg fakeroot xz-utils tor python-gpgme
+sudo apt-get install build-essential dh-python python-all python-stdeb python-gtk2 python-twisted python-lzma python-txsocksx gnupg fakeroot xz-utils tor python-gpg
 ./build_deb.sh
 sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 ```
