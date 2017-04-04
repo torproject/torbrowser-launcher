@@ -10,3 +10,4 @@ Terminal=false
 Type=Application
 Icon=torbrowser
 Categories=Network;WebBrowser;
+StartupWMClass=Tor Browser
