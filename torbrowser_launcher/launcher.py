@@ -26,12 +26,27 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicodedata, gpg
+import os
+import subprocess
+import time
+import json
+import tarfile
+import hashlib
+import lzma
+import threading
+import re
+import unicodedata
+
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
 from twisted.internet.error import DNSLookupError, ConnectionRefusedError
+
+try:
+    import gpg
+except ImportError:
+    gpgme_support = False
 
 import xml.etree.ElementTree as ET
 
@@ -41,17 +56,22 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
+
 class TryStableException(Exception):
     pass
+
 
 class TryDefaultMirrorException(Exception):
     pass
 
+
 class TryForcingEnglishException(Exception):
     pass
 
+
 class DownloadErrorException(Exception):
     pass
+
 
 class Launcher:
     def __init__(self, common, url_list):
@@ -510,23 +530,36 @@ class Launcher:
             self.set_gui('task', sigerror, ['start_over'], False)
             self.clear_ui()
             self.build_ui()
-        
-        with gpg.Context() as c:
-            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
-            
-            sig = gpg.Data(file=self.common.paths['sig_file'])
-            signed = gpg.Data(file=self.common.paths['tarball_file'])
-            
-            try:
-                c.verify(signature=sig, signed_data=signed)
-            except gpg.errors.BadSignatures as e:
-                result = str(e).split(": ")
-                if result[1] == 'Bad signature':
-                    gui_raise_sigerror(self, str(e))
-                elif result[1] == 'No public key':
-                    gui_raise_sigerror(self, str(e))
-            else:
+
+        if gpgme_support:
+            with gpg.Context() as c:
+                c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
+
+                sig = gpg.Data(file=self.common.paths['sig_file'])
+                signed = gpg.Data(file=self.common.paths['tarball_file'])
+
+                try:
+                    c.verify(signature=sig, signed_data=signed)
+                except gpg.errors.BadSignatures as e:
+                    result = str(e).split(": ")
+                    if result[1] == 'Bad signature':
+                        gui_raise_sigerror(self, str(e))
+                    elif result[1] == 'No public key':
+                        gui_raise_sigerror(self, str(e))
+                else:
+                    self.run_task()
+        else:
+            FNULL = open(os.devnull, 'w')
+            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify',
+                                  self.common.paths['sig_file'], self.common.paths['tarball_file']], stdout=FNULL,
+                                 stderr=subprocess.STDOUT)
+            self.pulse_until_process_exits(p)
+            if p.returncode == 0:
                 self.run_task()
+            else:
+                gui_raise_sigerror(self, 'VERIFY_FAIL_NO_GPGME')
+                if not reactor.running:
+                    reactor.run()
 
     def extract(self):
         # initialize the progress bar
