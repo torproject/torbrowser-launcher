@@ -205,6 +205,24 @@ class Common:
             self.mkdir(self.paths['gnupg_homedir'])
         self.import_keys()
 
+    def refresh_keyring(self, fingerprint=None):
+        if fingerprint is not None:
+            p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                                  '--homedir', self.paths['gnupg_homedir'],
+                                  '--keyserver', 'pool.sks-keyservers.net',
+                                  '--recv-keys', fingerprint], stderr=subprocess.PIPE)
+
+            for output in p.stderr.readlines():
+                print output
+        else:
+            p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                                  '--homedir', self.paths['gnupg_homedir'],
+                                  '--keyserver', 'pool.sks-keyservers.net',
+                                  '--refresh-keys'], stderr=subprocess.PIPE)
+
+            for output in p.stderr.readlines():
+                print output
+
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.
         :param str key: A string specifying the key's filepath from
