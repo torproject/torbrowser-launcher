@@ -28,6 +28,11 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 import os, sys, argparse
 
+# Hackaround for https://github.com/micahflee/torbrowser-launcher/issues/91
+# prevent packages installed by pip or setuptools from being read by
+# pkg_resources and tripping up apparmor
+sys.path = [dir for dir in sys.path if "/usr/local/" not in dir]
+
 from common import Common, SHARE
 from settings import Settings
 from launcher import Launcher
