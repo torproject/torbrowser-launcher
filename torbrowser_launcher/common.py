@@ -212,16 +212,14 @@ class Common:
                                   '--keyserver', 'pool.sks-keyservers.net',
                                   '--recv-keys', fingerprint], stderr=subprocess.PIPE)
 
-            for output in p.stderr.readlines():
-                print output
+            print('Refreshing Missing public key(s): ' + fingerprint)
         else:
             p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
                                   '--homedir', self.paths['gnupg_homedir'],
                                   '--keyserver', 'pool.sks-keyservers.net',
                                   '--refresh-keys'], stderr=subprocess.PIPE)
 
-            for output in p.stderr.readlines():
-                print output
+            print('Refreshing local keyring.')
 
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.
