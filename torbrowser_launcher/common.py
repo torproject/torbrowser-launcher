@@ -282,6 +282,7 @@ class Common:
         if not all_imports_succeeded:
             print _('Not all keys were imported successfully!')
 
+        self.refresh_keyring()
         return all_imports_succeeded
 
     # load mirrors
