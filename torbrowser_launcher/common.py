@@ -206,19 +206,14 @@ class Common:
         self.import_keys()
 
     def refresh_keyring(self, fingerprint=None):
+        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                              '--homedir', self.paths['gnupg_homedir'],
+                              '--keyserver', 'pool.sks-keyservers.net',
+                              '--refresh-keys'], stderr=subprocess.PIPE)
+
         if fingerprint is not None:
-            p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
-                                  '--homedir', self.paths['gnupg_homedir'],
-                                  '--keyserver', 'pool.sks-keyservers.net',
-                                  '--recv-keys', fingerprint], stderr=subprocess.PIPE)
-
-            print('Refreshing Missing public key(s): ' + fingerprint)
+            print('Refreshing local keyring. Missing key: ' + fingerprint)
         else:
-            p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
-                                  '--homedir', self.paths['gnupg_homedir'],
-                                  '--keyserver', 'pool.sks-keyservers.net',
-                                  '--refresh-keys'], stderr=subprocess.PIPE)
-
             print('Refreshing local keyring.')
 
     def import_key_and_check_status(self, key):
