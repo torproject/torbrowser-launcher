@@ -158,6 +158,7 @@ class Common:
                 'tbl_bin': sys.argv[0],
                 'icon_file': os.path.join(os.path.dirname(SHARE), 'pixmaps/torbrowser.png'),
                 'torproject_pem': os.path.join(SHARE, 'torproject.pem'),
+                'keyserver_ca': os.path.join(SHARE, 'sks-keyservers.netCA.pem'),
                 'signing_keys': {
                     'tor_browser_developers': os.path.join(SHARE, 'tor-browser-developers.asc')
                 },
@@ -208,8 +209,13 @@ class Common:
     def refresh_keyring(self, fingerprint=None):
         p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
                               '--homedir', self.paths['gnupg_homedir'],
-                              '--keyserver', 'pool.sks-keyservers.net',
+                              '--keyserver', 'hkps://hkps.pool.sks-keyservers.net',
+                              '--keyserver-options', 'ca-cert-file=' + self.paths['keyserver_ca']
+                              + ',include-revoked,no-honor-keyserver-url,no-honor-pka-record',
                               '--refresh-keys'], stderr=subprocess.PIPE)
+        p.wait()
+        for output in p.stderr.readlines():
+            print(str(output))
 
         if fingerprint is not None:
             print('Refreshing local keyring. Missing key: ' + fingerprint)
