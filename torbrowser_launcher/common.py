@@ -207,6 +207,11 @@ class Common:
         self.import_keys()
 
     def refresh_keyring(self, fingerprint=None):
+        if fingerprint is not None:
+            print('Refreshing local keyring... Missing key: ' + fingerprint)
+        else:
+            print('Refreshing local keyring...')
+
         p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
                               '--homedir', self.paths['gnupg_homedir'],
                               '--keyserver', 'hkps://hkps.pool.sks-keyservers.net',
@@ -214,13 +219,17 @@ class Common:
                               + ',include-revoked,no-honor-keyserver-url,no-honor-pka-record',
                               '--refresh-keys'], stderr=subprocess.PIPE)
         p.wait()
-        for output in p.stderr.readlines():
-            print(str(output))
 
-        if fingerprint is not None:
-            print('Refreshing local keyring. Missing key: ' + fingerprint)
-        else:
-            print('Refreshing local keyring.')
+        for output in p.stderr.readlines():
+            match = gnupg_import_ok_pattern.match(output)
+            if match and match.group(2) == 'IMPORT_OK':
+                fingerprint = str(match.group(4))
+                if match.group(3) == '0':
+                    print('Keyring refreshed successfully...\n  No key updates for key: ' + fingerprint)
+                elif match.group(3) == '4':
+                    print('Keyring refreshed successfully...\n  New signatures for key: ' + fingerprint)
+                else:
+                    print('Keyring refreshed successfully...')
 
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.
