@@ -26,12 +26,27 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import os, subprocess, time, json, tarfile, hashlib, lzma, threading, re, unicodedata
+import os
+import subprocess
+import time
+import json
+import tarfile
+import hashlib
+import lzma
+import threading
+import re
+import unicodedata
+
 from twisted.internet import reactor
 from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
 from twisted.web.http_headers import Headers
 from twisted.internet.protocol import Protocol
 from twisted.internet.error import DNSLookupError, ConnectionRefusedError
+
+try:
+    import gpg
+except ImportError:
+    gpgme_support = False
 
 import xml.etree.ElementTree as ET
 
@@ -41,17 +56,22 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
+
 class TryStableException(Exception):
     pass
+
 
 class TryDefaultMirrorException(Exception):
     pass
 
+
 class TryForcingEnglishException(Exception):
     pass
 
+
 class DownloadErrorException(Exception):
     pass
+
 
 class Launcher:
     def __init__(self, common, url_list):
@@ -253,7 +273,8 @@ class Launcher:
 
         if task == 'download_version_check':
             print _('Downloading'), self.common.paths['version_check_url']
-            self.download('version check', self.common.paths['version_check_url'], self.common.paths['version_check_file'])
+            self.download('version check', self.common.paths['version_check_url'],
+                          self.common.paths['version_check_file'])
 
         if task == 'set_version':
             version = self.get_stable_version()
@@ -304,11 +325,23 @@ class Launcher:
 
                 if response.code != 200:
                     if common.settings['mirror'] != common.default_mirror:
-                        raise TryDefaultMirrorException((_("Download Error:") +  " {0} {1}\n\n" + _("You are currently using a non-default mirror") + ":\n{2}\n\n" + _("Would you like to switch back to the default?")).format(response.code, response.phrase, common.settings['mirror']))
+                        raise TryDefaultMirrorException(
+                            (_("Download Error:") + " {0} {1}\n\n" + _("You are currently using a non-default mirror")
+                             + ":\n{2}\n\n" + _("Would you like to switch back to the default?")).format(
+                                response.code, response.phrase, common.settings['mirror']
+                            )
+                        )
                     elif common.language != 'en-US' and not common.settings['force_en-US']:
-                        raise TryForcingEnglishException((_("Download Error:") + " {0} {1}\n\n" + _("Would you like to try the English version of Tor Browser instead?")).format(response.code, response.phrase))
+                        raise TryForcingEnglishException(
+                            (_("Download Error:") + " {0} {1}\n\n"
+                             + _("Would you like to try the English version of Tor Browser instead?")).format(
+                                response.code, response.phrase
+                            )
+                        )
                     else:
-                        raise DownloadErrorException((_("Download Error:") + " {0} {1}").format(response.code, response.phrase))
+                        raise DownloadErrorException(
+                            (_("Download Error:") + " {0} {1}").format(response.code, response.phrase)
+                        )
 
             def dataReceived(self, bytes):
                 self.file.write(bytes)
@@ -320,7 +353,7 @@ class Launcher:
                 for (size, unit) in [(1024 * 1024, "MiB"), (1024, "KiB")]:
                     if amount > size:
                         units = unit
-                        amount = amount / float(size)
+                        amount /= float(size)
                         break
 
                 self.progress.set_text(_('Downloaded')+(' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units)))
@@ -333,7 +366,9 @@ class Launcher:
         else:
             url = None
 
-        dl = FileDownloader(self.common, self.file_download, url, response.length, self.progressbar, self.response_finished)
+        dl = FileDownloader(
+            self.common, self.file_download, url, response.length, self.progressbar, self.response_finished
+        )
         response.deliverBody(dl)
 
     def response_finished(self, msg):
@@ -347,7 +382,7 @@ class Launcher:
 
         else:
             print "FINISHED", msg
-            ## FIXME handle errors
+            # FIXME handle errors
 
     def download_error(self, f):
         print _("Download Error:"), f.value, type(f.value)
@@ -371,7 +406,11 @@ class Launcher:
         elif isinstance(f.value, DNSLookupError):
             f.trap(DNSLookupError)
             if common.settings['mirror'] != common.default_mirror:
-                self.set_gui('error_try_default_mirror', (_("DNS Lookup Error") + "\n\n" + _("You are currently using a non-default mirror") + ":\n{0}\n\n" + _("Would you like to switch back to the default?")).format(common.settings['mirror']), [], False)
+                self.set_gui('error_try_default_mirror', (_("DNS Lookup Error") + "\n\n" +
+                                                          _("You are currently using a non-default mirror")
+                                                          + ":\n{0}\n\n"
+                                                          + _("Would you like to switch back to the default?")
+                                                          ).format(common.settings['mirror']), [], False)
             else:
                 self.set_gui('error', str(f.value), [], False)
 
@@ -380,9 +419,12 @@ class Launcher:
                 if isinstance(reason.value, OpenSSL.SSL.Error):
                     # TODO: add the ability to report attack by posting bug to trac.torproject.org
                     if not self.common.settings['download_over_tor']:
-                        self.set_gui('error_try_tor', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack.') + " " + _('Try the download again using Tor?'), [], False)
+                        self.set_gui('error_try_tor',
+                                     _('The SSL certificate served by https://www.torproject.org is invalid! You may '
+                                       'be under attack.') + " " + _('Try the download again using Tor?'), [], False)
                     else:
-                        self.set_gui('error', _('The SSL certificate served by https://www.torproject.org is invalid! You may be under attack.'), [], False)
+                        self.set_gui('error', _('The SSL certificate served by https://www.torproject.org is invalid! '
+                                                'You may be under attack.'), [], False)
 
         elif isinstance(f.value, ConnectionRefusedError) and self.common.settings['download_over_tor']:
             # If we're using Tor, we'll only get this error when we fail to
@@ -405,7 +447,7 @@ class Launcher:
 
         # convert mirror_url from unicode to string, if needed (#205)
         if isinstance(mirror_url, unicode):
-            mirror_url = unicodedata.normalize('NFKD', mirror_url).encode('ascii','ignore')
+            mirror_url = unicodedata.normalize('NFKD', mirror_url).encode('ascii', 'ignore')
 
         # initialize the progress bar
         self.progressbar.set_fraction(0)
@@ -417,10 +459,10 @@ class Launcher:
             from twisted.internet.endpoints import clientFromString
             from txsocksx.http import SOCKS5Agent
 
-            torEndpoint = clientFromString(reactor, self.common.settings['tor_socks_address'])
+            torendpoint = clientFromString(reactor, self.common.settings['tor_socks_address'])
 
             # default mirror gets certificate pinning, only for requests that use the mirror
-            agent = SOCKS5Agent(reactor, proxyEndpoint=torEndpoint)
+            agent = SOCKS5Agent(reactor, proxyEndpoint=torendpoint)
         else:
             agent = Agent(reactor)
 
@@ -466,7 +508,7 @@ class Launcher:
                 version = str(up.attrib['appVersion'])
 
                 # make sure the version does not contain directory traversal attempts
-                # e.g. "5.5.3", "6.0a", "6.0a-hardned" are valid but "../../../../.." is invalid
+                # e.g. "5.5.3", "6.0a", "6.0a-hardened" are valid but "../../../../.." is invalid
                 if not re.match(r'^[a-z0-9\.\-]+$', version):
                     return None
 
@@ -474,29 +516,50 @@ class Launcher:
         return None
 
     def verify(self):
-        # initialize the progress bar
         self.progressbar.set_fraction(0)
         self.progressbar.set_text(_('Verifying Signature'))
         self.progressbar.show()
 
-        # verify the PGP signature
-        verified = False
-        FNULL = open(os.devnull, 'w')
-        p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify', self.common.paths['sig_file'], self.common.paths['tarball_file']], stdout=FNULL, stderr=subprocess.STDOUT)
-        self.pulse_until_process_exits(p)
-        if p.returncode == 0:
-            verified = True
-
-        if verified:
-            self.run_task()
-        else:
-            # TODO: add the ability to report attack by posting bug to trac.torproject.org
-            self.set_gui('task', _("SIGNATURE VERIFICATION FAILED!\n\nYou might be under attack, or there might just be a networking problem. Click Start try the download again."), ['start_over'], False)
+        def gui_raise_sigerror(self, sigerror='MissingErr'):
+            """
+            :type sigerror: str
+            """
+            sigerror = 'SIGNATURE VERIFICATION FAILED!\n\nError Code: {0}\n\nYou might be under attack, there might' \
+                       ' be a network\nproblem, or you may be missing a recently added\nTor Browser verification key.' \
+                       '\n\nFor support, report the above error code.\nClick Start to try again.'.format(sigerror)
+            self.set_gui('task', sigerror, ['start_over'], False)
             self.clear_ui()
             self.build_ui()
 
-            if not reactor.running:
-                reactor.run()
+        if gpgme_support:
+            with gpg.Context() as c:
+                c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
+
+                sig = gpg.Data(file=self.common.paths['sig_file'])
+                signed = gpg.Data(file=self.common.paths['tarball_file'])
+
+                try:
+                    c.verify(signature=sig, signed_data=signed)
+                except gpg.errors.BadSignatures as e:
+                    result = str(e).split(": ")
+                    if result[1] == 'Bad signature':
+                        gui_raise_sigerror(self, str(e))
+                    elif result[1] == 'No public key':
+                        gui_raise_sigerror(self, str(e))
+                else:
+                    self.run_task()
+        else:
+            FNULL = open(os.devnull, 'w')
+            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify',
+                                  self.common.paths['sig_file'], self.common.paths['tarball_file']], stdout=FNULL,
+                                 stderr=subprocess.STDOUT)
+            self.pulse_until_process_exits(p)
+            if p.returncode == 0:
+                self.run_task()
+            else:
+                gui_raise_sigerror(self, 'VERIFY_FAIL_NO_GPGME')
+                if not reactor.running:
+                    reactor.run()
 
     def extract(self):
         # initialize the progress bar
@@ -545,7 +608,8 @@ class Launcher:
     def run(self, run_next_task=True):
         # don't run if it isn't at least the minimum version
         if not self.check_min_version():
-            message =  _("The version of Tor Browser you have installed is earlier than it should be, which could be a sign of an attack!")
+            message = _("The version of Tor Browser you have installed is earlier than it should be, which could be a "
+                        "sign of an attack!")
             print message
 
             md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _(message))
@@ -565,7 +629,10 @@ class Launcher:
                     sound.play()
                     time.sleep(10)
                 except ImportError:
-                    md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-pygame package is missing, the modem sound is unavailable."))
+                    md = gtk.MessageDialog(
+                        None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
+                        _("The python-pygame package is missing, the modem sound is unavailable.")
+                    )
                     md.set_position(gtk.WIN_POS_CENTER)
                     md.run()
                     md.destroy()
@@ -580,7 +647,10 @@ class Launcher:
                 gtk.main_iteration_do(True)
 
         # run Tor Browser
-        subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
+        if len(self.url_list) != 0:
+            subprocess.call([self.common.paths['tbb']['start']] + self.url_list, cwd=self.common.paths['tbb']['dir_tbb'])
+        else:
+            subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
 
         if run_next_task:
             self.run_task()
@@ -594,7 +664,7 @@ class Launcher:
 
     # start over and download TBB again
     def start_over(self):
-        self.force_redownload = True # Overwrite any existing file
+        self.force_redownload = True  # Overwrite any existing file
         self.label.set_text(_("Downloading Tor Browser Bundle over again."))
         self.gui_tasks = ['download_tarball', 'verify', 'extract', 'run']
         self.gui_task_i = 0
