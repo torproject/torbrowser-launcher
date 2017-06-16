@@ -168,7 +168,7 @@ class Common:
                 'gnupg_homedir': tbb_local+'/gnupg_homedir',
                 'settings_file': tbb_config+'/settings.json',
                 'settings_file_pickle': tbb_config+'/settings',
-                'version_check_url': 'https://dist.torproject.org/torbrowser/update_2/release/Linux_x86_64-gcc3/x/en-US',
+                'version_check_url': 'https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/en-US',
                 'version_check_file': tbb_cache+'/download/release.xml',
                 'tbb': {
                     'dir': tbb_local+'/tbb/'+self.architecture,
