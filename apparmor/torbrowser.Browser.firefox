@@ -28,9 +28,9 @@
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
-  owner @{PROC}/[0-9]*/mountinfo r,
-  owner @{PROC}/[0-9]*/stat r,
-  owner @{PROC}/[0-9]*/task/*/stat r,
+  owner @{PROC}/@{pid}/mountinfo r,
+  owner @{PROC}/@{pid}/stat r,
+  owner @{PROC}/@{pid}/task/*/stat r,
   @{PROC}/sys/kernel/random/uuid r,
 
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/ r,
