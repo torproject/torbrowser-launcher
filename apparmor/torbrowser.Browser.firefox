@@ -91,6 +91,12 @@
   # sourced by the gnome abstraction, that we include.
   deny /dev/dri/** rwklx,
 
+  # Silence denial logs about permissions we don't need
+  deny /dev/dri/   rwklx,
+  deny @{PROC}/@{pid}/net/route r,
+  deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
+  deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
+
   # KDE 4
   owner @{HOME}/.kde/share/config/* r,
 
