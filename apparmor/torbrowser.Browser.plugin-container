@@ -1,4 +1,3 @@
-# Last modified
 #include <tunables/global>
 
 profile torbrowser_plugin_container {
