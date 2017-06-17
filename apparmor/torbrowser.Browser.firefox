@@ -46,7 +46,7 @@
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/browser/components/*.so mr,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox rix,
-  @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/plugin-container px -> torbrowser_plugin_container,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/plugin-container px -> torbrowser_plugin_container,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{,TorBrowser/UpdateInfo/}updates/[0-9]*/updater ix,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{,TorBrowser/UpdateInfo/}updates/0/MozUpdater/bgupdate/updater ix,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/TorBrowser/Data/Browser/profiles.ini r,
