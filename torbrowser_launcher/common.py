@@ -37,6 +37,7 @@ import re
 
 try:
     import gpg
+    gpgme_support = True
 except ImportError:
     gpgme_support = False
 

@@ -45,6 +45,7 @@ from twisted.internet.error import DNSLookupError, ConnectionRefusedError
 
 try:
     import gpg
+    gpgme_support = True
 except ImportError:
     gpgme_support = False
 
