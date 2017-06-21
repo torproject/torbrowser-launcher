@@ -159,6 +159,7 @@ class Common:
                 'tbl_bin': sys.argv[0],
                 'icon_file': os.path.join(os.path.dirname(SHARE), 'pixmaps/torbrowser.png'),
                 'torproject_pem': os.path.join(SHARE, 'torproject.pem'),
+                'keyserver_ca': os.path.join(SHARE, 'sks-keyservers.netCA.pem'),
                 'signing_keys': {
                     'tor_browser_developers': os.path.join(SHARE, 'tor-browser-developers.asc')
                 },
@@ -205,6 +206,31 @@ class Common:
             print _('Creating GnuPG homedir'), self.paths['gnupg_homedir']
             self.mkdir(self.paths['gnupg_homedir'])
         self.import_keys()
+
+    def refresh_keyring(self, fingerprint=None):
+        if fingerprint is not None:
+            print('Refreshing local keyring... Missing key: ' + fingerprint)
+        else:
+            print('Refreshing local keyring...')
+
+        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+                              '--homedir', self.paths['gnupg_homedir'],
+                              '--keyserver', 'hkps://hkps.pool.sks-keyservers.net',
+                              '--keyserver-options', 'ca-cert-file=' + self.paths['keyserver_ca']
+                              + ',include-revoked,no-honor-keyserver-url,no-honor-pka-record',
+                              '--refresh-keys'], stderr=subprocess.PIPE)
+        p.wait()
+
+        for output in p.stderr.readlines():
+            match = gnupg_import_ok_pattern.match(output)
+            if match and match.group(2) == 'IMPORT_OK':
+                fingerprint = str(match.group(4))
+                if match.group(3) == '0':
+                    print('Keyring refreshed successfully...\n  No key updates for key: ' + fingerprint)
+                elif match.group(3) == '4':
+                    print('Keyring refreshed successfully...\n  New signatures for key: ' + fingerprint)
+                else:
+                    print('Keyring refreshed successfully...')
 
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.
@@ -267,6 +293,7 @@ class Common:
         if not all_imports_succeeded:
             print _('Not all keys were imported successfully!')
 
+        self.refresh_keyring()
         return all_imports_succeeded
 
     # load mirrors

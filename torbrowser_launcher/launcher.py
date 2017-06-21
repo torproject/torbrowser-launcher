@@ -527,7 +527,9 @@ class Launcher:
             """
             sigerror = 'SIGNATURE VERIFICATION FAILED!\n\nError Code: {0}\n\nYou might be under attack, there might' \
                        ' be a network\nproblem, or you may be missing a recently added\nTor Browser verification key.' \
-                       '\n\nFor support, report the above error code.\nClick Start to try again.'.format(sigerror)
+                       '\nClick Start to refresh the keyring and try again. If the message persists report the above' \
+                       ' error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues'.format(sigerror)
+
             self.set_gui('task', sigerror, ['start_over'], False)
             self.clear_ui()
             self.build_ui()
@@ -546,6 +548,7 @@ class Launcher:
                     if result[1] == 'Bad signature':
                         gui_raise_sigerror(self, str(e))
                     elif result[1] == 'No public key':
+                        self.common.refresh_keyring(result[0])
                         gui_raise_sigerror(self, str(e))
                 else:
                     self.run_task()
@@ -558,7 +561,8 @@ class Launcher:
             if p.returncode == 0:
                 self.run_task()
             else:
-                gui_raise_sigerror(self, 'VERIFY_FAIL_NO_GPGME')
+                self.common.refresh_keyring()
+                gui_raise_sigerror(self, 'GENERIC_VERIFY_FAIL')
                 if not reactor.running:
                     reactor.run()
 
