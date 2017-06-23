@@ -4,6 +4,13 @@
 profile torbrowser_plugin_container {
   #include <abstractions/gnome>
 
+  # Uncomment the following lines if you don'want the Tor Browser
+  # to have direct access to your sound hardware.
+  # #include <abstractions/audio>
+  # /etc/asound.conf r,
+  # owner @{PROC}/@{pid}/fd/ r,
+  # owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/mozilla-temp-* rw,
+
   deny /etc/host.conf r,
   deny /etc/hosts r,
   deny /etc/nsswitch.conf r,
