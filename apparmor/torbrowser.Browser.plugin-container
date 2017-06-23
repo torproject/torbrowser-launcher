@@ -5,7 +5,9 @@ profile torbrowser_plugin_container {
   #include <abstractions/gnome>
 
   # Uncomment the following lines if you don'want the Tor Browser
-  # to have direct access to your sound hardware.
+  # to have direct access to your sound hardware. You will also
+  # need to remove the "deny" word in the machine-id lines further
+  # bellow.
   # #include <abstractions/audio>
   # /etc/asound.conf r,
   # owner @{PROC}/@{pid}/fd/ r,
