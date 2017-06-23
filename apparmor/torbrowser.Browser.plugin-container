@@ -35,7 +35,9 @@ profile torbrowser_plugin_container {
   owner @{torbrowser_home_dir}/plugin-container ixmr,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/extensions/*.xpi r,
   owner @{torbrowser_home_dir}/TorBrowser/Data/fontconfig/fonts.conf r,
-  owner @{torbrowser_home_dir}/TorBrowser/Tor/libstdc++.so.6 mr,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/ r,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
 
   /sys/devices/system/cpu/ r,
   /sys/devices/system/cpu/present r,
