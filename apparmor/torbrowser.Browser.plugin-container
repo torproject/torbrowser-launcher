@@ -38,6 +38,8 @@ profile torbrowser_plugin_container {
   owner @{torbrowser_home_dir}/TorBrowser/Tor/ r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
+  owner @{torbrowser_home_dir}/Downloads/ rwk,
+  owner @{torbrowser_home_dir}/Downloads/** rwk,
 
   /sys/devices/system/cpu/ r,
   /sys/devices/system/cpu/present r,
