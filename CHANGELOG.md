@@ -1,5 +1,13 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.8
+
+* Update URL to check for latest version, which changed in Tor Browser 7
+* Automatically refresh GPG keyring, to prevent signature verification false positives
+* Improve GnuPG code by using GPGME if available
+* Updated AppArmor profiles
+* Added Czech, Hungarian localization
+
 ## 0.2.7
 
 * Updated Tor Browser signing key because they added a new subkey and verification was failing

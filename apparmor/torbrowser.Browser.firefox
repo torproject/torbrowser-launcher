@@ -28,9 +28,10 @@
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
-  owner @{PROC}/[0-9]*/mountinfo r,
-  owner @{PROC}/[0-9]*/stat r,
-  owner @{PROC}/[0-9]*/task/*/stat r,
+  owner @{PROC}/@{pid}/mountinfo r,
+  owner @{PROC}/@{pid}/stat r,
+  owner @{PROC}/@{pid}/status r,
+  owner @{PROC}/@{pid}/task/*/stat r,
   @{PROC}/sys/kernel/random/uuid r,
 
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/ r,
@@ -46,6 +47,7 @@
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/components/*.so mr,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/browser/components/*.so mr,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox rix,
+  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/plugin-container Pix,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{,TorBrowser/UpdateInfo/}updates/[0-9]*/updater ix,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{,TorBrowser/UpdateInfo/}updates/0/MozUpdater/bgupdate/updater ix,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/TorBrowser/Data/Browser/profiles.ini r,
@@ -75,6 +77,8 @@
 
   /sys/devices/system/cpu/ r,
   /sys/devices/system/cpu/present r,
+  /sys/devices/system/node/ r,
+  /sys/devices/system/node/node[0-9]*/meminfo r,
   deny /sys/devices/virtual/block/*/uevent r,
 
   # Should use abstractions/gstreamer instead once merged upstream
@@ -83,9 +87,18 @@
   /sys/devices/pci[0-9]*/**/uevent r,
   owner /{dev,run}/shm/shmfd-* rw,
 
+  # Required for multiprocess Firefox (aka Electrolysis, i.e. e10s)
+  owner /dev/shm/org.chromium.* rw,
+
   # Deny access to DRM nodes, that's granted by the X abstraction, which is
   # sourced by the gnome abstraction, that we include.
   deny /dev/dri/** rwklx,
+
+  # Silence denial logs about permissions we don't need
+  deny /dev/dri/   rwklx,
+  deny @{PROC}/@{pid}/net/route r,
+  deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
+  deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
 
   # KDE 4
   owner @{HOME}/.kde/share/config/* r,
