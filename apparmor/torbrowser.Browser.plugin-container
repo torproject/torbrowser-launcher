@@ -33,6 +33,8 @@ profile torbrowser_plugin_container {
   owner @{torbrowser_home_dir}/*.dat r,
   owner @{torbrowser_home_dir}/*.manifest r,
   owner @{torbrowser_home_dir}/*.so mr,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/   rw,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/** rw,
   owner @{torbrowser_home_dir}/browser/** r,
   owner @{torbrowser_home_dir}/components/*.so mr,
   owner @{torbrowser_home_dir}/browser/components/*.so mr,
