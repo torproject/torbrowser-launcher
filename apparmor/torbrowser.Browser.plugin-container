@@ -66,7 +66,7 @@ profile torbrowser_plugin_container {
   owner /{dev,run}/shm/shmfd-* rw,
 
   # Required for multiprocess Firefox (aka Electrolysis, i.e. e10s)
-  owner /dev/shm/org.chromium.* rw,
+  owner /{dev,run}/shm/org.chromium.* rw,
 
   # Deny access to DRM nodes, that's granted by the X abstraction, which is
   # sourced by the gnome abstraction, that we include.
