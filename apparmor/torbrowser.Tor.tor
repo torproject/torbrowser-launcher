@@ -3,6 +3,7 @@
 /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Tor/tor {
   #include <abstractions/base>
 
+  network netlink raw,
   network tcp,
   network udp,
 
@@ -16,6 +17,12 @@
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Tor/lock rwk,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/Tor,Lib}/*.so mr,
   owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/Tor,Lib}/*.so.* mr,
+
+  # Silence file_inherit logs
+  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{browser/,}omni.ja r,
+  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/.parentlock rw,
+  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/extensions/*.xpi r,
+  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/startupCache/* r,
 
   @{PROC}/sys/kernel/random/uuid r,
   /sys/devices/system/cpu/ r,
