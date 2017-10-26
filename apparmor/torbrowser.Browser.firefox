@@ -31,6 +31,10 @@
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
+  /dev/ r,
+  /dev/shm/ r,
+
+  owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
   owner @{PROC}/@{pid}/stat r,
   owner @{PROC}/@{pid}/status r,
