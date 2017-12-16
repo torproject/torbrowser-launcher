@@ -226,9 +226,11 @@ class Common:
             if match and match.group(2) == 'IMPORT_OK':
                 fingerprint = str(match.group(4))
                 if match.group(3) == '0':
-                    print('Keyring refreshed successfully...\n  No key updates for key: ' + fingerprint)
+                    print('Keyring refreshed successfully...')
+                    print('  No key updates for key: ' + fingerprint)
                 elif match.group(3) == '4':
-                    print('Keyring refreshed successfully...\n  New signatures for key: ' + fingerprint)
+                    print('Keyring refreshed successfully...')
+                    print('  New signatures for key: ' + fingerprint)
                 else:
                     print('Keyring refreshed successfully...')
 
