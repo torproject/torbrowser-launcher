@@ -600,9 +600,9 @@ class Launcher:
 
     def check_min_version(self):
         installed_version = None
-        for line in open(self.common.paths['tbb']['versions']).readlines():
-            if line.startswith('TORBROWSER_VERSION='):
-                installed_version = line.split('=')[1].strip()
+        for line in open(self.common.paths['tbb']['changelog']).readlines():
+            if line.startswith('Tor Browser '):
+                installed_version = line.split()[2]
                 break
 
         if self.min_version <= installed_version:
