@@ -173,10 +173,10 @@ class Common:
                 'version_check_url': 'https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/en-US',
                 'version_check_file': tbb_cache+'/download/release.xml',
                 'tbb': {
+                    'changelog': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/ChangeLog.txt',
                     'dir': tbb_local+'/tbb/'+self.architecture,
                     'dir_tbb': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language,
                     'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser.desktop',
-                    'versions': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/sources/versions',
                 },
             }
 
