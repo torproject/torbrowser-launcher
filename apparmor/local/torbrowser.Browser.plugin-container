@@ -1,2 +1,2 @@
-# Site-specific additions and overrides for torbrowser.Browser.firefox.
+# Site-specific additions and overrides for torbrowser.Browser.plugin-container.
 # For more details, please see /etc/apparmor.d/local/README.
