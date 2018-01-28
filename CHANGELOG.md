@@ -1,5 +1,12 @@
 # Tor Browser Launcher Changelog
 
+## 0.2.9
+
+* Fixed crash issue related to Tor Browser 7.5 changing how the currently installed version number is stored
+* Updated list of Tor Project dist mirrors
+* Fixed edge case crash for when stdout isn't writable
+* Updates AppStream metadata
+
 ## 0.2.8
 
 * Update URL to check for latest version, which changed in Tor Browser 7
