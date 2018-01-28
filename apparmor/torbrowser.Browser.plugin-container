@@ -1,16 +1,17 @@
 #include <tunables/global>
 #include <tunables/torbrowser>
 
-/home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
+profile torbrowser_plugin_container {
   #include <abstractions/gnome>
 
-  # Uncomment the following lines if you want to give the Tor Browser read-write
-  # access to most of your personal files.
-  # #include <abstractions/user-download>
-  # @{HOME}/ r,
-
-  #dbus,
-  network tcp,
+  # Uncomment the following lines if you don'want the Tor Browser
+  # to have direct access to your sound hardware. You will also
+  # need to remove the "deny" word in the machine-id lines further
+  # bellow.
+  # #include <abstractions/audio>
+  # /etc/asound.conf r,
+  # owner @{PROC}/@{pid}/fd/ r,
+  # owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/mozilla-temp-* rw,
 
   deny /etc/host.conf r,
   deny /etc/hosts r,
@@ -29,43 +30,28 @@
   owner @{PROC}/@{pid}/task/*/stat r,
   @{PROC}/sys/kernel/random/uuid r,
 
-  owner @{torbrowser_installation_dir}/ r,
-  owner @{torbrowser_installation_dir}/* r,
-  owner @{torbrowser_installation_dir}/.** rwk,
-  owner @{torbrowser_installation_dir}/update.test/ rwk,
-  owner @{torbrowser_home_dir}/.** rwk,
-  owner @{torbrowser_home_dir}/ rw,
-  owner @{torbrowser_home_dir}/** rwk,
-  owner @{torbrowser_home_dir}.bak/ rwk,
-  owner @{torbrowser_home_dir}.bak/** rwk,
+  owner @{torbrowser_home_dir}/*.dat r,
+  owner @{torbrowser_home_dir}/*.manifest r,
   owner @{torbrowser_home_dir}/*.so mr,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/   rw,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/** rw,
+  owner @{torbrowser_home_dir}/browser/** r,
   owner @{torbrowser_home_dir}/components/*.so mr,
   owner @{torbrowser_home_dir}/browser/components/*.so mr,
-  owner @{torbrowser_home_dir}/firefox rix,
-  owner @{torbrowser_home_dir}/plugin-container px -> torbrowser_plugin_container,
-  owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/updater ix,
-  owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/0/MozUpdater/bgupdate/updater ix,
-  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profiles.ini r,
-  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/ r,
-  owner @{torbrowser_home_dir}/TorBrowser/Tor/tor px,
+  owner @{torbrowser_home_dir}/defaults/pref/     r,
+  owner @{torbrowser_home_dir}/defaults/pref/*.js r,
+  owner @{torbrowser_home_dir}/fonts/   r,
+  owner @{torbrowser_home_dir}/fonts/** r,
+  owner @{torbrowser_home_dir}/omni.ja r,
+  owner @{torbrowser_home_dir}/plugin-container ixmr,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/extensions/*.xpi r,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/* rw,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/fontconfig/fonts.conf r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/ r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
-
-  /etc/mailcap r,
-  /etc/mime.types r,
-
-  /usr/share/ r,
-  /usr/share/mime/ r,
-  /usr/share/themes/ r,
-  /usr/share/applications/** rk,
-  /usr/share/gnome/applications/ r,
-  /usr/share/gnome/applications/kde4/ r,
-  /usr/share/poppler/cMap/ r,
-
-  # Distribution homepage
-  /usr/share/homepage/ r,
-  /usr/share/homepage/** r,
+  owner @{torbrowser_home_dir}/Downloads/ rwk,
+  owner @{torbrowser_home_dir}/Downloads/** rwk,
 
   /sys/devices/system/cpu/ r,
   /sys/devices/system/cpu/present r,
@@ -92,12 +78,5 @@
   deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
 
-  # KDE 4
-  owner @{HOME}/.kde/share/config/* r,
-
-  # Xfce4
-  /etc/xfce4/defaults.list r,
-  /usr/share/xfce4/applications/ r,
-
-  #include <local/torbrowser.Browser.firefox>
+  #include <local/torbrowser.Browser.plugin-container>
 }
