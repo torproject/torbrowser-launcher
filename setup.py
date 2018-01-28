@@ -71,10 +71,14 @@ for root, dirs, files in os.walk(SHARE):
 if distro != 'Ubuntu':
     if not hasattr(sys, 'real_prefix'):
         # we're not in a virtualenv, so we can probably write to /etc
-        datafiles += [('/etc/apparmor.d/', [
-            'apparmor/torbrowser.Browser.firefox',
-            'apparmor/torbrowser.Tor.tor',
-            'apparmor/usr.bin.torbrowser-launcher'])]
+        datafiles += [
+            ('/etc/apparmor.d/', [
+                'apparmor/torbrowser.Browser.firefox',
+                'apparmor/torbrowser.Browser.plugin-container',
+                'apparmor/torbrowser.Tor.tor',
+                'apparmor/usr.bin.torbrowser-launcher']),
+            ('/etc/apparmor.d/tunables/', ['apparmor/tunables/torbrowser'])
+        ]
 
 datafiles += [('/usr/share/locale/', create_mo_files())]
 

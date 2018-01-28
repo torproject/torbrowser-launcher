@@ -1,0 +1,2 @@
+@{torbrowser_installation_dir}=@{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*
+@{torbrowser_home_dir}=@{torbrowser_installation_dir}/Browser
