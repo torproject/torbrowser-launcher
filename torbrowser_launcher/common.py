@@ -26,6 +26,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import print_function
+
 import os
 import sys
 import platform
@@ -193,17 +195,17 @@ class Common:
                 os.makedirs(path, 0o700)
                 return True
         except:
-            print _("Cannot create directory {0}").format(path)
+            print(_("Cannot create directory {0}").format(path))
             return False
         if not os.access(path, os.W_OK):
-            print _("{0} is not writable").format(path)
+            print(_("{0} is not writable").format(path))
             return False
         return True
 
     # if gnupg_homedir isn't set up, set it up
     def init_gnupg(self):
         if not os.path.exists(self.paths['gnupg_homedir']):
-            print _('Creating GnuPG homedir'), self.paths['gnupg_homedir']
+            print(_('Creating GnuPG homedir'), self.paths['gnupg_homedir'])
             self.mkdir(self.paths['gnupg_homedir'])
         self.import_keys()
 
@@ -286,12 +288,12 @@ class Common:
         for key in keys:
             imported = self.import_key_and_check_status(key)
             if not imported:
-                print _('Could not import key with fingerprint: %s.'
-                        % self.fingerprints[key])
+                print(_('Could not import key with fingerprint: %s.'
+                        % self.fingerprints[key]))
                 all_imports_succeeded = False
 
         if not all_imports_succeeded:
-            print _('Not all keys were imported successfully!')
+            print(_('Not all keys were imported successfully!'))
 
         self.refresh_keyring()
         return all_imports_succeeded

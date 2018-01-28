@@ -26,6 +26,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import print_function
+
 import os, sys, argparse
 
 from common import Common, SHARE
@@ -46,10 +48,10 @@ def main():
     with open(os.path.join(SHARE, 'version')) as buf:
         tor_browser_launcher_version = buf.read().strip()
 
-    print _('Tor Browser Launcher')
-    print _('By Micah Lee, licensed under MIT')
-    print _('version {0}').format(tor_browser_launcher_version)
-    print 'https://github.com/micahflee/torbrowser-launcher'
+    print(_('Tor Browser Launcher'))
+    print(_('By Micah Lee, licensed under MIT'))
+    print(_('version {0}').format(tor_browser_launcher_version))
+    print('https://github.com/micahflee/torbrowser-launcher')
 
     common = Common(tor_browser_launcher_version)
 
