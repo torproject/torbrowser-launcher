@@ -20,6 +20,7 @@
 
   # Silence file_inherit logs
   deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{browser/,}omni.ja r,
+  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{browser/,}features/*.xpi r,
   deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/.parentlock rw,
   deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/extensions/*.xpi r,
   deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/startupCache/* r,
