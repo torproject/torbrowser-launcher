@@ -16,10 +16,14 @@ profile torbrowser_tor @{torbrowser_tor_executable} {
   /etc/resolv.conf r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/tor mr,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Tor/ rw,
-  owner @{torbrowser_home_dir}/TorBrowser/Data/Tor/* rw,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Tor/** rw,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Tor/lock rwk,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
+
+  # Support some of the included pluggable transports
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/PluggableTransports/** rix,
+  @{PROC}/sys/net/core/somaxconn r,
 
   # Silence file_inherit logs
   deny @{torbrowser_home_dir}/{browser/,}omni.ja r,
