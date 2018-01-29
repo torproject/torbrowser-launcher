@@ -13,7 +13,8 @@
   network netlink raw,
   network tcp,
 
-  ptrace (trace) peer=@{profile_name},
+  ptrace (trace) peer=torbrowser_plugin_container,
+  signal (send) set=("term") peer=torbrowser_plugin_container,
 
   deny /etc/host.conf r,
   deny /etc/hosts r,
