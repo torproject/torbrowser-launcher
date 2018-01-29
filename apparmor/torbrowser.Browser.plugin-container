@@ -10,7 +10,6 @@ profile torbrowser_plugin_container {
   # bellow.
   # #include <abstractions/audio>
   # /etc/asound.conf r,
-  # owner @{PROC}/@{pid}/fd/ r,
   # owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/mozilla-temp-* rw,
 
   signal (receive) set=("term") peer=torbrowser_firefox,
@@ -29,6 +28,9 @@ profile torbrowser_plugin_container {
   /etc/mime.types r,
   /usr/share/applications/gnome-mimeapps.list r,
 
+  /dev/shm/ r,
+
+  owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
   owner @{PROC}/@{pid}/stat r,
   owner @{PROC}/@{pid}/status r,
