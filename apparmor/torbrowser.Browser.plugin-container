@@ -6,8 +6,10 @@ profile torbrowser_plugin_container {
 
   # Uncomment the following lines if you want Tor Browser
   # to have direct access to your sound hardware. You will also
-  # need to remove the "deny" word in the machine-id lines further
-  # bellow.
+  # need to remove, further bellow:
+  #  - the "deny" word in the machine-id lines
+  #  - the rules that deny reading /etc/pulse/client.conf
+  #    and executing /usr/bin/pulseaudio
   # #include <abstractions/audio>
   # /etc/asound.conf r,
   # owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/mozilla-temp-* rw,
@@ -84,6 +86,10 @@ profile torbrowser_plugin_container {
   deny @{PROC}/@{pid}/net/route r,
   deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
+
+  # Silence denial logs about PulseAudio
+  deny /etc/pulse/client.conf r,
+  deny /usr/bin/pulseaudio x,
 
   #include <local/torbrowser.Browser.plugin-container>
 }

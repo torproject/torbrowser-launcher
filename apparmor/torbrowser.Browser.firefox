@@ -108,6 +108,10 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
 
+  # Silence denial logs about PulseAudio
+  deny /etc/pulse/client.conf r,
+  deny /usr/bin/pulseaudio x,
+
   # KDE 4
   owner @{HOME}/.kde/share/config/* r,
 
