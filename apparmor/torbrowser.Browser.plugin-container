@@ -13,6 +13,8 @@ profile torbrowser_plugin_container {
   # owner @{PROC}/@{pid}/fd/ r,
   # owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/mozilla-temp-* rw,
 
+  signal (receive) set=("term") peer=torbrowser_firefox,
+
   deny /etc/host.conf r,
   deny /etc/hosts r,
   deny /etc/nsswitch.conf r,
