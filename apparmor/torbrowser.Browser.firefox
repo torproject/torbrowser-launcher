@@ -49,6 +49,8 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}.bak/ rwk,
   owner @{torbrowser_home_dir}.bak/** rwk,
   owner @{torbrowser_home_dir}/*.so mr,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/ rwk,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/** rwkl,
   owner @{torbrowser_home_dir}/components/*.so mr,
   owner @{torbrowser_home_dir}/browser/components/*.so mr,
   owner @{torbrowser_home_dir}/firefox rix,
