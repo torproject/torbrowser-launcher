@@ -24,6 +24,9 @@ profile torbrowser_plugin_container {
   deny /etc/machine-id r,
   deny /var/lib/dbus/machine-id r,
 
+  /etc/mime.types r,
+  /usr/share/applications/gnome-mimeapps.list r,
+
   owner @{PROC}/@{pid}/mountinfo r,
   owner @{PROC}/@{pid}/stat r,
   owner @{PROC}/@{pid}/status r,
