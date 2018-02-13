@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2014 Micah Lee <micah@micahflee.com> -->
-<application>
- <id type="desktop">torbrowser.desktop</id>
+<component>
+ <id>org.torproject.torbrowser.desktop</id>
  <metadata_license>CC0-1.0</metadata_license>
  <project_license>MIT</project_license>
  <name>Tor Browser Launcher</name>
@@ -26,5 +26,5 @@
   </screenshot>
  </screenshots>
  <url type="homepage">https://github.com/micahflee/torbrowser-launcher</url>
- <updatecontact>micah@micahflee.com</updatecontact>
-</application>
+ <update_contact>micah@micahflee.com</update_contact>
+</component>

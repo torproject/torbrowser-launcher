@@ -11,4 +11,8 @@ python setup.py bdist_rpm --requires="python-twisted, gnupg, fakeroot, pygtk2, p
 # install it
 echo ""
 echo "To install, run:"
+if [ -n "$(lsb_release -si | grep -i blackPanther)" ];then
+echo "installing dist/torbrowser-launcher-$VERSION-1.noarch.rpm"
+else
 echo "sudo dnf install dist/torbrowser-launcher-$VERSION-1.noarch.rpm"
+fi

@@ -26,6 +26,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+from __future__ import print_function
+
 import os
 import sys
 import platform
@@ -68,7 +70,7 @@ class Common:
         self.tbl_version = tbl_version
 
         # initialize the app
-        self.default_mirror = 'https://www.torproject.org/dist/'
+        self.default_mirror = 'https://dist.torproject.org/'
         self.discover_arch_lang()
         self.build_paths()
         for d in self.paths['dirs']:
@@ -115,7 +117,7 @@ class Common:
             homedir = '/tmp/.torbrowser-'+os.getenv('USER')
             if not os.path.exists(homedir):
                 try:
-                    os.mkdir(homedir, 0700)
+                    os.mkdir(homedir, 0o700)
                 except:
                     self.set_gui('error', _("Error creating {0}").format(homedir), [], False)
         if not os.access(homedir, os.W_OK):
@@ -173,10 +175,10 @@ class Common:
                 'version_check_url': 'https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/en-US',
                 'version_check_file': tbb_cache+'/download/release.xml',
                 'tbb': {
+                    'changelog': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/ChangeLog.txt',
                     'dir': tbb_local+'/tbb/'+self.architecture,
                     'dir_tbb': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language,
                     'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser.desktop',
-                    'versions': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/sources/versions',
                 },
             }
 
@@ -190,20 +192,20 @@ class Common:
     def mkdir(path):
         try:
             if not os.path.exists(path):
-                os.makedirs(path, 0700)
+                os.makedirs(path, 0o700)
                 return True
         except:
-            print _("Cannot create directory {0}").format(path)
+            print(_("Cannot create directory {0}").format(path))
             return False
         if not os.access(path, os.W_OK):
-            print _("{0} is not writable").format(path)
+            print(_("{0} is not writable").format(path))
             return False
         return True
 
     # if gnupg_homedir isn't set up, set it up
     def init_gnupg(self):
         if not os.path.exists(self.paths['gnupg_homedir']):
-            print _('Creating GnuPG homedir'), self.paths['gnupg_homedir']
+            print(_('Creating GnuPG homedir'), self.paths['gnupg_homedir'])
             self.mkdir(self.paths['gnupg_homedir'])
         self.import_keys()
 
@@ -226,9 +228,11 @@ class Common:
             if match and match.group(2) == 'IMPORT_OK':
                 fingerprint = str(match.group(4))
                 if match.group(3) == '0':
-                    print('Keyring refreshed successfully...\n  No key updates for key: ' + fingerprint)
+                    print('Keyring refreshed successfully...')
+                    print('  No key updates for key: ' + fingerprint)
                 elif match.group(3) == '4':
-                    print('Keyring refreshed successfully...\n  New signatures for key: ' + fingerprint)
+                    print('Keyring refreshed successfully...')
+                    print('  New signatures for key: ' + fingerprint)
                 else:
                     print('Keyring refreshed successfully...')
 
@@ -286,12 +290,12 @@ class Common:
         for key in keys:
             imported = self.import_key_and_check_status(key)
             if not imported:
-                print _('Could not import key with fingerprint: %s.'
-                        % self.fingerprints[key])
+                print(_('Could not import key with fingerprint: %s.'
+                        % self.fingerprints[key]))
                 all_imports_succeeded = False
 
         if not all_imports_succeeded:
-            print _('Not all keys were imported successfully!')
+            print(_('Not all keys were imported successfully!'))
 
         self.refresh_keyring()
         return all_imports_succeeded
