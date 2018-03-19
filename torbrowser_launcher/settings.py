@@ -26,232 +26,181 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import subprocess, time, shutil
+import subprocess
+import shutil
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+from PyQt5 import QtCore, QtWidgets, QtGui
 
-class Settings:
+class Settings(QtWidgets.QMainWindow):
+    """
+    Settings window.
+    """
     def __init__(self, common):
+        super(Settings, self).__init__()
+
         self.common = common
 
-        # set up the window
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title(_("Tor Browser Launcher Settings"))
-        self.window.set_icon_from_file(self.common.paths['icon_file'])
-        self.window.set_position(gtk.WIN_POS_CENTER)
-        self.window.set_border_width(10)
-        self.window.connect("delete_event", self.delete_event)
-        self.window.connect("destroy", self.destroy)
+        # Set up the window
+        self.setWindowTitle(_("Tor Browser Launcher Settings"))
+        self.setWindowIcon(QtGui.QIcon(self.common.paths['icon_file']))
 
-        # build the rest of the UI
-        self.box = gtk.VBox(False, 10)
-        self.window.add(self.box)
-        self.box.show()
+        # Download over system tor
+        self.tor_download_checkbox = QtWidgets.QCheckBox()
+        self.tor_download_checkbox.setText(_("Download over system Tor"))
 
-        self.hbox = gtk.HBox(False, 10)
-        self.box.pack_start(self.hbox, True, True, 0)
-        self.hbox.show()
-
-        self.settings_box = gtk.VBox(False, 10)
-        self.hbox.pack_start(self.settings_box, True, True, 0)
-        self.settings_box.show()
-
-        self.status_box = gtk.VBox(False, 10)
-        self.hbox.pack_start(self.status_box, True, True, 0)
-        self.status_box.show()
-
-        # download over system tor
         try:
             import txsocksx
             self.txsocks_found = True
         except ImportError:
             self.txsocks_found = False
-        self.tor_download_checkbox = gtk.CheckButton(_("Download over system Tor"))
+
         if self.txsocks_found:
-            self.tor_download_checkbox.set_tooltip_text(_("This option is only available when using a system wide Tor installation."))
+            self.tor_download_checkbox.setToolTip(_("This option is only available when using a system wide Tor installation."))
         else:
-            self.tor_download_checkbox.set_tooltip_text(_("This option requires the python-txsocksx package."))
+            self.tor_download_checkbox.setToolTip(_("This option requires the python-txsocksx package."))
+            self.tor_download_checkbox.setEnabled(False)
 
-        self.settings_box.pack_start(self.tor_download_checkbox, True, True, 0)
-        if self.common.settings['download_over_tor'] and self.txsocks_found:
-            self.tor_download_checkbox.set_active(True)
-        else:
-            self.tor_download_checkbox.set_active(False)
+        self.tor_download_checkbox.setCheckState(self.common.settings['download_over_tor'] and self.txsocks_found)
 
-        if self.txsocks_found == False:
-            self.tor_download_checkbox.set_sensitive(False)
-
-        self.tor_download_checkbox.show()
-
-        # modem sound
-        self.modem_checkbox = gtk.CheckButton(_("Play modem sound, because Tor is slow :]"))
-        self.settings_box.pack_start(self.modem_checkbox, True, True, 0)
+        # Modem sound
+        self.modem_checkbox = QtWidgets.QCheckBox()
+        self.modem_checkbox.setText(_("Play modem sound, because Tor is slow :]"))
 
         try:
             import pygame
-            if self.common.settings['modem_sound']:
-                self.modem_checkbox.set_active(True)
-            else:
-                self.modem_checkbox.set_active(False)
+            self.modem_checkbox.setCheckState(bool(self.common.settings['modem_sound']))
         except ImportError:
-            self.modem_checkbox.set_active(False)
-            self.modem_checkbox.set_sensitive(False)
-            self.modem_checkbox.set_tooltip_text(_("This option requires python-pygame to be installed"))
-        self.modem_checkbox.show()
+            self.modem_checkbox.setCheckState(False)
+            self.modem_checkbox.setEnabled(False)
+            self.modem_checkbox.setToolTip(_("This option requires python-pygame to be installed"))
 
-        # force en-US, only display if language isn't already en-US
-        if self.common.language != 'en-US':
-            self.force_en_checkbox = gtk.CheckButton(_("Force downloading English version of Tor Browser"))
-            if self.common.settings['force_en-US']:
-                self.force_en_checkbox.set_active(True)
-            else:
-                self.force_en_checkbox.set_active(False)
-            self.settings_box.pack_start(self.force_en_checkbox, True, True, 0)
-            self.force_en_checkbox.show()
+        # Force en-US, only display if language isn't already en-US
+        self.force_en_checkbox = QtWidgets.QCheckBox()
+        self.force_en_checkbox.setText(_("Force downloading English version of Tor Browser"))
+        self.force_en_checkbox.setCheckState(bool(self.common.settings['force_en-US']))
+        if self.common.language == 'en-US':
+            self.force_en_checkbox.hide()
 
         # Tor SOCKS address
-        self.tor_addr_box = gtk.HBox(False, 10)
-        self.settings_box.pack_start(self.tor_addr_box, True, True, 0)
-        self.tor_addr_box.show()
+        tor_addr_label = QtWidgets.QLabel(_('Tor server'))
+        self.tor_addr = QtWidgets.QLineEdit()
+        self.tor_addr.setText(self.common.settings['tor_socks_address'])
+        tor_addr_layout = QtWidgets.QHBoxLayout()
+        tor_addr_layout.addWidget(tor_addr_label)
+        tor_addr_layout.addWidget(self.tor_addr)
 
-        self.tor_addr_label = gtk.Label(_('Tor server'))
-        self.tor_addr_label.set_line_wrap(True)
-        self.tor_addr_box.pack_start(self.tor_addr_label, True, True, 0)
-        self.tor_addr_label.show()
+        # Settings layout
+        settings_layout = QtWidgets.QVBoxLayout()
+        settings_layout.addWidget(self.tor_download_checkbox)
+        settings_layout.addWidget(self.modem_checkbox)
+        settings_layout.addWidget(self.force_en_checkbox)
+        settings_layout.addLayout(tor_addr_layout)
 
-        self.tor_addr = gtk.Entry()
-        self.tor_addr.set_text(self.common.settings['tor_socks_address'])
-        self.tor_addr_box.pack_start(self.tor_addr, True, True, 0)
-        self.tor_addr.show()
-
-        # status
+        # Status
+        status_label = QtWidgets.QLabel()
         if(self.common.settings['installed']):
-            self.status_label = gtk.Label(_('Status: Installed'))
+            status_label.setText(_('Status: Installed'))
         else:
-            self.status_label = gtk.Label(_('Status: Not Installed'))
-        self.status_label.set_line_wrap(True)
-        self.status_box.pack_start(self.status_label, True, True, 0)
-        self.status_label.show()
+            status_label.setText(_('Status: Not Installed'))
+
+        # Install button
+        install_button = QtWidgets.QPushButton(_("Install Tor Browser"))
+        install_button.clicked.connect(self.install)
+        # TODO: add apply icon
+
+        # Reinstall buttons
+        reinstall_button = QtWidgets.QPushButton(_("Reinstall Tor Browser"))
+        reinstall_button.clicked.connect(self.reinstall)
+        # TODO: add apply icon
 
         if(self.common.settings['installed']):
-           # reinstall button
-            reinstall_image = gtk.Image()
-            reinstall_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
-            self.reinstall_button = gtk.Button(_("Reinstall Tor Browser"))
-            self.reinstall_button.set_image(reinstall_image)
-            self.reinstall_button.connect("clicked", self.reinstall, None)
-            self.status_box.add(self.reinstall_button)
-            self.reinstall_button.show()
+            install_button.hide()
+            reinstall_button.show()
         else:
-            # install button
-            install_image = gtk.Image()
-            install_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
-            self.install_button = gtk.Button(_("Install Tor Browser"))
-            self.install_button.set_image(install_image)
-            self.install_button.connect("clicked", self.install, None)
-            self.status_box.add(self.install_button)
-            self.install_button.show()
+            install_button.show()
+            reinstall_button.hide()
 
-        # mirrors
-        self.mirrors_box = gtk.HBox(False, 10)
-        self.box.pack_start(self.mirrors_box, True, True, 0)
-        self.mirrors_box.show()
+        # Status layout
+        status_layout = QtWidgets.QVBoxLayout()
+        status_layout.addWidget(status_label)
+        status_layout.addWidget(install_button)
+        status_layout.addWidget(reinstall_button)
 
-        self.mirrors_label = gtk.Label(_('Mirror'))
-        self.mirrors_label.set_line_wrap(True)
-        self.mirrors_box.pack_start(self.mirrors_label, True, True, 0)
-        self.mirrors_label.show()
+        # Top layout
+        top_layout = QtWidgets.QHBoxLayout()
+        top_layout.addLayout(settings_layout)
+        top_layout.addLayout(status_layout)
 
-        self.mirrors = gtk.combo_box_new_text()
+        # Mirror
+        mirror_label = QtWidgets.QLabel(_('Mirror'))
+
+        self.mirror = QtWidgets.QComboBox()
         for mirror in self.common.mirrors:
-            self.mirrors.append_text(mirror)
+            self.mirror.addItem(mirror)
+
         if self.common.settings['mirror'] in self.common.mirrors:
-            self.mirrors.set_active(self.common.mirrors.index(self.common.settings['mirror']))
+            self.mirror.setCurrentIndex(self.mirror.findText(self.common.settings['mirror']))
         else:
-            self.mirrors.set_active(0)
-        self.mirrors_box.pack_start(self.mirrors, True, True, 0)
-        self.mirrors.show()
+            self.mirror.setCurrentIndex(0)
 
-        # button box
-        self.button_box = gtk.HButtonBox()
-        self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
-        self.box.pack_start(self.button_box, True, True, 0)
-        self.button_box.show()
+        mirror_layout = QtWidgets.QHBoxLayout()
+        mirror_layout.addWidget(mirror_label)
+        mirror_layout.addWidget(self.mirror)
 
-        # save and exit button
-        save_exit_image = gtk.Image()
-        save_exit_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
-        self.save_exit_button = gtk.Button(_("Save & Exit"))
-        self.save_exit_button.set_image(save_exit_image)
-        self.save_exit_button.connect("clicked", self.save_exit, None)
-        self.button_box.add(self.save_exit_button)
-        self.save_exit_button.show()
+        # Save & Exit button
+        self.save_exit_button = QtWidgets.QPushButton(_("Save & Exit"))
+        self.save_exit_button.clicked.connect(self.save_exit)
+        # TODO: add apply icon
 
-        # cancel button
-        cancel_image = gtk.Image()
-        cancel_image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
-        self.cancel_button = gtk.Button(_("Cancel"))
-        self.cancel_button.set_image(cancel_image)
-        self.cancel_button.connect("clicked", self.destroy, None)
-        self.button_box.add(self.cancel_button)
-        self.cancel_button.show()
+        # Cancel button
+        self.cancel_button = QtWidgets.QPushButton(_("Cancel"))
+        self.cancel_button.clicked.connect(self.close)
+        # TODO: add cancel icon
 
-        # show the window
-        self.window.show()
+        # Buttons layout
+        buttons_layout = QtWidgets.QHBoxLayout()
+        buttons_layout.addWidget(self.save_exit_button)
+        buttons_layout.addWidget(self.cancel_button)
 
-        # start gtk
-        gtk.main()
+        # Main layout
+        layout = QtWidgets.QVBoxLayout()
+        layout.addLayout(top_layout)
+        layout.addLayout(mirror_layout)
+        layout.addLayout(buttons_layout)
 
-    # UI Callback for update over tor/use system tor
-    def on_system_tor_clicked(self, event):
-        if self.txsocks_found:
-            value = self.system_tor_checkbox.get_active()
-        else:
-            value = False
+        central_widget = QtWidgets.QWidget()
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
+        self.show()
 
-        self.tor_download_checkbox.set_active(value)
-        self.tor_download_checkbox.set_sensitive(value)
-
-    # install
-    def install(self, widget, data=None):
+    # Install
+    def install(self):
         self.save()
         subprocess.Popen([self.common.paths['tbl_bin']])
-        self.destroy(False)
+        self.close()
 
-    # launch
-    def reinstall(self, widget, data=None):
+    # Reinstall
+    def reinstall(self):
         self.save()
         shutil.rmtree(self.common.paths['tbb']['dir'])
         subprocess.Popen([self.common.paths['tbl_bin']])
-        self.destroy(False)
+        self.close()
 
-    # save and exit
-    def save_exit(self, widget, data=None):
+    # Save & Exit
+    def save_exit(self):
         self.save()
-        self.destroy(False)
+        self.close()
 
-    # save settings
+    # Save settings
     def save(self):
-        # checkbox options
-        self.common.settings['download_over_tor'] = self.tor_download_checkbox.get_active()
-        self.common.settings['modem_sound'] = self.modem_checkbox.get_active()
-        if hasattr(self, 'force_en_checkbox'):
-            self.common.settings['force_en-US'] = self.force_en_checkbox.get_active()
-        else:
-            self.common.settings['force_en-US'] = False
-        self.common.settings['tor_socks_address'] = self.tor_addr.get_text()
+        # Checkbox options
+        self.common.settings['download_over_tor'] = self.tor_download_checkbox.isChecked()
+        self.common.settings['modem_sound'] = self.modem_checkbox.isChecked()
+        self.common.settings['force_en-US'] = self.force_en_checkbox.isChecked()
+        self.common.settings['tor_socks_address'] = self.tor_addr.text()
 
-        # figure out the selected mirror
-        self.common.settings['mirror'] = self.common.mirrors[self.mirrors.get_active()]
+        # Figure out the selected mirror
+        self.common.settings['mirror'] = self.mirror.currentText()
 
-        # save them
+        # Save them
         self.common.save_settings()
-
-    # exit
-    def delete_event(self, widget, event, data=None):
-        return False
-
-    def destroy(self, widget, data=None):
-        gtk.main_quit()

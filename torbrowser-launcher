@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 """
 Tor Browser Launcher
 https://github.com/micahflee/torbrowser-launcher/

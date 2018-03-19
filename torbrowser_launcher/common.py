@@ -26,8 +26,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from __future__ import print_function
-
 import os
 import sys
 import platform
@@ -43,17 +41,10 @@ try:
 except ImportError:
     gpgme_support = False
 
-import pygtk
-pygtk.require('2.0')
-import gtk
-
 SHARE = os.getenv('TBL_SHARE', sys.prefix+'/share/torbrowser-launcher')
 
 import gettext
 gettext.install('torbrowser-launcher')
-
-from twisted.internet import gtk2reactor
-gtk2reactor.install()
 
 # We're looking for output which:
 #
@@ -64,8 +55,7 @@ gnupg_import_ok_pattern = re.compile(
     "(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})")
 
 
-class Common:
-
+class Common(object):
     def __init__(self, tbl_version):
         self.tbl_version = tbl_version
 
