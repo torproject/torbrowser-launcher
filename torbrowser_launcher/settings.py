@@ -62,18 +62,6 @@ class Settings(QtWidgets.QMainWindow):
 
         self.tor_download_checkbox.setCheckState(self.common.settings['download_over_tor'] and self.txsocks_found)
 
-        # Modem sound
-        self.modem_checkbox = QtWidgets.QCheckBox()
-        self.modem_checkbox.setText(_("Play modem sound, because Tor is slow :]"))
-
-        try:
-            import pygame
-            self.modem_checkbox.setCheckState(bool(self.common.settings['modem_sound']))
-        except ImportError:
-            self.modem_checkbox.setCheckState(False)
-            self.modem_checkbox.setEnabled(False)
-            self.modem_checkbox.setToolTip(_("This option requires python-pygame to be installed"))
-
         # Force en-US, only display if language isn't already en-US
         self.force_en_checkbox = QtWidgets.QCheckBox()
         self.force_en_checkbox.setText(_("Force downloading English version of Tor Browser"))
@@ -92,7 +80,6 @@ class Settings(QtWidgets.QMainWindow):
         # Settings layout
         settings_layout = QtWidgets.QVBoxLayout()
         settings_layout.addWidget(self.tor_download_checkbox)
-        settings_layout.addWidget(self.modem_checkbox)
         settings_layout.addWidget(self.force_en_checkbox)
         settings_layout.addLayout(tor_addr_layout)
 
@@ -195,7 +182,6 @@ class Settings(QtWidgets.QMainWindow):
     def save(self):
         # Checkbox options
         self.common.settings['download_over_tor'] = self.tor_download_checkbox.isChecked()
-        self.common.settings['modem_sound'] = self.modem_checkbox.isChecked()
         self.common.settings['force_en-US'] = self.force_en_checkbox.isChecked()
         self.common.settings['tor_socks_address'] = self.tor_addr.text()
 

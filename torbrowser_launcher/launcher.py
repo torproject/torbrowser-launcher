@@ -625,27 +625,6 @@ class Launcher:
 
             return
 
-        # play modem sound?
-        if self.common.settings['modem_sound']:
-            def play_modem_sound():
-                try:
-                    import pygame
-                    pygame.mixer.init()
-                    sound = pygame.mixer.Sound(self.common.paths['modem_sound'])
-                    sound.play()
-                    time.sleep(10)
-                except ImportError:
-                    md = gtk.MessageDialog(
-                        None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
-                        _("The python-pygame package is missing, the modem sound is unavailable.")
-                    )
-                    md.set_position(gtk.WIN_POS_CENTER)
-                    md.run()
-                    md.destroy()
-
-            t = threading.Thread(target=play_modem_sound)
-            t.start()
-
         # hide the TBL window (#151)
         if hasattr(self, 'window'):
             self.window.hide()
