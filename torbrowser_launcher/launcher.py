@@ -36,22 +36,10 @@ import lzma
 import threading
 import re
 import unicodedata
-
-from twisted.internet import reactor
-from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
-from twisted.web.http_headers import Headers
-from twisted.internet.protocol import Protocol
-from twisted.internet.error import DNSLookupError, ConnectionRefusedError
-
-try:
-    import gpg
-    gpgme_support = True
-except ImportError:
-    gpgme_support = False
-
-import xml.etree.ElementTree as ET
-
+import requests
+import gpg
 import OpenSSL
+import xml.etree.ElementTree as ET
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 
@@ -423,29 +411,28 @@ class Launcher(QtWidgets.QMainWindow):
         self.progress_bar.setFormat(_('Downloading') + ' {0}, %p%'.format(name))
 
         if self.common.settings['download_over_tor']:
-            from twisted.internet.endpoints import clientFromString
-            from txsocksx.http import SOCKS5Agent
+            # TODO: make requests work over SOCKS5 proxy
+            # this is the proxy to use: self.common.settings['tor_socks_address']
+            pass
 
-            torendpoint = clientFromString(reactor, self.common.settings['tor_socks_address'])
+        with open(self.current_download_path, "wb") as f:
+            # Start the request
+            r = requests.get(mirror_url, headers={'User-Agent': 'torbrowser-launcher'}, stream=True)
+            total_length = r.headers.get('content-length')
 
-            # default mirror gets certificate pinning, only for requests that use the mirror
-            agent = SOCKS5Agent(reactor, proxyEndpoint=torendpoint)
-        else:
-            agent = Agent(reactor)
+            if total_length is None: # no content length header
+                f.write(r.content)
+            else:
+                dl = 0
+                total_length = int(total_length)
+                for data in r.iter_content(chunk_size=4096):
+                    dl += len(data)
+                    f.write(data)
+                    done = int(50 * dl / total_length)
+                    print('{} / {}'.format(dl, total_length), end='\r')
 
-        # actually, agent needs to follow redirect
-        agent = RedirectAgent(agent)
-
-        # start the request
-        d = agent.request('GET', mirror_url,
-                          Headers({'User-Agent': ['torbrowser-launcher']}),
-                          None)
-
-        self.file_download = open(path, 'w')
-        d.addCallback(self.response_received).addErrback(self.download_error)
-
-        if not reactor.running:
-            reactor.run()
+        # Download complete, next task
+        self.run_task()
 
     def try_default_mirror(self, widget, data=None):
         # change mirror to default and relaunch TBL
@@ -500,38 +487,23 @@ class Launcher(QtWidgets.QMainWindow):
             self.set_state('task', sigerror, ['start_over'], False)
             self.update()
 
-        if gpgme_support:
-            with gpg.Context() as c:
-                c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
+        with gpg.Context() as c:
+            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
 
-                sig = gpg.Data(file=self.common.paths['sig_file'])
-                signed = gpg.Data(file=self.common.paths['tarball_file'])
+            sig = gpg.Data(file=self.common.paths['sig_file'])
+            signed = gpg.Data(file=self.common.paths['tarball_file'])
 
-                try:
-                    c.verify(signature=sig, signed_data=signed)
-                except gpg.errors.BadSignatures as e:
-                    result = str(e).split(": ")
-                    if result[1] == 'Bad signature':
-                        gui_raise_sigerror(self, str(e))
-                    elif result[1] == 'No public key':
-                        self.common.refresh_keyring(result[0])
-                        gui_raise_sigerror(self, str(e))
-                else:
-                    self.run_task()
-        else:
-            FNULL = open(os.devnull, 'w')
-            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify',
-                                  self.common.paths['sig_file'], self.common.paths['tarball_file']], stdout=FNULL,
-                                 stderr=subprocess.STDOUT)
-            #self.pulse_until_process_exits(p)
-            # TODO: reimplement this
-            if p.returncode == 0:
-                self.run_task()
+            try:
+                c.verify(signature=sig, signed_data=signed)
+            except gpg.errors.BadSignatures as e:
+                result = str(e).split(": ")
+                if result[1] == 'Bad signature':
+                    gui_raise_sigerror(self, str(e))
+                elif result[1] == 'No public key':
+                    self.common.refresh_keyring(result[0])
+                    gui_raise_sigerror(self, str(e))
             else:
-                self.common.refresh_keyring()
-                gui_raise_sigerror(self, 'GENERIC_VERIFY_FAIL')
-                if not reactor.running:
-                    reactor.run()
+                self.run_task()
 
     def extract(self):
         # initialize the progress bar
@@ -610,8 +582,6 @@ class Launcher(QtWidgets.QMainWindow):
             os.remove(self.current_download_path)
             delattr(self, 'current_download_path')
             delattr(self, 'current_download_url')
-        if reactor.running:
-            reactor.stop()
 
         super(Launcher, self).closeEvent(event)
 
