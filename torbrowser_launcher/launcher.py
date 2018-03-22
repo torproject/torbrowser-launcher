@@ -398,12 +398,8 @@ class Launcher(QtWidgets.QMainWindow):
         self.update()
 
     def download(self, name, url, path):
-        # Keep track of current download
-        self.current_download_path = path
-        self.current_download_url = url.encode()
-
-        mirror_url = url.format(self.common.settings['mirror'])
-        mirror_url = mirror_url.encode()
+        # Download from the selected mirror
+        mirror_url = url.format(self.common.settings['mirror']).encode()
 
         # Initialize the progress bar
         self.progress_bar.setValue(0)
@@ -415,24 +411,37 @@ class Launcher(QtWidgets.QMainWindow):
             # this is the proxy to use: self.common.settings['tor_socks_address']
             pass
 
-        with open(self.current_download_path, "wb") as f:
-            # Start the request
-            r = requests.get(mirror_url, headers={'User-Agent': 'torbrowser-launcher'}, stream=True)
-            total_length = r.headers.get('content-length')
+        def progress_update(total_bytes, bytes_so_far):
+            percent = float(bytes_so_far) / float(total_bytes)
+            amount = float(bytes_so_far)
+            units = "bytes"
+            for (size, unit) in [(1024 * 1024, "MiB"), (1024, "KiB")]:
+                if amount > size:
+                    units = unit
+                    amount /= float(size)
+                    break
 
-            if total_length is None: # no content length header
-                f.write(r.content)
-            else:
-                dl = 0
-                total_length = int(total_length)
-                for data in r.iter_content(chunk_size=4096):
-                    dl += len(data)
-                    f.write(data)
-                    done = int(50 * dl / total_length)
-                    print('{} / {}'.format(dl, total_length), end='\r')
+            message = _('Downloaded')+(' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units))
+            print(message, end='\r')
 
-        # Download complete, next task
-        self.run_task()
+            self.progress_bar.setMaximum(total_bytes)
+            self.progress_bar.setValue(bytes_so_far)
+            self.progress_bar.setFormat(message)
+
+        def download_complete():
+            # Download complete, next task
+            self.run_task()
+
+        def download_error(message):
+            print('Download error: {}'.format(msg))
+
+        t = DownloadThread(mirror_url, path)
+        t.progress_update.connect(progress_update)
+        t.download_complete.connect(download_complete)
+        t.download_error.connect(download_error)
+        t.start()
+
+        time.sleep(0.2)
 
     def try_default_mirror(self, widget, data=None):
         # change mirror to default and relaunch TBL
@@ -601,3 +610,58 @@ class Alert(QtWidgets.QMessageBox):
 
         if autostart:
             self.exec_()
+
+
+class DownloadThread(QtCore.QThread):
+    """
+    Download a file in a separate thread.
+    """
+    progress_update = QtCore.pyqtSignal(int, int)
+    download_complete = QtCore.pyqtSignal()
+    download_error = QtCore.pyqtSignal(str)
+
+    def __init__(self, url, path):
+        super(DownloadThread, self).__init__()
+        self.url = url
+        self.path = path
+
+    def run(self):
+        with open(self.path, "wb") as f:
+            # Start the request
+            r = requests.get(self.url, headers={'User-Agent': 'torbrowser-launcher'}, stream=True)
+
+            # If status code isn't 200, something went wrong
+            if r.status_code != 200:
+                if common.settings['mirror'] != common.default_mirror:
+                    self.download_error.emit(
+                        (_("Download Error:") + " {0} {1}\n\n" + _("You are currently using a non-default mirror")
+                         + ":\n{2}\n\n" + _("Would you like to switch back to the default?")).format(
+                            response.code, response.phrase, common.settings['mirror']
+                        )
+                    )
+                elif common.language != 'en-US' and not common.settings['force_en-US']:
+                    self.download_error.emit(
+                        (_("Download Error:") + " {0} {1}\n\n"
+                         + _("Would you like to try the English version of Tor Browser instead?")).format(
+                            response.code, response.phrase
+                        )
+                    )
+                else:
+                    self.download_error.emit(
+                        (_("Download Error:") + " {0} {1}").format(response.code, response.phrase)
+                    )
+
+                r.close()
+                return
+
+            # Start streaming the download
+            total_bytes = int(r.headers.get('content-length'))
+            bytes_so_far = 0
+            for data in r.iter_content(chunk_size=4096):
+                bytes_so_far += len(data)
+                f.write(data)
+                self.progress_update.emit(total_bytes, bytes_so_far)
+
+
+        print('')
+        self.download_complete.emit()
