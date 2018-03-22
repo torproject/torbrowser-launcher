@@ -139,11 +139,14 @@ class Launcher(QtWidgets.QMainWindow):
             self.start_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
             self.start_button.clicked.connect(self.start)
             self.cancel_button = QtWidgets.QPushButton()
-            self.start_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
+            self.cancel_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
             self.cancel_button.clicked.connect(self.close)
             buttons_layout = QtWidgets.QHBoxLayout()
+            buttons_layout.addStretch()
+            buttons_layout.addWidget(self.yes_button)
             buttons_layout.addWidget(self.start_button)
             buttons_layout.addWidget(self.cancel_button)
+            buttons_layout.addStretch()
 
             # Layout
             layout = QtWidgets.QVBoxLayout()
@@ -585,12 +588,13 @@ class Launcher(QtWidgets.QMainWindow):
         self.start(None)
 
     def closeEvent(self, event):
-        if hasattr(self, 'file_download'):
-            self.file_download.close()
-        if hasattr(self, 'current_download_path'):
-            os.remove(self.current_download_path)
-            delattr(self, 'current_download_path')
-            delattr(self, 'current_download_url')
+        # Clear the download cache
+        try:
+            os.remove(self.common.paths['version_check_file'])
+            os.remove(self.common.paths['sig_file'])
+            os.remove(self.common.paths['tarball_file'])
+        except:
+            pass
 
         super(Launcher, self).closeEvent(event)
 
