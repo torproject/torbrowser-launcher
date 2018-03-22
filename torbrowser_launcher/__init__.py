@@ -34,7 +34,7 @@ from PyQt5 import QtCore, QtWidgets
 
 from .common import Common, SHARE
 from .settings import Settings
-from .launcher import Launcher
+#from .launcher import Launcher
 
 
 class Application(QtWidgets.QApplication):
@@ -71,11 +71,11 @@ def main():
 
     if settings:
         # Settings mode
-        gui = Settings(common)
+        gui = Settings(common, app)
 
     else:
         # Launcher mode
-        gui = Launcher(common, url_list)
+        gui = Launcher(common, app, url_list)
 
     sys.exit(app.exec_())
 

@@ -35,10 +35,11 @@ class Settings(QtWidgets.QMainWindow):
     """
     Settings window.
     """
-    def __init__(self, common):
+    def __init__(self, common, app):
         super(Settings, self).__init__()
 
         self.common = common
+        self.app = app
 
         # Set up the window
         self.setWindowTitle(_("Tor Browser Launcher Settings"))
@@ -92,13 +93,13 @@ class Settings(QtWidgets.QMainWindow):
 
         # Install button
         install_button = QtWidgets.QPushButton(_("Install Tor Browser"))
+        install_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
         install_button.clicked.connect(self.install)
-        # TODO: add apply icon
 
         # Reinstall buttons
         reinstall_button = QtWidgets.QPushButton(_("Reinstall Tor Browser"))
+        reinstall_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
         reinstall_button.clicked.connect(self.reinstall)
-        # TODO: add apply icon
 
         if(self.common.settings['installed']):
             install_button.hide()
@@ -136,13 +137,13 @@ class Settings(QtWidgets.QMainWindow):
 
         # Save & Exit button
         self.save_exit_button = QtWidgets.QPushButton(_("Save & Exit"))
+        self.save_exit_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
         self.save_exit_button.clicked.connect(self.save_exit)
-        # TODO: add apply icon
 
         # Cancel button
         self.cancel_button = QtWidgets.QPushButton(_("Cancel"))
+        self.cancel_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
         self.cancel_button.clicked.connect(self.close)
-        # TODO: add cancel icon
 
         # Buttons layout
         buttons_layout = QtWidgets.QHBoxLayout()

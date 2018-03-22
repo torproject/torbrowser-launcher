@@ -77,8 +77,10 @@ class DownloadErrorException(Exception):
 
 
 class Launcher:
-    def __init__(self, common, url_list):
+    def __init__(self, common, app, url_list):
         self.common = common
+        self.app = app
+        
         self.url_list = url_list
         self.force_redownload = False
 
