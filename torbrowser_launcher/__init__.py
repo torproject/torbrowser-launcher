@@ -34,7 +34,7 @@ from PyQt5 import QtCore, QtWidgets
 
 from .common import Common, SHARE
 from .settings import Settings
-#from .launcher import Launcher
+from .launcher import Launcher
 
 
 class Application(QtWidgets.QApplication):
