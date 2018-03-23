@@ -37,8 +37,8 @@ import threading
 import re
 import unicodedata
 import requests
+import socks
 import gpg
-import OpenSSL
 import xml.etree.ElementTree as ET
 
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -81,16 +81,6 @@ class Launcher(QtWidgets.QMainWindow):
 
         # If Tor Browser is not installed, detect latest version, download, and install
         if not self.common.settings['installed'] or not self.check_min_version():
-            # If downloading over Tor, include txsocksx
-            if self.common.settings['download_over_tor']:
-                try:
-                    import txsocksx
-                    print(_('Downloading over Tor'))
-                except ImportError:
-                    Alert(self.common, _("The python-txsocksx package is missing, downloads will not happen over tor"))
-                    self.common.settings['download_over_tor'] = False
-                    self.common.save_settings()
-
             # Different message if downloading for the first time, or because your installed version is too low
             download_message = ""
             if not self.common.settings['installed']:
@@ -108,6 +98,9 @@ class Launcher(QtWidgets.QMainWindow):
                           'verify',
                           'extract',
                           'run'])
+
+            if self.common.settings['download_over_tor']:
+                print(_('Downloading over Tor'))
 
         else:
             # Tor Browser is already installed, so run
@@ -283,12 +276,10 @@ class Launcher(QtWidgets.QMainWindow):
         # Initialize the progress bar
         self.progress_bar.setValue(0)
         self.progress_bar.setMaximum(100)
-        self.progress_bar.setFormat(_('Downloading') + ' {0}, %p%'.format(name))
-
         if self.common.settings['download_over_tor']:
-            # TODO: make requests work over SOCKS5 proxy
-            # this is the proxy to use: self.common.settings['tor_socks_address']
-            pass
+            self.progress_bar.setFormat(_('Downloading') + ' {0} '.format(name) + _('(over Tor)') + ', %p%')
+        else:
+            self.progress_bar.setFormat(_('Downloading') + ' {0}, %p%'.format(name))
 
         def progress_update(total_bytes, bytes_so_far):
             percent = float(bytes_so_far) / float(total_bytes)
@@ -300,7 +291,9 @@ class Launcher(QtWidgets.QMainWindow):
                     amount /= float(size)
                     break
 
-            message = _('Downloaded')+(' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units))
+            message = _('Downloaded') + (' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units))
+            if self.common.settings['download_over_tor']:
+                message += ' ' + _('(over Tor)')
 
             self.progress_bar.setMaximum(total_bytes)
             self.progress_bar.setValue(bytes_so_far)
@@ -484,11 +477,23 @@ class DownloadThread(QtCore.QThread):
         self.url = url
         self.path = path
 
+        # Use tor socks5 proxy, if enabled
+        if self.common.settings['download_over_tor']:
+            socks5_address = 'socks5://{}'.format(self.common.settings['tor_socks_address'])
+            self.proxies = {
+                'https': socks5_address,
+                'http': socks5_address
+            }
+        else:
+            self.proxies = None
+
     def run(self):
         with open(self.path, "wb") as f:
             try:
                 # Start the request
-                r = requests.get(self.url, headers={'User-Agent': 'torbrowser-launcher'}, stream=True)
+                r = requests.get(self.url,
+                                 headers={'User-Agent': 'torbrowser-launcher'},
+                                 stream=True, proxies=self.proxies)
 
                 # If status code isn't 200, something went wrong
                 if r.status_code != 200:

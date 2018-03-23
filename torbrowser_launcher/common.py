@@ -305,7 +305,7 @@ class Common(object):
             'tbl_version': self.tbl_version,
             'installed': False,
             'download_over_tor': False,
-            'tor_socks_address': 'tcp:127.0.0.1:9050',
+            'tor_socks_address': '127.0.0.1:9050',
             'mirror': self.default_mirror,
             'force_en-US': False,
         }
@@ -322,6 +322,11 @@ class Common(object):
                 if setting not in settings:
                     settings[setting] = default_settings[setting]
                     resave = True
+
+            # make sure tor_socks_address doesn't start with 'tcp:'
+            if settings['tor_socks_address'].startswith('tcp:'):
+                settings['tor_socks_address'] = settings['tor_socks_address'][4:]
+                resave = True
 
             # make sure the version is current
             if settings['tbl_version'] != self.tbl_version:
