@@ -316,12 +316,11 @@ class Launcher(QtWidgets.QMainWindow):
             self.set_state(gui, message, [], False)
             self.update()
 
-        t = DownloadThread(mirror_url, path)
+        t = DownloadThread(self.common, mirror_url, path)
         t.progress_update.connect(progress_update)
         t.download_complete.connect(download_complete)
         t.download_error.connect(download_error)
         t.start()
-
         time.sleep(0.2)
 
     def try_default_mirror(self, widget, data=None):
@@ -363,12 +362,13 @@ class Launcher(QtWidgets.QMainWindow):
         self.progress_bar.setValue(0)
         self.progress_bar.setMaximum(0)
         self.progress_bar.setFormat(_('Verifying Signature'))
+        self.progress_bar.setTextVisible(True)
         self.progress_bar.show()
 
-        def gui_raise_sigerror(self, sigerror='MissingErr'):
-            """
-            :type sigerror: str
-            """
+        def success():
+            self.run_task()
+
+        def error(message):
             sigerror = 'SIGNATURE VERIFICATION FAILED!\n\nError Code: {0}\n\nYou might be under attack, there might' \
                        ' be a network\nproblem, or you may be missing a recently added\nTor Browser verification key.' \
                        '\nClick Start to refresh the keyring and try again. If the message persists report the above' \
@@ -377,23 +377,11 @@ class Launcher(QtWidgets.QMainWindow):
             self.set_state('task', sigerror, ['start_over'], False)
             self.update()
 
-        with gpg.Context() as c:
-            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
-
-            sig = gpg.Data(file=self.common.paths['sig_file'])
-            signed = gpg.Data(file=self.common.paths['tarball_file'])
-
-            try:
-                c.verify(signature=sig, signed_data=signed)
-            except gpg.errors.BadSignatures as e:
-                result = str(e).split(": ")
-                if result[1] == 'Bad signature':
-                    gui_raise_sigerror(self, str(e))
-                elif result[1] == 'No public key':
-                    self.common.refresh_keyring(result[0])
-                    gui_raise_sigerror(self, str(e))
-            else:
-                self.run_task()
+        t = VerifyThread(self.common)
+        t.error.connect(error)
+        t.success.connect(success)
+        t.start()
+        time.sleep(0.2)
 
     def extract(self):
         # initialize the progress bar
@@ -502,8 +490,9 @@ class DownloadThread(QtCore.QThread):
     download_complete = QtCore.pyqtSignal()
     download_error = QtCore.pyqtSignal(str, str)
 
-    def __init__(self, url, path):
+    def __init__(self, common, url, path):
         super(DownloadThread, self).__init__()
+        self.common = common
         self.url = url
         self.path = path
 
@@ -516,14 +505,14 @@ class DownloadThread(QtCore.QThread):
                 # If status code isn't 200, something went wrong
                 if r.status_code != 200:
                     # Should we use the default mirror?
-                    if common.settings['mirror'] != common.default_mirror:
+                    if self.common.settings['mirror'] != self.common.default_mirror:
                         message = (_("Download Error:") +
                                    " {0}\n\n" + _("You are currently using a non-default mirror") +
                                    ":\n{1}\n\n" + _("Would you like to switch back to the default?")).format(r.status_code, common.settings['mirror'])
                         self.download_error.emit('error_try_default_mirror', message)
 
                     # Should we switch to English?
-                    elif common.language != 'en-US' and not common.settings['force_en-US']:
+                    elif self.common.language != 'en-US' and not self.common.settings['force_en-US']:
                         message = (_("Download Error:") +
                                    " {0}\n\n" + _("Would you like to try the English version of Tor Browser instead?")).format(r.status_code)
                         self.download_error.emit('error_try_forcing_english', message)
@@ -552,3 +541,32 @@ class DownloadThread(QtCore.QThread):
 
         print('')
         self.download_complete.emit()
+
+
+class VerifyThread(QtCore.QThread):
+    """
+    Verify a signature in a separate thread
+    """
+    success = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal(str)
+
+    def __init__(self, common):
+        super(VerifyThread, self).__init__()
+        self.common = common
+
+    def run(self):
+        with gpg.Context() as c:
+            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
+
+            sig = gpg.Data(file=self.common.paths['sig_file'])
+            signed = gpg.Data(file=self.common.paths['tarball_file'])
+
+            try:
+                c.verify(signature=sig, signed_data=signed)
+            except gpg.errors.BadSignatures as e:
+                result = str(e).split(": ")
+                if result[1] == 'No public key':
+                    self.common.refresh_keyring(result[0])
+                self.error.emit(str(e))
+            else:
+                self.success.emit()
