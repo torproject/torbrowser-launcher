@@ -29,6 +29,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 import os
 import sys
 import argparse
+import signal
 
 from PyQt5 import QtCore, QtWidgets
 
@@ -76,6 +77,9 @@ def main():
     else:
         # Launcher mode
         Launcher(common, app, url_list)
+
+    # Allow ctrl-c to work
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     sys.exit(app.exec_())
 
