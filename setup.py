@@ -26,12 +26,17 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+import os
+import sys
+import platform
+import subprocess
 from distutils.core import setup
-import os, sys, platform, subprocess
+
 SHARE = 'share'
 
 # detect linux distribution
 distro = platform.dist()[0]
+
 
 def file_list(path):
     files = []
@@ -39,6 +44,7 @@ def file_list(path):
         if os.path.isfile(path+'/'+filename):
             files.append(path+'/'+filename)
     return files
+
 
 def create_mo_files():
     po_dir = 'po/'
@@ -58,6 +64,7 @@ def create_mo_files():
         subprocess.call(msgfmt_cmd, shell=True)
         mo_files.append(mo_dir + mo_file)
     return mo_files
+
 
 with open(os.path.join(SHARE, 'torbrowser-launcher/version')) as buf:
     version = buf.read().strip()
@@ -95,7 +102,15 @@ setup(
     license='MIT',
     description='A program to help you securely download and run Tor Browser',
     long_description="""
-Tor Browser Launcher is intended to make Tor Browser easier to install and use for GNU/Linux users. You install torbrowser-launcher from your distribution's package manager and it handles securely downloading the most recent version of Tor Browser for you, in your language and for your architecture. It also adds a "Tor Browser" application launcher to your operating system's menu. When you first launch Tor Browser Launcher, it will download Tor Browser from https://www.torproject.org/, verify the PGP signature, extract it in your home directory, and launch it. When you run it after that it will just launch Tor Browser.
+Tor Browser Launcher is intended to make Tor Browser easier to install and use
+for GNU/Linux users. You install torbrowser-launcher from your distribution's
+package manager and it handles securely downloading the most recent version of
+Tor Browser for you, in your language and for your architecture. It also adds a
+"Tor Browser" application launcher to your operating system's menu. When you
+first launch Tor Browser Launcher, it will download Tor Browser from
+https://www.torproject.org/, verify the PGP signature, extract it in your home
+directory, and launch it. When you run it after that it will just launch Tor
+Browser.
 """,
     packages=['torbrowser_launcher'],
     scripts=['torbrowser-launcher'],
