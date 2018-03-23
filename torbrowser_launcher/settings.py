@@ -46,27 +46,18 @@ class Settings(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(self.common.paths['icon_file']))
 
         # Download over system tor
-        self.tor_download_checkbox = QtWidgets.QCheckBox()
-        self.tor_download_checkbox.setText(_("Download over system Tor"))
-
-        try:
-            import txsocksx
-            self.txsocks_found = True
-        except ImportError:
-            self.txsocks_found = False
-
-        if self.txsocks_found:
-            self.tor_download_checkbox.setToolTip(_("This option is only available when using a system wide Tor installation."))
+        self.tor_download_checkbox = QtWidgets.QCheckBox(_("Download over system Tor"))
+        if self.common.settings['download_over_tor']:
+            self.tor_download_checkbox.setCheckState(QtCore.Qt.Checked)
         else:
-            self.tor_download_checkbox.setToolTip(_("This option requires the python-txsocksx package."))
-            self.tor_download_checkbox.setEnabled(False)
-
-        self.tor_download_checkbox.setCheckState(self.common.settings['download_over_tor'] and self.txsocks_found)
+            self.tor_download_checkbox.setCheckState(QtCore.Qt.Unchecked)
 
         # Force en-US, only display if language isn't already en-US
-        self.force_en_checkbox = QtWidgets.QCheckBox()
-        self.force_en_checkbox.setText(_("Force downloading English version of Tor Browser"))
-        self.force_en_checkbox.setCheckState(bool(self.common.settings['force_en-US']))
+        self.force_en_checkbox = QtWidgets.QCheckBox(_("Force downloading English version of Tor Browser"))
+        if self.common.settings['force_en-US']:
+            self.force_en_checkbox.setCheckState(QtCore.Qt.Checked)
+        else:
+            self.force_en_checkbox.setCheckState(QtCore.Qt.Unchecked)
         if self.common.language == 'en-US':
             self.force_en_checkbox.hide()
 
@@ -139,6 +130,7 @@ class Settings(QtWidgets.QMainWindow):
         self.save_exit_button = QtWidgets.QPushButton(_("Save & Exit"))
         self.save_exit_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
         self.save_exit_button.clicked.connect(self.save_exit)
+        # TODO: fix button text to show ampersand
 
         # Cancel button
         self.cancel_button = QtWidgets.QPushButton(_("Cancel"))
