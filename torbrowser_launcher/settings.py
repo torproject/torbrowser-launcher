@@ -127,10 +127,9 @@ class Settings(QtWidgets.QMainWindow):
         mirror_layout.addWidget(self.mirror)
 
         # Save & Exit button
-        self.save_exit_button = QtWidgets.QPushButton(_("Save & Exit"))
+        self.save_exit_button = QtWidgets.QPushButton(_("Save && Exit"))
         self.save_exit_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
         self.save_exit_button.clicked.connect(self.save_exit)
-        # TODO: fix button text to show ampersand
 
         # Cancel button
         self.cancel_button = QtWidgets.QPushButton(_("Cancel"))
