@@ -194,7 +194,7 @@ class Common(object):
         else:
             print('Refreshing local keyring...')
 
-        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+        p = subprocess.Popen(['/usr/bin/gpg2', '--status-fd', '2',
                               '--homedir', self.paths['gnupg_homedir'],
                               '--keyserver', 'hkps://hkps.pool.sks-keyservers.net',
                               '--keyserver-options', 'ca-cert-file=' + self.paths['keyserver_ca']

@@ -34,6 +34,7 @@ import lzma
 import re
 import requests
 import gpg
+import shutil
 import xml.etree.ElementTree as ET
 
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -79,10 +80,10 @@ class Launcher(QtWidgets.QMainWindow):
             # Different message if downloading for the first time, or because your installed version is too low
             download_message = ""
             if not self.common.settings['installed']:
-                download_message = _("Downloading and installing Tor Browser for the first time.")
+                download_message = _("Downloading Tor Browser for the first time.")
             elif not self.check_min_version():
                 download_message = _("Your version of Tor Browser is out-of-date. "
-                                     "Downloading and installing the newest version.")
+                                     "Downloading the newest version.")
 
             # Download and install
             print(download_message)
@@ -124,7 +125,7 @@ class Launcher(QtWidgets.QMainWindow):
             self.yes_button = QtWidgets.QPushButton()
             self.yes_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
             self.yes_button.clicked.connect(self.yes_clicked)
-            self.start_button = QtWidgets.QPushButton()
+            self.start_button = QtWidgets.QPushButton(_('Start'))
             self.start_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
             self.start_button.clicked.connect(self.start)
             self.cancel_button = QtWidgets.QPushButton()
@@ -189,6 +190,9 @@ class Launcher(QtWidgets.QMainWindow):
 
             # Cancel button
             self.cancel_button.setText(_('Cancel'))
+
+        # Resize the window
+        self.adjustSize()
 
         if self.gui_autostart:
             self.start(None)
@@ -356,10 +360,21 @@ class Launcher(QtWidgets.QMainWindow):
             self.run_task()
 
         def error(message):
-            sigerror = 'SIGNATURE VERIFICATION FAILED!\n\nError Code: {0}\n\nYou might be under attack, there might' \
-                       ' be a network\nproblem, or you may be missing a recently added\nTor Browser verification key.' \
-                       '\nClick Start to refresh the keyring and try again. If the message persists report the above' \
-                       ' error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues'.format(message)
+            # Make backup of tarball and sig
+            backup_tarball_filename = self.common.paths['tarball_file'] + '.verification_failed'
+            backup_sig_filename = self.common.paths['sig_file'] + '.verification_failed'
+            shutil.copyfile(self.common.paths['tarball_file'], backup_tarball_filename)
+            shutil.copyfile(self.common.paths['sig_file'], backup_sig_filename)
+
+            sigerror = 'SIGNATURE VERIFICATION FAILED!\n\n' \
+                       'Error Code: {0}\n\n' \
+                       'You might be under attack, there might be a network problem, or you may be missing a ' \
+                       'recently added Tor Browser verification key.\n\n' \
+                       'A copy of the Tor Browser files you downloaded have been saved here:\n' \
+                       '{1}\n{2}\n\n' \
+                       'Click Start to refresh the keyring and try again. If the message persists report the above ' \
+                       'error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues'
+            sigerror = sigerror.format(message, backup_tarball_filename, backup_sig_filename)
 
             self.set_state('task', sigerror, ['start_over'], False)
             self.update()
@@ -428,7 +443,7 @@ class Launcher(QtWidgets.QMainWindow):
     # Start over and download TBB again
     def start_over(self):
         self.force_redownload = True  # Overwrite any existing file
-        self.label.setText(_("Downloading Tor Browser Bundle over again."))
+        self.label.setText(_("Downloading Tor Browser over again."))
         self.gui_tasks = ['download_tarball', 'verify', 'extract', 'run']
         self.gui_task_i = 0
         self.start(None)
@@ -577,10 +592,10 @@ class VerifyThread(QtCore.QThread):
                 try:
                     c.verify(signature=sig, signed_data=signed)
                 except gpg.errors.BadSignatures as e:
-                    result = str(e).split(": ")
-                    if result[1] == 'No public key' and not second_try:
+                    if second_try:
+                        self.error.emit(str(e))
+                    else:
                         raise Exception
-                    self.error.emit(str(e))
                 else:
                     self.success.emit()
 
