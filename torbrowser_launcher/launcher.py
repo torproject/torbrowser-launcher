@@ -536,9 +536,13 @@ class DownloadThread(QtCore.QThread):
 
             except requests.exceptions.ConnectionError:
                 # Connection error
-                message = _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(self.url.decode())
-                self.download_error.emit('error', message)
-                # TODO: check for SSL error, also check if connecting over Tor if there's a socks5 error
+                if self.common.settings['download_over_tor']:
+                    message = _("Error starting download:\n\n{0}\n\nTrying to download over Tor. Are you sure Tor is configured correctly and running?").format(self.url.decode())
+                    self.download_error.emit('error', message)
+                else:
+                    message = _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(self.url.decode())
+                    self.download_error.emit('error', message)
+
                 return
 
         self.download_complete.emit()
