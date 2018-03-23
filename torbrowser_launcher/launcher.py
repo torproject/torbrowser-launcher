@@ -301,7 +301,6 @@ class Launcher(QtWidgets.QMainWindow):
                     break
 
             message = _('Downloaded')+(' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units))
-            print(message, end='\r')
 
             self.progress_bar.setMaximum(total_bytes)
             self.progress_bar.setValue(bytes_so_far)
@@ -361,9 +360,9 @@ class Launcher(QtWidgets.QMainWindow):
     def verify(self):
         self.progress_bar.setValue(0)
         self.progress_bar.setMaximum(0)
-        self.progress_bar.setFormat(_('Verifying Signature'))
-        self.progress_bar.setTextVisible(True)
         self.progress_bar.show()
+
+        self.label.setText(_('Verifying Signature'))
 
         def success():
             self.run_task()
@@ -384,35 +383,24 @@ class Launcher(QtWidgets.QMainWindow):
         time.sleep(0.2)
 
     def extract(self):
-        # initialize the progress bar
         self.progress_bar.setValue(0)
         self.progress_bar.setMaximum(0)
-        self.progress_bar.setFormat(_('Installing'))
         self.progress_bar.show()
 
-        extracted = False
-        try:
-            if self.common.paths['tarball_file'][-2:] == 'xz':
-                # if tarball is .tar.xz
-                xz = lzma.LZMAFile(self.common.paths['tarball_file'])
-                tf = tarfile.open(fileobj=xz)
-                tf.extractall(self.common.paths['tbb']['dir'])
-                extracted = True
-            else:
-                # if tarball is .tar.gz
-                if tarfile.is_tarfile(self.common.paths['tarball_file']):
-                    tf = tarfile.open(self.common.paths['tarball_file'])
-                    tf.extractall(self.common.paths['tbb']['dir'])
-                    extracted = True
-        except:
-            pass
+        self.label.setText(_('Installing'))
 
-        if not extracted:
+        def success():
+            self.run_task()
+
+        def error(message):
             self.set_state('task', _("Tor Browser Launcher doesn't understand the file format of {0}".format(self.common.paths['tarball_file'])), ['start_over'], False)
             self.update()
-            return
 
-        self.run_task()
+        t = ExtractThread(self.common)
+        t.error.connect(error)
+        t.success.connect(success)
+        t.start()
+        time.sleep(0.2)
 
     def check_min_version(self):
         installed_version = None
@@ -545,7 +533,7 @@ class DownloadThread(QtCore.QThread):
 
 class VerifyThread(QtCore.QThread):
     """
-    Verify a signature in a separate thread
+    Verify the signature in a separate thread
     """
     success = QtCore.pyqtSignal()
     error = QtCore.pyqtSignal(str)
@@ -570,3 +558,38 @@ class VerifyThread(QtCore.QThread):
                 self.error.emit(str(e))
             else:
                 self.success.emit()
+
+
+class ExtractThread(QtCore.QThread):
+    """
+    Extract the tarball in a separate thread
+    """
+    success = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal()
+
+    def __init__(self, common):
+        super(ExtractThread, self).__init__()
+        self.common = common
+
+    def run(self):
+        extracted = False
+        try:
+            if self.common.paths['tarball_file'][-2:] == 'xz':
+                # if tarball is .tar.xz
+                xz = lzma.LZMAFile(self.common.paths['tarball_file'])
+                tf = tarfile.open(fileobj=xz)
+                tf.extractall(self.common.paths['tbb']['dir'])
+                extracted = True
+            else:
+                # if tarball is .tar.gz
+                if tarfile.is_tarfile(self.common.paths['tarball_file']):
+                    tf = tarfile.open(self.common.paths['tarball_file'])
+                    tf.extractall(self.common.paths['tbb']['dir'])
+                    extracted = True
+        except:
+            pass
+
+        if extracted:
+            self.success.emit()
+        else:
+            self.error.emit()
