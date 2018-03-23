@@ -34,16 +34,11 @@ import locale
 import pickle
 import json
 import re
-
-try:
-    import gpg
-    gpgme_support = True
-except ImportError:
-    gpgme_support = False
+import gettext
+import gpg
 
 SHARE = os.getenv('TBL_SHARE', sys.prefix+'/share/torbrowser-launcher')
 
-import gettext
 gettext.install('torbrowser-launcher')
 
 # We're looking for output which:
@@ -70,13 +65,6 @@ class Common(object):
         self.mkdir(self.paths['download_dir'])
         self.mkdir(self.paths['tbb']['dir'])
         self.init_gnupg()
-
-        # allow buttons to have icons
-        try:
-            gtk_settings = gtk.settings_get_default()
-            gtk_settings.props.gtk_button_images = True
-        except:
-            pass
 
     # discover the architecture and language
     def discover_arch_lang(self):
@@ -129,17 +117,17 @@ class Common(object):
                 language = 'en-US'
             else:
                 language = self.language
-            tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+language+'.tar.xz'
+            tarball_filename = 'tor-browser-' + arch + '-' + tbb_version + '_' + language + '.tar.xz'
 
             # tarball
-            self.paths['tarball_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename
-            self.paths['tarball_file'] = tbb_cache+'/download/'+tarball_filename
+            self.paths['tarball_url'] = '{0}torbrowser/' + tbb_version + '/' + tarball_filename
+            self.paths['tarball_file'] = tbb_cache + '/download/' + tarball_filename
             self.paths['tarball_filename'] = tarball_filename
 
             # sig
-            self.paths['sig_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename+'.asc'
-            self.paths['sig_file'] = tbb_cache+'/download/'+tarball_filename+'.asc'
-            self.paths['sig_filename'] = tarball_filename+'.asc'
+            self.paths['sig_url'] = '{0}torbrowser/' + tbb_version + '/' + tarball_filename + '.asc'
+            self.paths['sig_file'] = tbb_cache + '/download/' + tarball_filename + '.asc'
+            self.paths['sig_filename'] = tarball_filename + '.asc'
         else:
             self.paths = {
                 'dirs': {
@@ -156,18 +144,20 @@ class Common(object):
                     'tor_browser_developers': os.path.join(SHARE, 'tor-browser-developers.asc')
                 },
                 'mirrors_txt': [os.path.join(SHARE, 'mirrors.txt'),
-                                tbb_config+'/mirrors.txt'],
-                'download_dir': tbb_cache+'/download',
-                'gnupg_homedir': tbb_local+'/gnupg_homedir',
-                'settings_file': tbb_config+'/settings.json',
-                'settings_file_pickle': tbb_config+'/settings',
+                                tbb_config + '/mirrors.txt'],
+                'download_dir': tbb_cache + '/download',
+                'gnupg_homedir': tbb_local + '/gnupg_homedir',
+                'settings_file': tbb_config + '/settings.json',
+                'settings_file_pickle': tbb_config + '/settings',
                 'version_check_url': 'https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/en-US',
-                'version_check_file': tbb_cache+'/download/release.xml',
+                'version_check_file': tbb_cache + '/download/release.xml',
                 'tbb': {
-                    'changelog': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/ChangeLog.txt',
-                    'dir': tbb_local+'/tbb/'+self.architecture,
-                    'dir_tbb': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language,
-                    'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser.desktop',
+                    'changelog': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' +
+                                 self.language + '/Browser/TorBrowser/Docs/ChangeLog.txt',
+                    'dir': tbb_local + '/tbb/' + self.architecture,
+                    'dir_tbb': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' + self.language,
+                    'start': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' +
+                             self.language + '/start-tor-browser.desktop'
                 },
             }
 
@@ -233,38 +223,20 @@ class Common(object):
         :returns: ``True`` if the key is now within the keyring (or was
             previously and hasn't changed). ``False`` otherwise.
         """
-        if gpgme_support:
-            with gpg.Context() as c:
-                c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
+        with gpg.Context() as c:
+            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
 
-                impkey = self.paths['signing_keys'][key]
-                try:
-                    c.op_import(gpg.Data(file=impkey))
-                except:
-                    return False
+            impkey = self.paths['signing_keys'][key]
+            try:
+                c.op_import(gpg.Data(file=impkey))
+            except:
+                return False
+            else:
+                result = c.op_import_result()
+                if result and self.fingerprints[key] in result.imports[0].fpr:
+                    return True
                 else:
-                    result = c.op_import_result()
-                    if result and self.fingerprints[key] in result.imports[0].fpr:
-                        return True
-                    else:
-                        return False
-        else:
-            success = False
-
-            p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
-                                  '--homedir', self.paths['gnupg_homedir'],
-                                  '--import', self.paths['signing_keys'][key]],
-                                 stderr=subprocess.PIPE)
-            p.wait()
-
-            for output in p.stderr.readlines():
-                match = gnupg_import_ok_pattern.match(output)
-                if match:
-                    if match.group().find(self.fingerprints[key]) >= 0:
-                        success = True
-                        break
-
-            return success
+                    return False
 
     # import gpg keys
     def import_keys(self):
@@ -273,7 +245,7 @@ class Common(object):
         :returns: ``True`` if all keys were successfully imported; ``False``
             otherwise.
         """
-        keys = ['tor_browser_developers',]
+        keys = ['tor_browser_developers', ]
         all_imports_succeeded = True
 
         for key in keys:

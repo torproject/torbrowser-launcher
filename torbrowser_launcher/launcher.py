@@ -29,15 +29,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 import os
 import subprocess
 import time
-import json
 import tarfile
-import hashlib
 import lzma
-import threading
 import re
-import unicodedata
 import requests
-import socks
 import gpg
 import xml.etree.ElementTree as ET
 
@@ -86,18 +81,19 @@ class Launcher(QtWidgets.QMainWindow):
             if not self.common.settings['installed']:
                 download_message = _("Downloading and installing Tor Browser for the first time.")
             elif not self.check_min_version():
-                download_message = _("Your version of Tor Browser is out-of-date. Downloading and installing the newest version.")
+                download_message = _("Your version of Tor Browser is out-of-date. "
+                                     "Downloading and installing the newest version.")
 
             # Download and install
             print(download_message)
             self.set_state('task', download_message,
-                         ['download_version_check',
-                          'set_version',
-                          'download_sig',
-                          'download_tarball',
-                          'verify',
-                          'extract',
-                          'run'])
+                           ['download_version_check',
+                            'set_version',
+                            'download_sig',
+                            'download_tarball',
+                            'verify',
+                            'extract',
+                            'run'])
 
             if self.common.settings['download_over_tor']:
                 print(_('Downloading over Tor'))
@@ -364,7 +360,7 @@ class Launcher(QtWidgets.QMainWindow):
             sigerror = 'SIGNATURE VERIFICATION FAILED!\n\nError Code: {0}\n\nYou might be under attack, there might' \
                        ' be a network\nproblem, or you may be missing a recently added\nTor Browser verification key.' \
                        '\nClick Start to refresh the keyring and try again. If the message persists report the above' \
-                       ' error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues'.format(sigerror)
+                       ' error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues'.format(message)
 
             self.set_state('task', sigerror, ['start_over'], False)
             self.update()
@@ -386,7 +382,11 @@ class Launcher(QtWidgets.QMainWindow):
             self.run_task()
 
         def error(message):
-            self.set_state('task', _("Tor Browser Launcher doesn't understand the file format of {0}".format(self.common.paths['tarball_file'])), ['start_over'], False)
+            self.set_state(
+                'task',
+                _("Tor Browser Launcher doesn't understand the file format of {0}".format(self.common.paths['tarball_file'])),
+                ['start_over'], False
+            )
             self.update()
 
         t = ExtractThread(self.common)
@@ -501,13 +501,18 @@ class DownloadThread(QtCore.QThread):
                     if self.common.settings['mirror'] != self.common.default_mirror:
                         message = (_("Download Error:") +
                                    " {0}\n\n" + _("You are currently using a non-default mirror") +
-                                   ":\n{1}\n\n" + _("Would you like to switch back to the default?")).format(r.status_code, self.common.settings['mirror'])
+                                   ":\n{1}\n\n" + _("Would you like to switch back to the default?")).format(
+                                       r.status_code, self.common.settings['mirror']
+                                   )
                         self.download_error.emit('error_try_default_mirror', message)
 
                     # Should we switch to English?
                     elif self.common.language != 'en-US' and not self.common.settings['force_en-US']:
                         message = (_("Download Error:") +
-                                   " {0}\n\n" + _("Would you like to try the English version of Tor Browser instead?")).format(r.status_code)
+                                   " {0}\n\n" +
+                                   _("Would you like to try the English version of Tor Browser instead?")).format(
+                                       r.status_code
+                                   )
                         self.download_error.emit('error_try_forcing_english', message)
 
                     else:
@@ -526,21 +531,24 @@ class DownloadThread(QtCore.QThread):
                     self.progress_update.emit(total_bytes, bytes_so_far)
 
             except requests.exceptions.SSLError:
+                message = _('Invalid SSL certificate for:\n{0}\n\nYou may be under attack.').format(self.url.decode())
                 if not self.common.settings['download_over_tor']:
-                    message = _('Invalid SSL certificate for:\n{0}\n\nYou may be under attack.').format(self.url.decode()) + "\n\n" + _('Try the download again using Tor?')
+                    message += "\n\n" + _('Try the download again using Tor?')
                     self.download_error.emit('error_try_tor', message)
                 else:
-                    message = _('Invalid SSL certificate for:\n{0}\n\nYou may be under attack.'.format(self.url.decode()))
                     self.download_error.emit('error', message)
                 return
 
             except requests.exceptions.ConnectionError:
                 # Connection error
                 if self.common.settings['download_over_tor']:
-                    message = _("Error starting download:\n\n{0}\n\nTrying to download over Tor. Are you sure Tor is configured correctly and running?").format(self.url.decode())
+                    message = _("Error starting download:\n\n{0}\n\nTrying to download over Tor. "
+                                "Are you sure Tor is configured correctly and running?").format(self.url.decode())
                     self.download_error.emit('error', message)
                 else:
-                    message = _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(self.url.decode())
+                    message = _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(
+                        self.url.decode()
+                    )
                     self.download_error.emit('error', message)
 
                 return

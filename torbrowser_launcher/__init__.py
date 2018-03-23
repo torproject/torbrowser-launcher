@@ -71,13 +71,14 @@ def main():
 
     if settings:
         # Settings mode
-        gui = Settings(common, app)
+        Settings(common, app)
 
     else:
         # Launcher mode
-        gui = Launcher(common, app, url_list)
+        Launcher(common, app, url_list)
 
     sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     main()

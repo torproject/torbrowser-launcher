@@ -31,6 +31,7 @@ import shutil
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 
+
 class Settings(QtWidgets.QMainWindow):
     """
     Settings window.
