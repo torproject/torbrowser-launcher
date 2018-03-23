@@ -322,21 +322,21 @@ class Launcher(QtWidgets.QMainWindow):
         t.start()
         time.sleep(0.2)
 
-    def try_default_mirror(self, widget, data=None):
+    def try_default_mirror(self):
         # change mirror to default and relaunch TBL
         self.common.settings['mirror'] = self.common.default_mirror
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
         self.close()
 
-    def try_forcing_english(self, widget, data=None):
+    def try_forcing_english(self):
         # change force english to true and relaunch TBL
         self.common.settings['force_en-US'] = True
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
         self.close()
 
-    def try_tor(self, widget, data=None):
+    def try_tor(self):
         # set download_over_tor to true and relaunch TBL
         self.common.settings['download_over_tor'] = True
         self.common.save_settings()
@@ -496,7 +496,7 @@ class DownloadThread(QtCore.QThread):
                     if self.common.settings['mirror'] != self.common.default_mirror:
                         message = (_("Download Error:") +
                                    " {0}\n\n" + _("You are currently using a non-default mirror") +
-                                   ":\n{1}\n\n" + _("Would you like to switch back to the default?")).format(r.status_code, common.settings['mirror'])
+                                   ":\n{1}\n\n" + _("Would you like to switch back to the default?")).format(r.status_code, self.common.settings['mirror'])
                         self.download_error.emit('error_try_default_mirror', message)
 
                     # Should we switch to English?
@@ -520,6 +520,15 @@ class DownloadThread(QtCore.QThread):
                     f.write(data)
                     self.progress_update.emit(total_bytes, bytes_so_far)
 
+            except requests.exceptions.SSLError:
+                if not self.common.settings['download_over_tor']:
+                    message = _('Invalid SSL certificate for:\n{0}\n\nYou may be under attack.').format(self.url.decode()) + "\n\n" + _('Try the download again using Tor?')
+                    self.download_error.emit('error_try_tor', message)
+                else:
+                    message = _('Invalid SSL certificate for:\n{0}\n\nYou may be under attack.'.format(self.url.decode()))
+                    self.download_error.emit('error', message)
+                return
+
             except requests.exceptions.ConnectionError:
                 # Connection error
                 message = _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(self.url.decode())
@@ -527,7 +536,6 @@ class DownloadThread(QtCore.QThread):
                 # TODO: check for SSL error, also check if connecting over Tor if there's a socks5 error
                 return
 
-        print('')
         self.download_complete.emit()
 
 
