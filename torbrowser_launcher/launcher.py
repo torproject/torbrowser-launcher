@@ -568,21 +568,30 @@ class VerifyThread(QtCore.QThread):
         self.common = common
 
     def run(self):
-        with gpg.Context() as c:
-            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
+        def verify(second_try=False):
+            with gpg.Context() as c:
+                c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
 
-            sig = gpg.Data(file=self.common.paths['sig_file'])
-            signed = gpg.Data(file=self.common.paths['tarball_file'])
+                sig = gpg.Data(file=self.common.paths['sig_file'])
+                signed = gpg.Data(file=self.common.paths['tarball_file'])
 
-            try:
-                c.verify(signature=sig, signed_data=signed)
-            except gpg.errors.BadSignatures as e:
-                result = str(e).split(": ")
-                if result[1] == 'No public key':
-                    self.common.refresh_keyring(result[0])
-                self.error.emit(str(e))
-            else:
-                self.success.emit()
+                try:
+                    c.verify(signature=sig, signed_data=signed)
+                except gpg.errors.BadSignatures as e:
+                    result = str(e).split(": ")
+                    if result[1] == 'No public key' and not second_try:
+                        raise Exception
+                    self.error.emit(str(e))
+                else:
+                    self.success.emit()
+
+        try:
+            # Try verifying
+            verify()
+        except:
+            # If it fails, refresh the keyring and try again
+            self.common.refresh_keyring()
+            verify(True)
 
 
 class ExtractThread(QtCore.QThread):
