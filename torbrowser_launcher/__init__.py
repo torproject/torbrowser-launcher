@@ -70,13 +70,14 @@ def main():
     common = Common(tor_browser_launcher_version)
     app = Application()
 
+    # Open the GUI
+    gui = None
     if settings:
         # Settings mode
-        Settings(common, app)
-
+        gui = Settings(common, app)
     else:
         # Launcher mode
-        Launcher(common, app, url_list)
+        gui = Launcher(common, app, url_list)
 
     # Allow ctrl-c to work
     signal.signal(signal.SIGINT, signal.SIG_DFL)
