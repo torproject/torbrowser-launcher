@@ -151,7 +151,6 @@ class Settings(QtWidgets.QMainWindow):
         central_widget = QtWidgets.QWidget()
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
-        self.show()
 
     # Install
     def install(self):

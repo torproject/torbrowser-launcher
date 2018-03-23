@@ -70,14 +70,24 @@ def main():
     common = Common(tor_browser_launcher_version)
     app = Application()
 
-    # Open the GUI
+    # Open the window
     gui = None
+
     if settings:
         # Settings mode
         gui = Settings(common, app)
     else:
         # Launcher mode
         gui = Launcher(common, app, url_list)
+
+    # Center the window
+    desktop = app.desktop()
+    window_size = gui.size()
+    gui.move(
+        (desktop.width() - window_size.width()) / 2,
+        (desktop.height() - window_size.height()) / 2
+    )
+    gui.show()
 
     # Allow ctrl-c to work
     signal.signal(signal.SIGINT, signal.SIG_DFL)
