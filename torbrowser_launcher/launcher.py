@@ -276,130 +276,6 @@ class Launcher(QtWidgets.QMainWindow):
             print(_('Starting download over again'))
             self.start_over()
 
-    def response_received(self, response):
-        class FileDownloader(Protocol):
-            def __init__(self, common, file, url, total, progress, done_cb):
-                self.file = file
-                self.total = total
-                self.so_far = 0
-                self.progress = progress
-                self.all_done = done_cb
-
-                if response.code != 200:
-                    if common.settings['mirror'] != common.default_mirror:
-                        raise TryDefaultMirrorException(
-                            (_("Download Error:") + " {0} {1}\n\n" + _("You are currently using a non-default mirror")
-                             + ":\n{2}\n\n" + _("Would you like to switch back to the default?")).format(
-                                response.code, response.phrase, common.settings['mirror']
-                            )
-                        )
-                    elif common.language != 'en-US' and not common.settings['force_en-US']:
-                        raise TryForcingEnglishException(
-                            (_("Download Error:") + " {0} {1}\n\n"
-                             + _("Would you like to try the English version of Tor Browser instead?")).format(
-                                response.code, response.phrase
-                            )
-                        )
-                    else:
-                        raise DownloadErrorException(
-                            (_("Download Error:") + " {0} {1}").format(response.code, response.phrase)
-                        )
-
-            def dataReceived(self, bytes):
-                self.file.write(bytes)
-                self.so_far += len(bytes)
-                percent = float(self.so_far) / float(self.total)
-                self.progress.setValue(percent)
-                amount = float(self.so_far)
-                units = "bytes"
-                for (size, unit) in [(1024 * 1024, "MiB"), (1024, "KiB")]:
-                    if amount > size:
-                        units = unit
-                        amount /= float(size)
-                        break
-
-                self.progress.setFormat(_('Downloaded')+(' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units)))
-
-            def connectionLost(self, reason):
-                self.all_done(reason)
-
-        if hasattr(self, 'current_download_url'):
-            url = self.current_download_url
-        else:
-            url = None
-
-        dl = FileDownloader(
-            self.common, self.file_download, url, response.length, self.progress_bar, self.response_finished
-        )
-        response.deliverBody(dl)
-
-    def response_finished(self, msg):
-        if msg.check(ResponseDone):
-            self.file_download.close()
-            delattr(self, 'current_download_path')
-            delattr(self, 'current_download_url')
-
-            # next task!
-            self.run_task()
-
-        else:
-            print("FINISHED", msg)
-            ## FIXME handle errors
-
-    def download_error(self, f):
-        print(_("Download Error:"), f.value, type(f.value))
-
-        if isinstance(f.value, TryStableException):
-            f.trap(TryStableException)
-            self.set_state('error_try_stable', str(f.value), [], False)
-
-        elif isinstance(f.value, TryDefaultMirrorException):
-            f.trap(TryDefaultMirrorException)
-            self.set_state('error_try_default_mirror', str(f.value), [], False)
-
-        elif isinstance(f.value, TryForcingEnglishException):
-            f.trap(TryForcingEnglishException)
-            self.set_state('error_try_forcing_english', str(f.value), [], False)
-
-        elif isinstance(f.value, DownloadErrorException):
-            f.trap(DownloadErrorException)
-            self.set_state('error', str(f.value), [], False)
-
-        elif isinstance(f.value, DNSLookupError):
-            f.trap(DNSLookupError)
-            if common.settings['mirror'] != common.default_mirror:
-                self.set_state('error_try_default_mirror', (_("DNS Lookup Error") + "\n\n" +
-                                                          _("You are currently using a non-default mirror")
-                                                          + ":\n{0}\n\n"
-                                                          + _("Would you like to switch back to the default?")
-                                                          ).format(common.settings['mirror']), [], False)
-            else:
-                self.set_state('error', str(f.value), [], False)
-
-        elif isinstance(f.value, ResponseFailed):
-            for reason in f.value.reasons:
-                if isinstance(reason.value, OpenSSL.SSL.Error):
-                    # TODO: add the ability to report attack by posting bug to trac.torproject.org
-                    if not self.common.settings['download_over_tor']:
-                        self.set_state('error_try_tor',
-                                     _('The SSL certificate served by https://www.torproject.org is invalid! You may '
-                                       'be under attack.') + " " + _('Try the download again using Tor?'), [], False)
-                    else:
-                        self.set_state('error', _('The SSL certificate served by https://www.torproject.org is invalid! '
-                                                'You may be under attack.'), [], False)
-
-        elif isinstance(f.value, ConnectionRefusedError) and self.common.settings['download_over_tor']:
-            # If we're using Tor, we'll only get this error when we fail to
-            # connect to the SOCKS server.  If the connection fails at the
-            # remote end, we'll get txsocksx.errors.ConnectionRefused.
-            addr = self.common.settings['tor_socks_address']
-            self.set_state('error', _("Error connecting to Tor at {0}").format(addr), [], False)
-
-        else:
-            self.set_state('error', _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(f.value), [], False)
-
-        self.update()
-
     def download(self, name, url, path):
         # Download from the selected mirror
         mirror_url = url.format(self.common.settings['mirror']).encode()
@@ -435,8 +311,10 @@ class Launcher(QtWidgets.QMainWindow):
             # Download complete, next task
             self.run_task()
 
-        def download_error(message):
-            print('Download error: {}'.format(msg))
+        def download_error(gui, message):
+            print(message)
+            self.set_state(gui, message, [], False)
+            self.update()
 
         t = DownloadThread(mirror_url, path)
         t.progress_update.connect(progress_update)
@@ -622,7 +500,7 @@ class DownloadThread(QtCore.QThread):
     """
     progress_update = QtCore.pyqtSignal(int, int)
     download_complete = QtCore.pyqtSignal()
-    download_error = QtCore.pyqtSignal(str)
+    download_error = QtCore.pyqtSignal(str, str)
 
     def __init__(self, url, path):
         super(DownloadThread, self).__init__()
@@ -631,41 +509,46 @@ class DownloadThread(QtCore.QThread):
 
     def run(self):
         with open(self.path, "wb") as f:
-            # Start the request
-            r = requests.get(self.url, headers={'User-Agent': 'torbrowser-launcher'}, stream=True)
+            try:
+                # Start the request
+                r = requests.get(self.url, headers={'User-Agent': 'torbrowser-launcher'}, stream=True)
 
-            # If status code isn't 200, something went wrong
-            if r.status_code != 200:
-                if common.settings['mirror'] != common.default_mirror:
-                    self.download_error.emit(
-                        (_("Download Error:") + " {0} {1}\n\n" + _("You are currently using a non-default mirror")
-                         + ":\n{2}\n\n" + _("Would you like to switch back to the default?")).format(
-                            response.code, response.phrase, common.settings['mirror']
-                        )
-                    )
-                elif common.language != 'en-US' and not common.settings['force_en-US']:
-                    self.download_error.emit(
-                        (_("Download Error:") + " {0} {1}\n\n"
-                         + _("Would you like to try the English version of Tor Browser instead?")).format(
-                            response.code, response.phrase
-                        )
-                    )
-                else:
-                    self.download_error.emit(
-                        (_("Download Error:") + " {0} {1}").format(response.code, response.phrase)
-                    )
+                # If status code isn't 200, something went wrong
+                if r.status_code != 200:
+                    # Should we use the default mirror?
+                    if common.settings['mirror'] != common.default_mirror:
+                        message = (_("Download Error:") +
+                                   " {0}\n\n" + _("You are currently using a non-default mirror") +
+                                   ":\n{1}\n\n" + _("Would you like to switch back to the default?")).format(r.status_code, common.settings['mirror'])
+                        self.download_error.emit('error_try_default_mirror', message)
 
-                r.close()
+                    # Should we switch to English?
+                    elif common.language != 'en-US' and not common.settings['force_en-US']:
+                        message = (_("Download Error:") +
+                                   " {0}\n\n" + _("Would you like to try the English version of Tor Browser instead?")).format(r.status_code)
+                        self.download_error.emit('error_try_forcing_english', message)
+
+                    else:
+                        message = (_("Download Error:") + " {0}").format(r.status_code)
+                        self.download_error.emit('error', message)
+
+                    r.close()
+                    return
+
+                # Start streaming the download
+                total_bytes = int(r.headers.get('content-length'))
+                bytes_so_far = 0
+                for data in r.iter_content(chunk_size=4096):
+                    bytes_so_far += len(data)
+                    f.write(data)
+                    self.progress_update.emit(total_bytes, bytes_so_far)
+
+            except requests.exceptions.ConnectionError:
+                # Connection error
+                message = _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(self.url.decode())
+                self.download_error.emit('error', message)
+                # TODO: check for SSL error, also check if connecting over Tor if there's a socks5 error
                 return
-
-            # Start streaming the download
-            total_bytes = int(r.headers.get('content-length'))
-            bytes_so_far = 0
-            for data in r.iter_content(chunk_size=4096):
-                bytes_so_far += len(data)
-                f.write(data)
-                self.progress_update.emit(total_bytes, bytes_so_far)
-
 
         print('')
         self.download_complete.emit()
