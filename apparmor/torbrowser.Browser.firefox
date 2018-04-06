@@ -1,7 +1,9 @@
 #include <tunables/global>
 #include <tunables/torbrowser>
 
-/home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox {
+@{torbrowser_firefox_executable} = /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox
+
+profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/gnome>
 
   # Uncomment the following lines if you want to give the Tor Browser read-write
@@ -13,7 +15,8 @@
   network netlink raw,
   network tcp,
 
-  ptrace (trace) peer=@{profile_name},
+  ptrace (trace) peer=torbrowser_plugin_container,
+  signal (send) set=("term") peer=torbrowser_plugin_container,
 
   deny /etc/host.conf r,
   deny /etc/hosts r,
@@ -46,6 +49,8 @@
   owner @{torbrowser_home_dir}.bak/ rwk,
   owner @{torbrowser_home_dir}.bak/** rwk,
   owner @{torbrowser_home_dir}/*.so mr,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/ rwk,
+  owner @{torbrowser_home_dir}/.cache/fontconfig/** rwkl,
   owner @{torbrowser_home_dir}/components/*.so mr,
   owner @{torbrowser_home_dir}/browser/components/*.so mr,
   owner @{torbrowser_home_dir}/firefox rix,
@@ -102,6 +107,10 @@
   deny @{PROC}/@{pid}/net/route r,
   deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
+
+  # Silence denial logs about PulseAudio
+  deny /etc/pulse/client.conf r,
+  deny /usr/bin/pulseaudio x,
 
   # KDE 4
   owner @{HOME}/.kde/share/config/* r,

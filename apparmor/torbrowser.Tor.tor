@@ -1,6 +1,9 @@
 #include <tunables/global>
+#include <tunables/torbrowser>
 
-/home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Tor/tor {
+@{torbrowser_tor_executable} = /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/TorBrowser/Tor/tor
+
+profile torbrowser_tor @{torbrowser_tor_executable} {
   #include <abstractions/base>
 
   network netlink raw,
@@ -11,18 +14,23 @@
   /etc/nsswitch.conf r,
   /etc/passwd r,
   /etc/resolv.conf r,
-  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Tor/tor mr,
-  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Tor/ rw,
-  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Tor/* rw,
-  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Tor/lock rwk,
-  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/Tor,Lib}/*.so mr,
-  owner @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/Tor,Lib}/*.so.* mr,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/tor mr,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Tor/ rw,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Tor/** rw,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Tor/lock rwk,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
+
+  # Support some of the included pluggable transports
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/PluggableTransports/** rix,
+  @{PROC}/sys/net/core/somaxconn r,
 
   # Silence file_inherit logs
-  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/{browser/,}omni.ja r,
-  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/.parentlock rw,
-  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/extensions/*.xpi r,
-  deny @{HOME}/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/{Browser/TorBrowser/,}Data/Browser/profile.default/startupCache/* r,
+  deny @{torbrowser_home_dir}/{browser/,}omni.ja r,
+  deny @{torbrowser_home_dir}/{browser/,}features/*.xpi r,
+  deny @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/.parentlock rw,
+  deny @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/extensions/*.xpi r,
+  deny @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/startupCache/* r,
 
   @{PROC}/sys/kernel/random/uuid r,
   /sys/devices/system/cpu/ r,
