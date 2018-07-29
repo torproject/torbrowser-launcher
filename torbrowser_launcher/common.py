@@ -26,8 +26,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from __future__ import print_function
-
 import os
 import sys
 import platform
@@ -36,24 +34,12 @@ import locale
 import pickle
 import json
 import re
-
-try:
-    import gpg
-    gpgme_support = True
-except ImportError:
-    gpgme_support = False
-
-import pygtk
-pygtk.require('2.0')
-import gtk
+import gettext
+import gpg
 
 SHARE = os.getenv('TBL_SHARE', sys.prefix+'/share/torbrowser-launcher')
 
-import gettext
 gettext.install('torbrowser-launcher')
-
-from twisted.internet import gtk2reactor
-gtk2reactor.install()
 
 # We're looking for output which:
 #
@@ -61,11 +47,10 @@ gtk2reactor.install()
 #  2. The second must be an integer between [0, 15], inclusive
 #  3. The third must be an uppercased hex-encoded 160-bit fingerprint
 gnupg_import_ok_pattern = re.compile(
-    "(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})")
+    b"(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})")
 
 
-class Common:
-
+class Common(object):
     def __init__(self, tbl_version):
         self.tbl_version = tbl_version
 
@@ -80,13 +65,6 @@ class Common:
         self.mkdir(self.paths['download_dir'])
         self.mkdir(self.paths['tbb']['dir'])
         self.init_gnupg()
-
-        # allow buttons to have icons
-        try:
-            gtk_settings = gtk.settings_get_default()
-            gtk_settings.props.gtk_button_images = True
-        except:
-            pass
 
     # discover the architecture and language
     def discover_arch_lang(self):
@@ -139,17 +117,17 @@ class Common:
                 language = 'en-US'
             else:
                 language = self.language
-            tarball_filename = 'tor-browser-'+arch+'-'+tbb_version+'_'+language+'.tar.xz'
+            tarball_filename = 'tor-browser-' + arch + '-' + tbb_version + '_' + language + '.tar.xz'
 
             # tarball
-            self.paths['tarball_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename
-            self.paths['tarball_file'] = tbb_cache+'/download/'+tarball_filename
+            self.paths['tarball_url'] = '{0}torbrowser/' + tbb_version + '/' + tarball_filename
+            self.paths['tarball_file'] = tbb_cache + '/download/' + tarball_filename
             self.paths['tarball_filename'] = tarball_filename
 
             # sig
-            self.paths['sig_url'] = '{0}torbrowser/'+tbb_version+'/'+tarball_filename+'.asc'
-            self.paths['sig_file'] = tbb_cache+'/download/'+tarball_filename+'.asc'
-            self.paths['sig_filename'] = tarball_filename+'.asc'
+            self.paths['sig_url'] = '{0}torbrowser/' + tbb_version + '/' + tarball_filename + '.asc'
+            self.paths['sig_file'] = tbb_cache + '/download/' + tarball_filename + '.asc'
+            self.paths['sig_filename'] = tarball_filename + '.asc'
         else:
             self.paths = {
                 'dirs': {
@@ -166,19 +144,20 @@ class Common:
                     'tor_browser_developers': os.path.join(SHARE, 'tor-browser-developers.asc')
                 },
                 'mirrors_txt': [os.path.join(SHARE, 'mirrors.txt'),
-                                tbb_config+'/mirrors.txt'],
-                'modem_sound': os.path.join(SHARE, 'modem.ogg'),
-                'download_dir': tbb_cache+'/download',
-                'gnupg_homedir': tbb_local+'/gnupg_homedir',
-                'settings_file': tbb_config+'/settings.json',
-                'settings_file_pickle': tbb_config+'/settings',
+                                tbb_config + '/mirrors.txt'],
+                'download_dir': tbb_cache + '/download',
+                'gnupg_homedir': tbb_local + '/gnupg_homedir',
+                'settings_file': tbb_config + '/settings.json',
+                'settings_file_pickle': tbb_config + '/settings',
                 'version_check_url': 'https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/en-US',
-                'version_check_file': tbb_cache+'/download/release.xml',
+                'version_check_file': tbb_cache + '/download/release.xml',
                 'tbb': {
-                    'changelog': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/Browser/TorBrowser/Docs/ChangeLog.txt',
-                    'dir': tbb_local+'/tbb/'+self.architecture,
-                    'dir_tbb': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language,
-                    'start': tbb_local+'/tbb/'+self.architecture+'/tor-browser_'+self.language+'/start-tor-browser.desktop',
+                    'changelog': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' +
+                                 self.language + '/Browser/TorBrowser/Docs/ChangeLog.txt',
+                    'dir': tbb_local + '/tbb/' + self.architecture,
+                    'dir_tbb': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' + self.language,
+                    'start': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' +
+                             self.language + '/start-tor-browser.desktop'
                 },
             }
 
@@ -215,7 +194,7 @@ class Common:
         else:
             print('Refreshing local keyring...')
 
-        p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
+        p = subprocess.Popen(['/usr/bin/gpg2', '--status-fd', '2',
                               '--homedir', self.paths['gnupg_homedir'],
                               '--keyserver', 'hkps://hkps.pool.sks-keyservers.net',
                               '--keyserver-options', 'ca-cert-file=' + self.paths['keyserver_ca']
@@ -244,38 +223,20 @@ class Common:
         :returns: ``True`` if the key is now within the keyring (or was
             previously and hasn't changed). ``False`` otherwise.
         """
-        if gpgme_support:
-            with gpg.Context() as c:
-                c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
+        with gpg.Context() as c:
+            c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.paths['gnupg_homedir'])
 
-                impkey = self.paths['signing_keys'][key]
-                try:
-                    c.op_import(gpg.Data(file=impkey))
-                except:
-                    return False
+            impkey = self.paths['signing_keys'][key]
+            try:
+                c.op_import(gpg.Data(file=impkey))
+            except:
+                return False
+            else:
+                result = c.op_import_result()
+                if result and self.fingerprints[key] in result.imports[0].fpr:
+                    return True
                 else:
-                    result = c.op_import_result()
-                    if result and self.fingerprints[key] in result.imports[0].fpr:
-                        return True
-                    else:
-                        return False
-        else:
-            success = False
-
-            p = subprocess.Popen(['/usr/bin/gpg', '--status-fd', '2',
-                                  '--homedir', self.paths['gnupg_homedir'],
-                                  '--import', self.paths['signing_keys'][key]],
-                                 stderr=subprocess.PIPE)
-            p.wait()
-
-            for output in p.stderr.readlines():
-                match = gnupg_import_ok_pattern.match(output)
-                if match:
-                    if match.group().find(self.fingerprints[key]) >= 0:
-                        success = True
-                        break
-
-            return success
+                    return False
 
     # import gpg keys
     def import_keys(self):
@@ -284,7 +245,7 @@ class Common:
         :returns: ``True`` if all keys were successfully imported; ``False``
             otherwise.
         """
-        keys = ['tor_browser_developers',]
+        keys = ['tor_browser_developers', ]
         all_imports_succeeded = True
 
         for key in keys:
@@ -297,7 +258,6 @@ class Common:
         if not all_imports_succeeded:
             print(_('Not all keys were imported successfully!'))
 
-        self.refresh_keyring()
         return all_imports_succeeded
 
     # load mirrors
@@ -316,8 +276,7 @@ class Common:
             'tbl_version': self.tbl_version,
             'installed': False,
             'download_over_tor': False,
-            'modem_sound': False,
-            'tor_socks_address': 'tcp:127.0.0.1:9050',
+            'tor_socks_address': '127.0.0.1:9050',
             'mirror': self.default_mirror,
             'force_en-US': False,
         }
@@ -334,6 +293,11 @@ class Common:
                 if setting not in settings:
                     settings[setting] = default_settings[setting]
                     resave = True
+
+            # make sure tor_socks_address doesn't start with 'tcp:'
+            if settings['tor_socks_address'].startswith('tcp:'):
+                settings['tor_socks_address'] = settings['tor_socks_address'][4:]
+                resave = True
 
             # make sure the version is current
             if settings['tbl_version'] != self.tbl_version:

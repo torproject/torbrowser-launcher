@@ -7,161 +7,195 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-29 21:06+0100\n"
+"POT-Creation-Date: 2018-03-23 15:47-0700\n"
 "PO-Revision-Date: 2017-01-29 21:33+0100\n"
+"Last-Translator: Marek Suchánek <marek.suchanek@protonmail.com>\n"
 "Language-Team: \n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.11\n"
-"Last-Translator: Marek Suchánek <marek.suchanek@protonmail.com>\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"Language: cs\n"
 
-#: __init__.py:49
+#: __init__.py:65 launcher.py:470
 msgid "Tor Browser Launcher"
 msgstr "Spouštěč prohlížeče Tor"
 
-#: __init__.py:50
+#: __init__.py:66
 msgid "By Micah Lee, licensed under MIT"
 msgstr "Vytvořil Micah Lee pod licencí MIT"
 
-#: __init__.py:51
+#: __init__.py:67
 #, python-brace-format
 msgid "version {0}"
 msgstr "verze {0}"
 
-#: common.py:108
+#: common.py:100
 #, python-brace-format
 msgid "Error creating {0}"
 msgstr "Chyba při vytváření {0}"
 
-#: common.py:110 common.py:186
+#: common.py:102 common.py:180
 #, python-brace-format
 msgid "{0} is not writable"
 msgstr "Do {0} není možné zapisovat"
 
-#: common.py:183
+#: common.py:177
 #, python-brace-format
 msgid "Cannot create directory {0}"
 msgstr "Nelze vytvořit adresář {0}"
 
-#: common.py:193
+#: common.py:187
 msgid "Creating GnuPG homedir"
 msgstr "Vytváří se domovská složka GnuGPG"
 
-#: common.py:240
+#: common.py:254
 #, python-format
 msgid "Could not import key with fingerprint: %s."
 msgstr "Selhal import klíče s otiskem: %s."
 
-#: common.py:245
+#: common.py:259
 msgid "Not all keys were imported successfully!"
 msgstr "Ne všechny klíče byly importovány úspěšně!"
 
-#: launcher.py:75
-msgid "Downloading over Tor"
-msgstr "Stahování přes Tor"
-
-#: launcher.py:77
-msgid ""
-"The python-txsocksx package is missing, downloads will not happen over tor"
-msgstr "Chybí balíček python-txsocksx, stahování se neuskuteční přes tor"
-
-#: launcher.py:87
-msgid "Downloading and installing Tor Browser for the first time."
+#: launcher.py:83
+#, fuzzy
+msgid "Downloading Tor Browser for the first time."
 msgstr "Poprvé se stahuje a instaluje Prohlížeč Tor."
 
-#: launcher.py:89
+#: launcher.py:85
+#, fuzzy
 msgid ""
-"Your version of Tor Browser is out-of-date. Downloading and installing the "
-"newest version."
+"Your version of Tor Browser is out-of-date. Downloading the newest version."
 msgstr ""
 "Vaše verze Prohlížeče Tor je zastaralá. Stáhne se a nainstaluje nejnovější "
 "verze."
 
-#: launcher.py:114
+#: launcher.py:100
+msgid "Downloading over Tor"
+msgstr "Stahování přes Tor"
+
+#: launcher.py:111
 msgid "Tor Browser"
 msgstr "Prohlížeč Tor"
 
-#: launcher.py:210
+#: launcher.py:128
 msgid "Start"
 msgstr "Spustit"
 
-#: launcher.py:220 settings.py:195
+#: launcher.py:174
+msgid "Yes"
+msgstr ""
+
+#: launcher.py:178
+msgid "Exit"
+msgstr ""
+
+#: launcher.py:192 settings.py:136
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: launcher.py:255 launcher.py:270 launcher.py:274 launcher.py:412
+#: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
+#: launcher.py:281
 msgid "Downloading"
 msgstr "Stahuje se"
 
-#: launcher.py:262
+#: launcher.py:238
 msgid "Latest version: {}"
 msgstr "Nejnovější verze: {}"
 
-#: launcher.py:265
+#: launcher.py:241
 msgid "Error detecting Tor Browser version."
 msgstr "Chyba při zjišťování verze Prohlížeče Tor."
 
-#: launcher.py:281 launcher.py:479
+#: launcher.py:256 launcher.py:357
 msgid "Verifying Signature"
 msgstr "Ověřuje se podpis"
 
-#: launcher.py:285
+#: launcher.py:260
 msgid "Extracting"
 msgstr "Extrahuje se"
 
-#: launcher.py:289
+#: launcher.py:264
 msgid "Running"
 msgstr "Běží"
 
-#: launcher.py:293
+#: launcher.py:268
 msgid "Starting download over again"
 msgstr "Stahování se spouští znovu"
 
-#: launcher.py:307 launcher.py:309 launcher.py:311 launcher.py:353
-msgid "Download Error:"
-msgstr "Chyba stahování:"
+#: launcher.py:279 launcher.py:295
+msgid "(over Tor)"
+msgstr ""
 
-#: launcher.py:307 launcher.py:374
-msgid "You are currently using a non-default mirror"
-msgstr "Používáte právě nevýchozí zrcadlo"
-
-#: launcher.py:307 launcher.py:374
-msgid "Would you like to switch back to the default?"
-msgstr "Přejete si přepnout zpět na výchozí?"
-
-#: launcher.py:309
-msgid "Would you like to try the English version of Tor Browser instead?"
-msgstr "Přejete si místo toho zkusit anglickou verzi Prohlížeče Tor?"
-
-#: launcher.py:326
+#: launcher.py:293
 msgid "Downloaded"
 msgstr "Staženo"
 
-#: launcher.py:374
-msgid "DNS Lookup Error"
-msgstr "Chyba při vyhledávání DNS"
+#: launcher.py:393
+msgid "Installing"
+msgstr "Instaluje se"
 
-#: launcher.py:383 launcher.py:385
+#: launcher.py:401
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Spouštěč prohlížeče Tor nerozumí formátu souboru {0}"
+
+#: launcher.py:427
 msgid ""
-"The SSL certificate served by https://www.torproject.org is invalid! You may "
-"be under attack."
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
 msgstr ""
-"Certifikát SSL získaný od https://www.torproject.org je neplatný! Možná je "
-"na vás veden útok."
+"Verze prohlížeče Tor, kterou máte nainstalovanou, je ranější, než by měla "
+"být, což může značit útok!"
 
-#: launcher.py:383
+#: launcher.py:446
+#, fuzzy
+msgid "Downloading Tor Browser over again."
+msgstr "Znovu se stahuje balík Prohlížeče Tor."
+
+#: launcher.py:516 launcher.py:525 launcher.py:533
+msgid "Download Error:"
+msgstr "Chyba stahování:"
+
+#: launcher.py:517
+msgid "You are currently using a non-default mirror"
+msgstr "Používáte právě nevýchozí zrcadlo"
+
+#: launcher.py:518
+msgid "Would you like to switch back to the default?"
+msgstr "Přejete si přepnout zpět na výchozí?"
+
+#: launcher.py:527
+msgid "Would you like to try the English version of Tor Browser instead?"
+msgstr "Přejete si místo toho zkusit anglickou verzi Prohlížeče Tor?"
+
+#: launcher.py:548
+#, python-brace-format
+msgid ""
+"Invalid SSL certificate for:\n"
+"{0}\n"
+"\n"
+"You may be under attack."
+msgstr ""
+
+#: launcher.py:550
 msgid "Try the download again using Tor?"
 msgstr "Zkusit stahování znovu pomocí Toru?"
 
-#: launcher.py:392
+#: launcher.py:559
 #, python-brace-format
-msgid "Error connecting to Tor at {0}"
-msgstr "Chyba při připojování k Toru na {0}"
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Trying to download over Tor. Are you sure Tor is configured correctly and "
+"running?"
+msgstr ""
 
-#: launcher.py:395
+#: launcher.py:563
 #, python-brace-format
 msgid ""
 "Error starting download:\n"
@@ -176,97 +210,89 @@ msgstr ""
 "\n"
 "Jste připojeni k internetu?"
 
-#: launcher.py:494
-msgid ""
-"SIGNATURE VERIFICATION FAILED!\n"
-"\n"
-"You might be under attack, or there might just be a networking problem. "
-"Click Start try the download again."
-msgstr ""
-"SELHALO OVĚŘENÍ PODPISU!\n"
-"\n"
-"Možná je na vás veden útok, anebo může jít pouze o síťovou závadu. Pro nové "
-"stažení klikněte na Spustit."
-
-#: launcher.py:504
-msgid "Installing"
-msgstr "Instaluje se"
-
-#: launcher.py:526
-#, python-brace-format
-msgid "Tor Browser Launcher doesn't understand the file format of {0}"
-msgstr "Spouštěč prohlížeče Tor nerozumí formátu souboru {0}"
-
-#: launcher.py:548
-msgid ""
-"The version of Tor Browser you have installed is earlier than it should be, "
-"which could be a sign of an attack!"
-msgstr ""
-"Verze prohlížeče Tor, kterou máte nainstalovanou, je ranější, než by měla "
-"být, což může značit útok!"
-
-#: launcher.py:568
-msgid "The python-pygame package is missing, the modem sound is unavailable."
-msgstr "Chybí balíček python-pygame, zvuk modemu není dostupný."
-
-#: launcher.py:598
-msgid "Downloading Tor Browser Bundle over again."
-msgstr "Znovu se stahuje balík Prohlížeče Tor."
-
-#: settings.py:41
+#: settings.py:46
 msgid "Tor Browser Launcher Settings"
 msgstr "Nastavení Spouštěče prohlížeče Tor"
 
-#: settings.py:71
+#: settings.py:50
 msgid "Download over system Tor"
 msgstr "Stáhnout přes systémový Tor"
 
-#: settings.py:73
-msgid ""
-"This option is only available when using a system wide Tor installation."
-msgstr ""
-"Tato možnost je dostupná, pouze pokud se používá systémová instalace Toru."
-
-#: settings.py:75
-msgid "This option requires the python-txsocksx package."
-msgstr "Tato možnost vyžaduje balíček python-txsocksx."
-
-#: settings.py:89
-msgid "Play modem sound, because Tor is slow :]"
-msgstr "Přehrávat zvuk modemu, jelikož je Tor pomalý :]"
-
-#: settings.py:101
-msgid "This option requires python-pygame to be installed"
-msgstr "Tato možnost vyžaduje nainstalovaný python-pygame"
-
-#: settings.py:106
+#: settings.py:57
 msgid "Force downloading English version of Tor Browser"
 msgstr "Vynutit stažení anglické verze Prohlížeče Tor"
 
-#: settings.py:119
+#: settings.py:66
 msgid "Tor server"
 msgstr "Server Toru"
 
-#: settings.py:131
+#: settings.py:82
 msgid "Status: Installed"
 msgstr "Stav: Nainstalováno"
 
-#: settings.py:133
+#: settings.py:84
 msgid "Status: Not Installed"
 msgstr "Stav: Nenainstalováno"
 
-#: settings.py:142
-msgid "Reinstall Tor Browser"
-msgstr "Přeinstalovat Prohlížeč Tor"
-
-#: settings.py:151
+#: settings.py:87
 msgid "Install Tor Browser"
 msgstr "Nainstalovat Prohlížeč Tor"
 
-#: settings.py:162
+#: settings.py:92
+msgid "Reinstall Tor Browser"
+msgstr "Přeinstalovat Prohlížeč Tor"
+
+#: settings.py:115
 msgid "Mirror"
 msgstr "Zrcadlo"
 
-#: settings.py:186
-msgid "Save & Exit"
+#: settings.py:131
+#, fuzzy
+msgid "Save && Exit"
 msgstr "Uložit a ukončit"
+
+#~ msgid ""
+#~ "The python-txsocksx package is missing, downloads will not happen over tor"
+#~ msgstr "Chybí balíček python-txsocksx, stahování se neuskuteční přes tor"
+
+#~ msgid "DNS Lookup Error"
+#~ msgstr "Chyba při vyhledávání DNS"
+
+#~ msgid ""
+#~ "The SSL certificate served by https://www.torproject.org is invalid! You "
+#~ "may be under attack."
+#~ msgstr ""
+#~ "Certifikát SSL získaný od https://www.torproject.org je neplatný! Možná "
+#~ "je na vás veden útok."
+
+#~ msgid "Error connecting to Tor at {0}"
+#~ msgstr "Chyba při připojování k Toru na {0}"
+
+#~ msgid ""
+#~ "SIGNATURE VERIFICATION FAILED!\n"
+#~ "\n"
+#~ "You might be under attack, or there might just be a networking problem. "
+#~ "Click Start try the download again."
+#~ msgstr ""
+#~ "SELHALO OVĚŘENÍ PODPISU!\n"
+#~ "\n"
+#~ "Možná je na vás veden útok, anebo může jít pouze o síťovou závadu. Pro "
+#~ "nové stažení klikněte na Spustit."
+
+#~ msgid ""
+#~ "The python-pygame package is missing, the modem sound is unavailable."
+#~ msgstr "Chybí balíček python-pygame, zvuk modemu není dostupný."
+
+#~ msgid ""
+#~ "This option is only available when using a system wide Tor installation."
+#~ msgstr ""
+#~ "Tato možnost je dostupná, pouze pokud se používá systémová instalace Toru."
+
+#~ msgid "This option requires the python-txsocksx package."
+#~ msgstr "Tato možnost vyžaduje balíček python-txsocksx."
+
+#~ msgid "Play modem sound, because Tor is slow :]"
+#~ msgstr "Přehrávat zvuk modemu, jelikož je Tor pomalý :]"
+
+#~ msgid "This option requires python-pygame to be installed"
+#~ msgstr "Tato možnost vyžaduje nainstalovaný python-pygame"

@@ -26,16 +26,30 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from __future__ import print_function
+import os
+import sys
+import argparse
+import signal
 
-import os, sys, argparse
+from PyQt5 import QtCore, QtWidgets
 
 from .common import Common, SHARE
 from .settings import Settings
 from .launcher import Launcher
 
+
+class Application(QtWidgets.QApplication):
+    """
+    Qt's QApplication class. It has been overridden to support threads.
+    """
+    def __init__(self):
+        self.setAttribute(QtCore.Qt.AA_X11InitThreads, True)
+        QtWidgets.QApplication.__init__(self, sys.argv)
+        self.installEventFilter(self)
+
+
 def main():
-    # parse arguments
+    # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--settings', action='store_true', dest='settings', help='Open Tor Browser Launcher settings')
     parser.add_argument('url', nargs='*', help='URL to load')
@@ -44,7 +58,7 @@ def main():
     settings = bool(args.settings)
     url_list = args.url
 
-    # load the version and print the banner
+    # Load the version and print the banner
     with open(os.path.join(SHARE, 'version')) as buf:
         tor_browser_launcher_version = buf.read().strip()
 
@@ -54,14 +68,32 @@ def main():
     print('https://github.com/micahflee/torbrowser-launcher')
 
     common = Common(tor_browser_launcher_version)
+    app = Application()
+
+    # Open the window
+    gui = None
 
     if settings:
-        # settings mode
-        app = Settings(common)
-
+        # Settings mode
+        gui = Settings(common, app)
     else:
-        # launcher mode
-        app = Launcher(common, url_list)
+        # Launcher mode
+        gui = Launcher(common, app, url_list)
+
+    # Center the window
+    desktop = app.desktop()
+    window_size = gui.size()
+    gui.move(
+        (desktop.width() - window_size.width()) / 2,
+        (desktop.height() - window_size.height()) / 2
+    )
+    gui.show()
+
+    # Allow ctrl-c to work
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     main()

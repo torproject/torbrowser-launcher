@@ -26,38 +26,18 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from __future__ import print_function
-
 import os
 import subprocess
 import time
-import json
 import tarfile
-import hashlib
 import lzma
-import threading
 import re
-import unicodedata
-
-from twisted.internet import reactor
-from twisted.web.client import Agent, RedirectAgent, ResponseDone, ResponseFailed
-from twisted.web.http_headers import Headers
-from twisted.internet.protocol import Protocol
-from twisted.internet.error import DNSLookupError, ConnectionRefusedError
-
-try:
-    import gpg
-    gpgme_support = True
-except ImportError:
-    gpgme_support = False
-
+import requests
+import gpg
+import shutil
 import xml.etree.ElementTree as ET
 
-import OpenSSL
-
-import pygtk
-pygtk.require('2.0')
-import gtk
+from PyQt5 import QtCore, QtWidgets, QtGui
 
 
 class TryStableException(Exception):
@@ -76,51 +56,48 @@ class DownloadErrorException(Exception):
     pass
 
 
-class Launcher:
-    def __init__(self, common, url_list):
+class Launcher(QtWidgets.QMainWindow):
+    """
+    Launcher window.
+    """
+    def __init__(self, common, app, url_list):
+        super(Launcher, self).__init__()
         self.common = common
+        self.app = app
+
         self.url_list = url_list
         self.force_redownload = False
 
-        # this is the current version of Tor Browser, which should get updated with every release
-        self.min_version = '6.0.2'
+        # This is the current version of Tor Browser, which should get updated with every release
+        self.min_version = '7.5.2'
 
-        # init launcher
-        self.set_gui(None, '', [])
+        # Init launcher
+        self.set_state(None, '', [])
         self.launch_gui = True
 
-        # if Tor Browser is not installed, detect latest version, download, and install
+        # If Tor Browser is not installed, detect latest version, download, and install
         if not self.common.settings['installed'] or not self.check_min_version():
-            # if downloading over Tor, include txsocksx
-            if self.common.settings['download_over_tor']:
-                try:
-                    import txsocksx
-                    print(_('Downloading over Tor'))
-                except ImportError:
-                    md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("The python-txsocksx package is missing, downloads will not happen over tor"))
-                    md.set_position(gtk.WIN_POS_CENTER)
-                    md.run()
-                    md.destroy()
-                    self.common.settings['download_over_tor'] = False
-                    self.common.save_settings()
-
-            # different message if downloading for the first time, or because your installed version is too low
+            # Different message if downloading for the first time, or because your installed version is too low
             download_message = ""
             if not self.common.settings['installed']:
-                download_message = _("Downloading and installing Tor Browser for the first time.")
+                download_message = _("Downloading Tor Browser for the first time.")
             elif not self.check_min_version():
-                download_message = _("Your version of Tor Browser is out-of-date. Downloading and installing the newest version.")
+                download_message = _("Your version of Tor Browser is out-of-date. "
+                                     "Downloading the newest version.")
 
-            # download and install
+            # Download and install
             print(download_message)
-            self.set_gui('task', download_message,
-                         ['download_version_check',
-                          'set_version',
-                          'download_sig',
-                          'download_tarball',
-                          'verify',
-                          'extract',
-                          'run'])
+            self.set_state('task', download_message,
+                           ['download_version_check',
+                            'set_version',
+                            'download_sig',
+                            'download_tarball',
+                            'verify',
+                            'extract',
+                            'run'])
+
+            if self.common.settings['download_over_tor']:
+                print(_('Downloading over Tor'))
 
         else:
             # Tor Browser is already installed, so run
@@ -128,150 +105,126 @@ class Launcher:
             self.launch_gui = False
 
         if self.launch_gui:
-            # build the rest of the UI
-            self.build_ui()
+            # Build the rest of the UI
 
-    def configure_window(self):
-        if not hasattr(self, 'window'):
-            self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-            self.window.set_title(_("Tor Browser"))
-            self.window.set_icon_from_file(self.common.paths['icon_file'])
-            self.window.set_position(gtk.WIN_POS_CENTER)
-            self.window.set_border_width(10)
-            self.window.connect("delete_event", self.delete_event)
-            self.window.connect("destroy", self.destroy)
+            # Set up the window
+            self.setWindowTitle(_("Tor Browser"))
+            self.setWindowIcon(QtGui.QIcon(self.common.paths['icon_file']))
 
-    # there are different GUIs that might appear, this sets which one we want
-    def set_gui(self, gui, message, tasks, autostart=True):
+            # Label
+            self.label = QtWidgets.QLabel()
+
+            # Progress bar
+            self.progress_bar = QtWidgets.QProgressBar()
+            self.progress_bar.setTextVisible(True)
+            self.progress_bar.setMinimum(0)
+            self.progress_bar.setMaximum(0)
+            self.progress_bar.setValue(0)
+
+            # Buttons
+            self.yes_button = QtWidgets.QPushButton()
+            self.yes_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
+            self.yes_button.clicked.connect(self.yes_clicked)
+            self.start_button = QtWidgets.QPushButton(_('Start'))
+            self.start_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
+            self.start_button.clicked.connect(self.start)
+            self.cancel_button = QtWidgets.QPushButton()
+            self.cancel_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
+            self.cancel_button.clicked.connect(self.close)
+            buttons_layout = QtWidgets.QHBoxLayout()
+            buttons_layout.addStretch()
+            buttons_layout.addWidget(self.yes_button)
+            buttons_layout.addWidget(self.start_button)
+            buttons_layout.addWidget(self.cancel_button)
+            buttons_layout.addStretch()
+
+            # Layout
+            layout = QtWidgets.QVBoxLayout()
+            layout.addWidget(self.label)
+            layout.addWidget(self.progress_bar)
+            layout.addLayout(buttons_layout)
+
+            central_widget = QtWidgets.QWidget()
+            central_widget.setLayout(layout)
+            self.setCentralWidget(central_widget)
+
+            self.update()
+
+    # Set the current state of Tor Browser Launcher
+    def set_state(self, gui, message, tasks, autostart=True):
         self.gui = gui
         self.gui_message = message
         self.gui_tasks = tasks
         self.gui_task_i = 0
         self.gui_autostart = autostart
 
-    # set all gtk variables to False
-    def clear_ui(self):
-        if hasattr(self, 'box') and hasattr(self.box, 'destroy'):
-            self.box.destroy()
-        self.box = False
-
-        self.label = False
-        self.progressbar = False
-        self.button_box = False
-        self.start_button = False
-        self.exit_button = False
-
-    # build the application's UI
-    def build_ui(self):
-        self.clear_ui()
-
-        self.box = gtk.VBox(False, 20)
-        self.configure_window()
-        self.window.add(self.box)
+    # Show and hide parts of the UI based on the current state
+    def update(self):
+        # Hide widgets
+        self.progress_bar.hide()
+        self.yes_button.hide()
+        self.start_button.hide()
 
         if 'error' in self.gui:
-            # labels
-            self.label = gtk.Label(self.gui_message)
-            self.label.set_line_wrap(True)
-            self.box.pack_start(self.label, True, True, 0)
-            self.label.show()
+            # Label
+            self.label.setText(self.gui_message)
 
-            # button box
-            self.button_box = gtk.HButtonBox()
-            self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
-            self.box.pack_start(self.button_box, True, True, 0)
-            self.button_box.show()
-
+            # Yes button
             if self.gui != 'error':
-                # yes button
-                yes_image = gtk.Image()
-                yes_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
-                self.yes_button = gtk.Button("Yes")
-                self.yes_button.set_image(yes_image)
-                if self.gui == 'error_try_stable':
-                    self.yes_button.connect("clicked", self.try_stable, None)
-                elif self.gui == 'error_try_default_mirror':
-                    self.yes_button.connect("clicked", self.try_default_mirror, None)
-                elif self.gui == 'error_try_forcing_english':
-                    self.yes_button.connect("clicked", self.try_forcing_english, None)
-                elif self.gui == 'error_try_tor':
-                    self.yes_button.connect("clicked", self.try_tor, None)
-                self.button_box.add(self.yes_button)
+                self.yes_button.setText(_('Yes'))
                 self.yes_button.show()
 
-            # exit button
-            exit_image = gtk.Image()
-            exit_image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
-            self.exit_button = gtk.Button("Exit")
-            self.exit_button.set_image(exit_image)
-            self.exit_button.connect("clicked", self.destroy, None)
-            self.button_box.add(self.exit_button)
-            self.exit_button.show()
+            # Exit button
+            self.cancel_button.setText(_('Exit'))
 
         elif self.gui == 'task':
-            # label
-            self.label = gtk.Label(self.gui_message)
-            self.label.set_line_wrap(True)
-            self.box.pack_start(self.label, True, True, 0)
-            self.label.show()
+            # Label
+            self.label.setText(self.gui_message)
 
-            # progress bar
-            self.progressbar = gtk.ProgressBar(adjustment=None)
-            self.progressbar.set_orientation(gtk.PROGRESS_LEFT_TO_RIGHT)
-            self.progressbar.set_pulse_step(0.01)
-            self.box.pack_start(self.progressbar, True, True, 0)
+            # Progress bar
+            self.progress_bar.show()
 
-            # button box
-            self.button_box = gtk.HButtonBox()
-            self.button_box.set_layout(gtk.BUTTONBOX_SPREAD)
-            self.box.pack_start(self.button_box, True, True, 0)
-            self.button_box.show()
-
-            # start button
-            start_image = gtk.Image()
-            start_image.set_from_stock(gtk.STOCK_APPLY, gtk.ICON_SIZE_BUTTON)
-            self.start_button = gtk.Button(_("Start"))
-            self.start_button.set_image(start_image)
-            self.start_button.connect("clicked", self.start, None)
-            self.button_box.add(self.start_button)
+            # Start button
             if not self.gui_autostart:
                 self.start_button.show()
 
-            # exit button
-            exit_image = gtk.Image()
-            exit_image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
-            self.exit_button = gtk.Button(_("Cancel"))
-            self.exit_button.set_image(exit_image)
-            self.exit_button.connect("clicked", self.destroy, None)
-            self.button_box.add(self.exit_button)
-            self.exit_button.show()
+            # Cancel button
+            self.cancel_button.setText(_('Cancel'))
 
-        self.box.show()
-        self.window.show()
+        # Resize the window
+        self.adjustSize()
 
         if self.gui_autostart:
             self.start(None)
 
-    # start button clicked, begin tasks
-    def start(self, widget, data=None):
-        # disable the start button
-        if self.start_button:
-            self.start_button.set_sensitive(False)
+    # Yes button clicked, based on the state decide what to do
+    def yes_clicked(self):
+        if self.gui == 'error_try_stable':
+            self.try_stable()
+        elif self.gui == 'error_try_default_mirror':
+            self.try_default_mirror()
+        elif self.gui == 'error_try_forcing_english':
+            self.try_forcing_english()
+        elif self.gui == 'error_try_tor':
+            self.try_tor()
 
-        # start running tasks
+    # Start button clicked, begin tasks
+    def start(self, widget, data=None):
+        # Hide the start button
+        self.start_button.hide()
+
+        # Start running tasks
         self.run_task()
 
-    # run the next task in the task list
+    # Run the next task in the task list
     def run_task(self):
-        self.refresh_gtk()
-
         if self.gui_task_i >= len(self.gui_tasks):
-            self.destroy(False)
+            self.close()
             return
 
         task = self.gui_tasks[self.gui_task_i]
 
-        # get ready for the next task
+        # Get ready for the next task
         self.gui_task_i += 1
 
         if task == 'download_version_check':
@@ -285,9 +238,8 @@ class Launcher:
                 print(_('Latest version: {}').format(version))
                 self.run_task()
             else:
-                self.set_gui('error', _("Error detecting Tor Browser version."), [], False)
-                self.clear_ui()
-                self.build_ui()
+                self.set_state('error', _("Error detecting Tor Browser version."), [], False)
+                self.update()
 
         elif task == 'download_sig':
             print(_('Downloading'), self.common.paths['sig_url'].format(self.common.settings['mirror']))
@@ -316,192 +268,72 @@ class Launcher:
             print(_('Starting download over again'))
             self.start_over()
 
-    def response_received(self, response):
-        class FileDownloader(Protocol):
-            def __init__(self, common, file, url, total, progress, done_cb):
-                self.file = file
-                self.total = total
-                self.so_far = 0
-                self.progress = progress
-                self.all_done = done_cb
+    def download(self, name, url, path):
+        # Download from the selected mirror
+        mirror_url = url.format(self.common.settings['mirror']).encode()
 
-                if response.code != 200:
-                    if common.settings['mirror'] != common.default_mirror:
-                        raise TryDefaultMirrorException(
-                            (_("Download Error:") + " {0} {1}\n\n" + _("You are currently using a non-default mirror")
-                             + ":\n{2}\n\n" + _("Would you like to switch back to the default?")).format(
-                                response.code, response.phrase, common.settings['mirror']
-                            )
-                        )
-                    elif common.language != 'en-US' and not common.settings['force_en-US']:
-                        raise TryForcingEnglishException(
-                            (_("Download Error:") + " {0} {1}\n\n"
-                             + _("Would you like to try the English version of Tor Browser instead?")).format(
-                                response.code, response.phrase
-                            )
-                        )
-                    else:
-                        raise DownloadErrorException(
-                            (_("Download Error:") + " {0} {1}").format(response.code, response.phrase)
-                        )
-
-            def dataReceived(self, bytes):
-                self.file.write(bytes)
-                self.so_far += len(bytes)
-                percent = float(self.so_far) / float(self.total)
-                self.progress.set_fraction(percent)
-                amount = float(self.so_far)
-                units = "bytes"
-                for (size, unit) in [(1024 * 1024, "MiB"), (1024, "KiB")]:
-                    if amount > size:
-                        units = unit
-                        amount /= float(size)
-                        break
-
-                self.progress.set_text(_('Downloaded')+(' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units)))
-
-            def connectionLost(self, reason):
-                self.all_done(reason)
-
-        if hasattr(self, 'current_download_url'):
-            url = self.current_download_url
+        # Initialize the progress bar
+        self.progress_bar.setValue(0)
+        self.progress_bar.setMaximum(100)
+        if self.common.settings['download_over_tor']:
+            self.progress_bar.setFormat(_('Downloading') + ' {0} '.format(name) + _('(over Tor)') + ', %p%')
         else:
-            url = None
+            self.progress_bar.setFormat(_('Downloading') + ' {0}, %p%'.format(name))
 
-        dl = FileDownloader(
-            self.common, self.file_download, url, response.length, self.progressbar, self.response_finished
-        )
-        response.deliverBody(dl)
+        def progress_update(total_bytes, bytes_so_far):
+            percent = float(bytes_so_far) / float(total_bytes)
+            amount = float(bytes_so_far)
+            units = "bytes"
+            for (size, unit) in [(1024 * 1024, "MiB"), (1024, "KiB")]:
+                if amount > size:
+                    units = unit
+                    amount /= float(size)
+                    break
 
-    def response_finished(self, msg):
-        if msg.check(ResponseDone):
-            self.file_download.close()
-            delattr(self, 'current_download_path')
-            delattr(self, 'current_download_url')
+            message = _('Downloaded') + (' %2.1f%% (%2.1f %s)' % ((percent * 100.0), amount, units))
+            if self.common.settings['download_over_tor']:
+                message += ' ' + _('(over Tor)')
 
-            # next task!
+            self.progress_bar.setMaximum(total_bytes)
+            self.progress_bar.setValue(bytes_so_far)
+            self.progress_bar.setFormat(message)
+
+        def download_complete():
+            # Download complete, next task
             self.run_task()
 
-        else:
-            print("FINISHED", msg)
-            ## FIXME handle errors
+        def download_error(gui, message):
+            print(message)
+            self.set_state(gui, message, [], False)
+            self.update()
 
-    def download_error(self, f):
-        print(_("Download Error:"), f.value, type(f.value))
+        t = DownloadThread(self.common, mirror_url, path)
+        t.progress_update.connect(progress_update)
+        t.download_complete.connect(download_complete)
+        t.download_error.connect(download_error)
+        t.start()
+        time.sleep(0.2)
 
-        if isinstance(f.value, TryStableException):
-            f.trap(TryStableException)
-            self.set_gui('error_try_stable', str(f.value), [], False)
-
-        elif isinstance(f.value, TryDefaultMirrorException):
-            f.trap(TryDefaultMirrorException)
-            self.set_gui('error_try_default_mirror', str(f.value), [], False)
-
-        elif isinstance(f.value, TryForcingEnglishException):
-            f.trap(TryForcingEnglishException)
-            self.set_gui('error_try_forcing_english', str(f.value), [], False)
-
-        elif isinstance(f.value, DownloadErrorException):
-            f.trap(DownloadErrorException)
-            self.set_gui('error', str(f.value), [], False)
-
-        elif isinstance(f.value, DNSLookupError):
-            f.trap(DNSLookupError)
-            if common.settings['mirror'] != common.default_mirror:
-                self.set_gui('error_try_default_mirror', (_("DNS Lookup Error") + "\n\n" +
-                                                          _("You are currently using a non-default mirror")
-                                                          + ":\n{0}\n\n"
-                                                          + _("Would you like to switch back to the default?")
-                                                          ).format(common.settings['mirror']), [], False)
-            else:
-                self.set_gui('error', str(f.value), [], False)
-
-        elif isinstance(f.value, ResponseFailed):
-            for reason in f.value.reasons:
-                if isinstance(reason.value, OpenSSL.SSL.Error):
-                    # TODO: add the ability to report attack by posting bug to trac.torproject.org
-                    if not self.common.settings['download_over_tor']:
-                        self.set_gui('error_try_tor',
-                                     _('The SSL certificate served by https://www.torproject.org is invalid! You may '
-                                       'be under attack.') + " " + _('Try the download again using Tor?'), [], False)
-                    else:
-                        self.set_gui('error', _('The SSL certificate served by https://www.torproject.org is invalid! '
-                                                'You may be under attack.'), [], False)
-
-        elif isinstance(f.value, ConnectionRefusedError) and self.common.settings['download_over_tor']:
-            # If we're using Tor, we'll only get this error when we fail to
-            # connect to the SOCKS server.  If the connection fails at the
-            # remote end, we'll get txsocksx.errors.ConnectionRefused.
-            addr = self.common.settings['tor_socks_address']
-            self.set_gui('error', _("Error connecting to Tor at {0}").format(addr), [], False)
-
-        else:
-            self.set_gui('error', _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(f.value), [], False)
-
-        self.build_ui()
-
-    def download(self, name, url, path):
-        # keep track of current download
-        self.current_download_path = path
-        self.current_download_url = url
-
-        mirror_url = url.format(self.common.settings['mirror'])
-
-        # convert mirror_url from unicode to string, if needed (#205)
-        if isinstance(mirror_url, unicode):
-            mirror_url = unicodedata.normalize('NFKD', mirror_url).encode('ascii', 'ignore')
-
-        # initialize the progress bar
-        self.progressbar.set_fraction(0)
-        self.progressbar.set_text(_('Downloading') + ' {0}'.format(name))
-        self.progressbar.show()
-        self.refresh_gtk()
-
-        if self.common.settings['download_over_tor']:
-            from twisted.internet.endpoints import clientFromString
-            from txsocksx.http import SOCKS5Agent
-
-            torendpoint = clientFromString(reactor, self.common.settings['tor_socks_address'])
-
-            # default mirror gets certificate pinning, only for requests that use the mirror
-            agent = SOCKS5Agent(reactor, proxyEndpoint=torendpoint)
-        else:
-            agent = Agent(reactor)
-
-        # actually, agent needs to follow redirect
-        agent = RedirectAgent(agent)
-
-        # start the request
-        d = agent.request('GET', mirror_url,
-                          Headers({'User-Agent': ['torbrowser-launcher']}),
-                          None)
-
-        self.file_download = open(path, 'w')
-        d.addCallback(self.response_received).addErrback(self.download_error)
-
-        if not reactor.running:
-            reactor.run()
-
-    def try_default_mirror(self, widget, data=None):
+    def try_default_mirror(self):
         # change mirror to default and relaunch TBL
         self.common.settings['mirror'] = self.common.default_mirror
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
-        self.destroy(False)
+        self.close()
 
-    def try_forcing_english(self, widget, data=None):
+    def try_forcing_english(self):
         # change force english to true and relaunch TBL
         self.common.settings['force_en-US'] = True
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
-        self.destroy(False)
+        self.close()
 
-    def try_tor(self, widget, data=None):
+    def try_tor(self):
         # set download_over_tor to true and relaunch TBL
         self.common.settings['download_over_tor'] = True
         self.common.save_settings()
         subprocess.Popen([self.common.paths['tbl_bin']])
-        self.destroy(False)
+        self.close()
 
     def get_stable_version(self):
         tree = ET.parse(self.common.paths['version_check_file'])
@@ -518,24 +350,240 @@ class Launcher:
         return None
 
     def verify(self):
-        self.progressbar.set_fraction(0)
-        self.progressbar.set_text(_('Verifying Signature'))
-        self.progressbar.show()
+        self.progress_bar.setValue(0)
+        self.progress_bar.setMaximum(0)
+        self.progress_bar.show()
 
-        def gui_raise_sigerror(self, sigerror='MissingErr'):
-            """
-            :type sigerror: str
-            """
-            sigerror = 'SIGNATURE VERIFICATION FAILED!\n\nError Code: {0}\n\nYou might be under attack, there might' \
-                       ' be a network\nproblem, or you may be missing a recently added\nTor Browser verification key.' \
-                       '\nClick Start to refresh the keyring and try again. If the message persists report the above' \
-                       ' error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues'.format(sigerror)
+        self.label.setText(_('Verifying Signature'))
 
-            self.set_gui('task', sigerror, ['start_over'], False)
-            self.clear_ui()
-            self.build_ui()
+        def success():
+            self.run_task()
 
-        if gpgme_support:
+        def error(message):
+            # Make backup of tarball and sig
+            backup_tarball_filename = self.common.paths['tarball_file'] + '.verification_failed'
+            backup_sig_filename = self.common.paths['sig_file'] + '.verification_failed'
+            shutil.copyfile(self.common.paths['tarball_file'], backup_tarball_filename)
+            shutil.copyfile(self.common.paths['sig_file'], backup_sig_filename)
+
+            sigerror = 'SIGNATURE VERIFICATION FAILED!\n\n' \
+                       'Error Code: {0}\n\n' \
+                       'You might be under attack, there might be a network problem, or you may be missing a ' \
+                       'recently added Tor Browser verification key.\n\n' \
+                       'A copy of the Tor Browser files you downloaded have been saved here:\n' \
+                       '{1}\n{2}\n\n' \
+                       'Click Start to refresh the keyring and try again. If the message persists report the above ' \
+                       'error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues'
+            sigerror = sigerror.format(message, backup_tarball_filename, backup_sig_filename)
+
+            self.set_state('task', sigerror, ['start_over'], False)
+            self.update()
+
+        t = VerifyThread(self.common)
+        t.error.connect(error)
+        t.success.connect(success)
+        t.start()
+        time.sleep(0.2)
+
+    def extract(self):
+        self.progress_bar.setValue(0)
+        self.progress_bar.setMaximum(0)
+        self.progress_bar.show()
+
+        self.label.setText(_('Installing'))
+
+        def success():
+            self.run_task()
+
+        def error(message):
+            self.set_state(
+                'task',
+                _("Tor Browser Launcher doesn't understand the file format of {0}".format(self.common.paths['tarball_file'])),
+                ['start_over'], False
+            )
+            self.update()
+
+        t = ExtractThread(self.common)
+        t.error.connect(error)
+        t.success.connect(success)
+        t.start()
+        time.sleep(0.2)
+
+    def check_min_version(self):
+        installed_version = None
+        print(self.common.paths['tbb']['changelog'])
+        for line in open(self.common.paths['tbb']['changelog'],'rb').readlines():
+            if line.startswith(b'Tor Browser '):
+                installed_version = line.split()[2].decode()
+                break
+
+        if self.min_version <= installed_version:
+            return True
+
+        return False
+
+    def run(self, run_next_task=True):
+        # Don't run if it isn't at least the minimum version
+        if not self.check_min_version():
+            message = _("The version of Tor Browser you have installed is earlier than it should be, which could be a "
+                        "sign of an attack!")
+            print(message)
+
+            Alert(self.common, message)
+            return
+
+        # Hide the TBL window (#151)
+        self.hide()
+
+        # Run Tor Browser
+        subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
+
+        if run_next_task:
+            self.run_task()
+
+    # Start over and download TBB again
+    def start_over(self):
+        self.force_redownload = True  # Overwrite any existing file
+        self.label.setText(_("Downloading Tor Browser over again."))
+        self.gui_tasks = ['download_tarball', 'verify', 'extract', 'run']
+        self.gui_task_i = 0
+        self.start(None)
+
+    def closeEvent(self, event):
+        # Clear the download cache
+        try:
+            os.remove(self.common.paths['version_check_file'])
+            os.remove(self.common.paths['sig_file'])
+            os.remove(self.common.paths['tarball_file'])
+        except:
+            pass
+
+        super(Launcher, self).closeEvent(event)
+
+
+class Alert(QtWidgets.QMessageBox):
+    """
+    An alert box dialog.
+    """
+    def __init__(self, common, message, icon=QtWidgets.QMessageBox.NoIcon, buttons=QtWidgets.QMessageBox.Ok, autostart=True):
+        super(Alert, self).__init__(None)
+
+        self.setWindowTitle(_("Tor Browser Launcher"))
+        self.setWindowIcon(QtGui.QIcon(common.paths['icon_file']))
+        self.setText(message)
+        self.setIcon(icon)
+        self.setStandardButtons(buttons)
+
+        if autostart:
+            self.exec_()
+
+
+class DownloadThread(QtCore.QThread):
+    """
+    Download a file in a separate thread.
+    """
+    progress_update = QtCore.pyqtSignal(int, int)
+    download_complete = QtCore.pyqtSignal()
+    download_error = QtCore.pyqtSignal(str, str)
+
+    def __init__(self, common, url, path):
+        super(DownloadThread, self).__init__()
+        self.common = common
+        self.url = url
+        self.path = path
+
+        # Use tor socks5 proxy, if enabled
+        if self.common.settings['download_over_tor']:
+            socks5_address = 'socks5://{}'.format(self.common.settings['tor_socks_address'])
+            self.proxies = {
+                'https': socks5_address,
+                'http': socks5_address
+            }
+        else:
+            self.proxies = None
+
+    def run(self):
+        with open(self.path, "wb") as f:
+            try:
+                # Start the request
+                r = requests.get(self.url,
+                                 headers={'User-Agent': 'torbrowser-launcher'},
+                                 stream=True, proxies=self.proxies)
+
+                # If status code isn't 200, something went wrong
+                if r.status_code != 200:
+                    # Should we use the default mirror?
+                    if self.common.settings['mirror'] != self.common.default_mirror:
+                        message = (_("Download Error:") +
+                                   " {0}\n\n" + _("You are currently using a non-default mirror") +
+                                   ":\n{1}\n\n" + _("Would you like to switch back to the default?")).format(
+                                       r.status_code, self.common.settings['mirror']
+                                   )
+                        self.download_error.emit('error_try_default_mirror', message)
+
+                    # Should we switch to English?
+                    elif self.common.language != 'en-US' and not self.common.settings['force_en-US']:
+                        message = (_("Download Error:") +
+                                   " {0}\n\n" +
+                                   _("Would you like to try the English version of Tor Browser instead?")).format(
+                                       r.status_code
+                                   )
+                        self.download_error.emit('error_try_forcing_english', message)
+
+                    else:
+                        message = (_("Download Error:") + " {0}").format(r.status_code)
+                        self.download_error.emit('error', message)
+
+                    r.close()
+                    return
+
+                # Start streaming the download
+                total_bytes = int(r.headers.get('content-length'))
+                bytes_so_far = 0
+                for data in r.iter_content(chunk_size=4096):
+                    bytes_so_far += len(data)
+                    f.write(data)
+                    self.progress_update.emit(total_bytes, bytes_so_far)
+
+            except requests.exceptions.SSLError:
+                message = _('Invalid SSL certificate for:\n{0}\n\nYou may be under attack.').format(self.url.decode())
+                if not self.common.settings['download_over_tor']:
+                    message += "\n\n" + _('Try the download again using Tor?')
+                    self.download_error.emit('error_try_tor', message)
+                else:
+                    self.download_error.emit('error', message)
+                return
+
+            except requests.exceptions.ConnectionError:
+                # Connection error
+                if self.common.settings['download_over_tor']:
+                    message = _("Error starting download:\n\n{0}\n\nTrying to download over Tor. "
+                                "Are you sure Tor is configured correctly and running?").format(self.url.decode())
+                    self.download_error.emit('error', message)
+                else:
+                    message = _("Error starting download:\n\n{0}\n\nAre you connected to the internet?").format(
+                        self.url.decode()
+                    )
+                    self.download_error.emit('error', message)
+
+                return
+
+        self.download_complete.emit()
+
+
+class VerifyThread(QtCore.QThread):
+    """
+    Verify the signature in a separate thread
+    """
+    success = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal(str)
+
+    def __init__(self, common):
+        super(VerifyThread, self).__init__()
+        self.common = common
+
+    def run(self):
+        def verify(second_try=False):
             with gpg.Context() as c:
                 c.set_engine_info(gpg.constants.protocol.OpenPGP, home_dir=self.common.paths['gnupg_homedir'])
 
@@ -545,35 +593,34 @@ class Launcher:
                 try:
                     c.verify(signature=sig, signed_data=signed)
                 except gpg.errors.BadSignatures as e:
-                    result = str(e).split(": ")
-                    if result[1] == 'Bad signature':
-                        gui_raise_sigerror(self, str(e))
-                    elif result[1] == 'No public key':
-                        self.common.refresh_keyring(result[0])
-                        gui_raise_sigerror(self, str(e))
+                    if second_try:
+                        self.error.emit(str(e))
+                    else:
+                        raise Exception
                 else:
-                    self.run_task()
-        else:
-            FNULL = open(os.devnull, 'w')
-            p = subprocess.Popen(['/usr/bin/gpg', '--homedir', self.common.paths['gnupg_homedir'], '--verify',
-                                  self.common.paths['sig_file'], self.common.paths['tarball_file']], stdout=FNULL,
-                                 stderr=subprocess.STDOUT)
-            self.pulse_until_process_exits(p)
-            if p.returncode == 0:
-                self.run_task()
-            else:
-                self.common.refresh_keyring()
-                gui_raise_sigerror(self, 'GENERIC_VERIFY_FAIL')
-                if not reactor.running:
-                    reactor.run()
+                    self.success.emit()
 
-    def extract(self):
-        # initialize the progress bar
-        self.progressbar.set_fraction(0)
-        self.progressbar.set_text(_('Installing'))
-        self.progressbar.show()
-        self.refresh_gtk()
+        try:
+            # Try verifying
+            verify()
+        except:
+            # If it fails, refresh the keyring and try again
+            self.common.refresh_keyring()
+            verify(True)
 
+
+class ExtractThread(QtCore.QThread):
+    """
+    Extract the tarball in a separate thread
+    """
+    success = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal()
+
+    def __init__(self, common):
+        super(ExtractThread, self).__init__()
+        self.common = common
+
+    def run(self):
         extracted = False
         try:
             if self.common.paths['tarball_file'][-2:] == 'xz':
@@ -591,103 +638,7 @@ class Launcher:
         except:
             pass
 
-        if not extracted:
-            self.set_gui('task', _("Tor Browser Launcher doesn't understand the file format of {0}".format(self.common.paths['tarball_file'])), ['start_over'], False)
-            self.clear_ui()
-            self.build_ui()
-            return
-
-        self.run_task()
-
-    def check_min_version(self):
-        installed_version = None
-        for line in open(self.common.paths['tbb']['changelog']).readlines():
-            if line.startswith('Tor Browser '):
-                installed_version = line.split()[2]
-                break
-
-        if self.min_version <= installed_version:
-            return True
-
-        return False
-
-    def run(self, run_next_task=True):
-        # don't run if it isn't at least the minimum version
-        if not self.check_min_version():
-            message = _("The version of Tor Browser you have installed is earlier than it should be, which could be a "
-                        "sign of an attack!")
-            print(message)
-
-            md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _(message))
-            md.set_position(gtk.WIN_POS_CENTER)
-            md.run()
-            md.destroy()
-
-            return
-
-        # play modem sound?
-        if self.common.settings['modem_sound']:
-            def play_modem_sound():
-                try:
-                    import pygame
-                    pygame.mixer.init()
-                    sound = pygame.mixer.Sound(self.common.paths['modem_sound'])
-                    sound.play()
-                    time.sleep(10)
-                except ImportError:
-                    md = gtk.MessageDialog(
-                        None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
-                        _("The python-pygame package is missing, the modem sound is unavailable.")
-                    )
-                    md.set_position(gtk.WIN_POS_CENTER)
-                    md.run()
-                    md.destroy()
-
-            t = threading.Thread(target=play_modem_sound)
-            t.start()
-
-        # hide the TBL window (#151)
-        if hasattr(self, 'window'):
-            self.window.hide()
-            while gtk.events_pending():
-                gtk.main_iteration_do(True)
-
-        # run Tor Browser
-        subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
-
-        if run_next_task:
-            self.run_task()
-
-    # make the progress bar pulse until process p (a Popen object) finishes
-    def pulse_until_process_exits(self, p):
-        while p.poll() is None:
-            time.sleep(0.01)
-            self.progressbar.pulse()
-            self.refresh_gtk()
-
-    # start over and download TBB again
-    def start_over(self):
-        self.force_redownload = True  # Overwrite any existing file
-        self.label.set_text(_("Downloading Tor Browser Bundle over again."))
-        self.gui_tasks = ['download_tarball', 'verify', 'extract', 'run']
-        self.gui_task_i = 0
-        self.start(None)
-
-    # refresh gtk
-    def refresh_gtk(self):
-        while gtk.events_pending():
-            gtk.main_iteration(False)
-
-    # exit
-    def delete_event(self, widget, event, data=None):
-        return False
-
-    def destroy(self, widget, data=None):
-        if hasattr(self, 'file_download'):
-            self.file_download.close()
-        if hasattr(self, 'current_download_path'):
-            os.remove(self.current_download_path)
-            delattr(self, 'current_download_path')
-            delattr(self, 'current_download_url')
-        if reactor.running:
-            reactor.stop()
+        if extracted:
+            self.success.emit()
+        else:
+            self.error.emit()
