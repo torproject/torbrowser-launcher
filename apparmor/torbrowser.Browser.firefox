@@ -53,7 +53,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/.cache/fontconfig/** rwkl,
   owner @{torbrowser_home_dir}/components/*.so mr,
   owner @{torbrowser_home_dir}/browser/components/*.so mr,
-  owner @{torbrowser_home_dir}/firefox rix,
+  owner @{torbrowser_home_dir}/firefox.real rix,
   owner @{torbrowser_home_dir}/plugin-container px -> torbrowser_plugin_container,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/updater ix,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/0/MozUpdater/bgupdate/updater ix,
