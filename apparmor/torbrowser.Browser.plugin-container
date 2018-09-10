@@ -34,6 +34,7 @@ profile torbrowser_plugin_container {
 
   /dev/shm/ r,
 
+  owner @{PROC}/@{pid}/environ r,
   owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
   owner @{PROC}/@{pid}/stat r,
@@ -51,6 +52,7 @@ profile torbrowser_plugin_container {
   owner @{torbrowser_home_dir}/browser/components/*.so mr,
   owner @{torbrowser_home_dir}/defaults/pref/     r,
   owner @{torbrowser_home_dir}/defaults/pref/*.js r,
+  owner @{torbrowser_home_dir}/dependentlibs.list r,
   owner @{torbrowser_home_dir}/fonts/   r,
   owner @{torbrowser_home_dir}/fonts/** r,
   owner @{torbrowser_home_dir}/omni.ja r,
