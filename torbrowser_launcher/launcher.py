@@ -411,9 +411,9 @@ class Launcher(QtWidgets.QMainWindow):
 
     def check_min_version(self):
         installed_version = None
-        for line in open(self.common.paths['tbb']['changelog']).readlines():
-            if line.startswith('Tor Browser '):
-                installed_version = line.split()[2]
+        for line in open(self.common.paths['tbb']['changelog'],'rb').readlines():
+            if line.startswith(b'Tor Browser '):
+                installed_version = line.split()[2].decode()
                 break
 
         if self.min_version <= installed_version:
