@@ -72,7 +72,7 @@ class Common(object):
         self.architecture = 'x86_64' if '64' in platform.architecture()[0] else 'i686'
 
         # figure out the language
-        available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ko', 'nl', 'pl', 'pt-PT', 'ru', 'vi', 'zh-CN']
+        available_languages = ['en-US', 'ar', 'de', 'es-ES', 'fa', 'fr', 'it', 'ja','ko', 'nl', 'pl', 'pt-BR', 'ru', 'tr', 'vi', 'zh-CN']
         default_locale = locale.getlocale(locale.LC_MESSAGES)[0]
         if default_locale is None:
             self.language = 'en-US'
