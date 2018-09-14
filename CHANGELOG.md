@@ -1,5 +1,17 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.0
+
+* Switched from python2 to python3
+* Switched from gtk2 to Qt5
+* Switched from twisted to requests/socks
+* Use QThreads for async
+* Removed modem sound
+* Only refresh gpg keyring on verification error, instead of every time
+* Updated AppArmor profiles
+* Updated available languages, and fixed locale detection bug
+* Fixed false signature verification error related to twisted
+
 ## 0.2.9
 
 * Fixed crash issue related to Tor Browser 7.5 changing how the currently installed version number is stored
