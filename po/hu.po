@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-23 15:47-0700\n"
-"PO-Revision-Date: 2017-02-16 00:55+0100\n"
+"PO-Revision-Date: 2018-09-23 19:21+0200\n"
 "Last-Translator: Barcza Károly <kbarcza@blackpanther.hu>\n"
 "Language-Team: \n"
 "Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.12\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: __init__.py:65 launcher.py:470
@@ -57,20 +57,16 @@ msgstr "Nem lehetett importálni a kulcsot ujjlenyomattal: %s."
 
 #: common.py:259
 msgid "Not all keys were imported successfully!"
-msgstr ""
+msgstr "Nem sikerült minden kulcsot importálni!"
 
 #: launcher.py:83
-#, fuzzy
 msgid "Downloading Tor Browser for the first time."
 msgstr "Tor böngésző letöltése és telepítése első alkalommal."
 
 #: launcher.py:85
-#, fuzzy
 msgid ""
 "Your version of Tor Browser is out-of-date. Downloading the newest version."
-msgstr ""
-"A Tor böngésző verziója elavult. Töltsük le és telepítsük a legfrissebb "
-"változatot."
+msgstr "A Tor böngésző verziója elavult. Töltsük le a legfrissebb változatot."
 
 #: launcher.py:100
 msgid "Downloading over Tor"
@@ -86,11 +82,11 @@ msgstr "Elindítás"
 
 #: launcher.py:174
 msgid "Yes"
-msgstr ""
+msgstr "Igen"
 
 #: launcher.py:178
 msgid "Exit"
-msgstr ""
+msgstr "Kilépés"
 
 #: launcher.py:192 settings.py:136
 msgid "Cancel"
@@ -127,7 +123,7 @@ msgstr "Újra letöltés indítása"
 
 #: launcher.py:279 launcher.py:295
 msgid "(over Tor)"
-msgstr ""
+msgstr "(Tor-on keresztül)"
 
 #: launcher.py:293
 msgid "Downloaded"
@@ -151,7 +147,6 @@ msgstr ""
 "ami lehet egy támadás jele!"
 
 #: launcher.py:446
-#, fuzzy
 msgid "Downloading Tor Browser over again."
 msgstr "Tör böngészőcsomag letöltése újra."
 
@@ -179,6 +174,10 @@ msgid ""
 "\n"
 "You may be under attack."
 msgstr ""
+"Az SSL tanúsítvány érvénytelen ehhez:\n"
+"{0}\n"
+"\n"
+"Lehet, hogy támadás alatt vagy."
 
 #: launcher.py:550
 msgid "Try the download again using Tor?"
@@ -194,6 +193,12 @@ msgid ""
 "Trying to download over Tor. Are you sure Tor is configured correctly and "
 "running?"
 msgstr ""
+"Probléma a letöltés indításakor:\n"
+"\n"
+"{0}\n"
+"\n"
+"Tor-on keresztül próbálta letölteni. Biztos vagy benne, hogy a Tor "
+"beállításai jók és fut?"
 
 #: launcher.py:563
 #, python-brace-format
@@ -247,7 +252,6 @@ msgid "Mirror"
 msgstr "Tükrözés"
 
 #: settings.py:131
-#, fuzzy
 msgid "Save && Exit"
 msgstr "Mentés és kilépés"
 
