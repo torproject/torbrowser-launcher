@@ -37,7 +37,7 @@ import re
 import gettext
 import gpg
 
-SHARE = os.getenv('TBL_SHARE', sys.prefix+'/share/torbrowser-launcher')
+SHARE = os.getenv('TBL_SHARE', sys.prefix + '/share') + '/torbrowser-launcher'
 
 gettext.install('torbrowser-launcher')
 
