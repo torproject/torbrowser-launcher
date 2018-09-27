@@ -27,6 +27,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import os
+import sys
 import subprocess
 import time
 import tarfile
@@ -101,54 +102,54 @@ class Launcher(QtWidgets.QMainWindow):
 
         else:
             # Tor Browser is already installed, so run
-            self.run(False)
-            self.launch_gui = False
+            launch_message = "Launching Tor Browser."
+            print(launch_message)
+            self.set_state('task', launch_message, ['run'])
 
-        if self.launch_gui:
-            # Build the rest of the UI
+        # Build the rest of the UI
 
-            # Set up the window
-            self.setWindowTitle(_("Tor Browser"))
-            self.setWindowIcon(QtGui.QIcon(self.common.paths['icon_file']))
+        # Set up the window
+        self.setWindowTitle(_("Tor Browser"))
+        self.setWindowIcon(QtGui.QIcon(self.common.paths['icon_file']))
 
-            # Label
-            self.label = QtWidgets.QLabel()
+        # Label
+        self.label = QtWidgets.QLabel()
 
-            # Progress bar
-            self.progress_bar = QtWidgets.QProgressBar()
-            self.progress_bar.setTextVisible(True)
-            self.progress_bar.setMinimum(0)
-            self.progress_bar.setMaximum(0)
-            self.progress_bar.setValue(0)
+        # Progress bar
+        self.progress_bar = QtWidgets.QProgressBar()
+        self.progress_bar.setTextVisible(True)
+        self.progress_bar.setMinimum(0)
+        self.progress_bar.setMaximum(0)
+        self.progress_bar.setValue(0)
 
-            # Buttons
-            self.yes_button = QtWidgets.QPushButton()
-            self.yes_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
-            self.yes_button.clicked.connect(self.yes_clicked)
-            self.start_button = QtWidgets.QPushButton(_('Start'))
-            self.start_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
-            self.start_button.clicked.connect(self.start)
-            self.cancel_button = QtWidgets.QPushButton()
-            self.cancel_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
-            self.cancel_button.clicked.connect(self.close)
-            buttons_layout = QtWidgets.QHBoxLayout()
-            buttons_layout.addStretch()
-            buttons_layout.addWidget(self.yes_button)
-            buttons_layout.addWidget(self.start_button)
-            buttons_layout.addWidget(self.cancel_button)
-            buttons_layout.addStretch()
+        # Buttons
+        self.yes_button = QtWidgets.QPushButton()
+        self.yes_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
+        self.yes_button.clicked.connect(self.yes_clicked)
+        self.start_button = QtWidgets.QPushButton(_('Start'))
+        self.start_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
+        self.start_button.clicked.connect(self.start)
+        self.cancel_button = QtWidgets.QPushButton()
+        self.cancel_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
+        self.cancel_button.clicked.connect(self.close)
+        buttons_layout = QtWidgets.QHBoxLayout()
+        buttons_layout.addStretch()
+        buttons_layout.addWidget(self.yes_button)
+        buttons_layout.addWidget(self.start_button)
+        buttons_layout.addWidget(self.cancel_button)
+        buttons_layout.addStretch()
 
-            # Layout
-            layout = QtWidgets.QVBoxLayout()
-            layout.addWidget(self.label)
-            layout.addWidget(self.progress_bar)
-            layout.addLayout(buttons_layout)
+        # Layout
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.label)
+        layout.addWidget(self.progress_bar)
+        layout.addLayout(buttons_layout)
 
-            central_widget = QtWidgets.QWidget()
-            central_widget.setLayout(layout)
-            self.setCentralWidget(central_widget)
+        central_widget = QtWidgets.QWidget()
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
 
-            self.update()
+        self.update()
 
     # Set the current state of Tor Browser Launcher
     def set_state(self, gui, message, tasks, autostart=True):
@@ -421,7 +422,7 @@ class Launcher(QtWidgets.QMainWindow):
 
         return False
 
-    def run(self, run_next_task=True):
+    def run(self):
         # Don't run if it isn't at least the minimum version
         if not self.check_min_version():
             message = _("The version of Tor Browser you have installed is earlier than it should be, which could be a "
@@ -431,14 +432,9 @@ class Launcher(QtWidgets.QMainWindow):
             Alert(self.common, message)
             return
 
-        # Hide the TBL window (#151)
-        self.hide()
-
         # Run Tor Browser
         subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
-
-        if run_next_task:
-            self.run_task()
+        sys.exit(0)
 
     # Start over and download TBB again
     def start_over(self):
