@@ -105,7 +105,7 @@ msgstr "Fejl ved registrering af Tor Browser-version."
 
 #: launcher.py:256 launcher.py:357
 msgid "Verifying Signature"
-msgstr "Verificer signatur"
+msgstr "Verificerer signatur"
 
 #: launcher.py:260
 msgid "Extracting"
@@ -150,7 +150,7 @@ msgstr "Downloader Tor Browser på ny."
 
 #: launcher.py:516 launcher.py:525 launcher.py:533
 msgid "Download Error:"
-msgstr "Fej ved download:"
+msgstr "Fejl ved download:"
 
 #: launcher.py:517
 msgid "You are currently using a non-default mirror"
