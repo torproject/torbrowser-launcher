@@ -100,11 +100,13 @@ class Launcher(QtWidgets.QMainWindow):
                 print(_('Downloading over Tor'))
 
         else:
-            # Tor Browser is already installed, so run
-            self.run(False)
-            self.launch_gui = False
+            #Tor Browser is already installed, so run
+            #self.launch_gui = False
 
-        if self.launch_gui:
+            self.run(False)
+            self.set_state('task', "Starting...", ['load'])
+
+        if self.launch_gui != False:
             # Build the rest of the UI
 
             # Set up the window
@@ -161,6 +163,7 @@ class Launcher(QtWidgets.QMainWindow):
     # Show and hide parts of the UI based on the current state
     def update(self):
         # Hide widgets
+        #print("Update----------"),self.launch_gui
         self.progress_bar.hide()
         self.yes_button.hide()
         self.start_button.hide()
@@ -188,8 +191,12 @@ class Launcher(QtWidgets.QMainWindow):
             if not self.gui_autostart:
                 self.start_button.show()
 
-            # Cancel button
-            self.cancel_button.setText(_('Cancel'))
+            if self.launch_gui:
+                # Close button
+                self.cancel_button.setText(_('Close'))
+            else:
+                # Cancel button
+                self.cancel_button.setText(_('Cancel'))
 
         # Resize the window
         self.adjustSize()
@@ -268,6 +275,10 @@ class Launcher(QtWidgets.QMainWindow):
             print(_('Starting download over again'))
             self.start_over()
 
+        elif task == 'load':
+            print(_('Loading...'))
+            self.hide()
+        
     def download(self, name, url, path):
         # Download from the selected mirror
         mirror_url = url.format(self.common.settings['mirror']).encode()
