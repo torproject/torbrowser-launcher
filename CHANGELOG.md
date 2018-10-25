@@ -1,5 +1,10 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.1
+
+* Ship with latest version of the Tor Browser Developers OpenPGP public key
+* Fix bug where TBL window stays open after Tor Browser is launched
+
 ## 0.3.0
 
 * Switched from python2 to python3
