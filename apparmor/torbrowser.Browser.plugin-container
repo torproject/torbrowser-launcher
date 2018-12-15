@@ -62,6 +62,7 @@ profile torbrowser_plugin_container {
   owner @{torbrowser_home_dir}/TorBrowser/UpdateInfo/updates/[0-9]/updater rw,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/startupCache/* r,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/* rw,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/{,profile.default/}.parentwritetest rw,
   owner @{torbrowser_home_dir}/TorBrowser/Data/fontconfig/fonts.conf r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/ r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
