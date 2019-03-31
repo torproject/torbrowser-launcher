@@ -11,12 +11,22 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   # #include <abstractions/user-download>
   # @{HOME}/ r,
 
+  # Uncomment the following lines if you want Tor Browser
+  # to have direct access to your sound hardware. You will also
+  # need to remove, further bellow:
+  #  - the "deny" word in the machine-id lines
+  #  - the rules that deny reading /etc/pulse/client.conf
+  #    and executing /usr/bin/pulseaudio
+  # #include <abstractions/audio>
+  # /etc/asound.conf r,
+  # owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/mozilla-temp-* rw,
+
   #dbus,
   network netlink raw,
   network tcp,
 
-  ptrace (trace) peer=torbrowser_plugin_container,
-  signal (send) set=("term") peer=torbrowser_plugin_container,
+  ptrace (trace) peer=@{profile_name},
+  signal (receive, send) set=("term") peer=@{profile_name},
 
   deny /etc/host.conf r,
   deny /etc/hosts r,
@@ -32,6 +42,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /dev/ r,
   /dev/shm/ r,
 
+  owner @{PROC}/@{pid}/environ r,
   owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
   owner @{PROC}/@{pid}/stat r,
@@ -51,20 +62,24 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/*.so mr,
   owner @{torbrowser_home_dir}/.cache/fontconfig/ rwk,
   owner @{torbrowser_home_dir}/.cache/fontconfig/** rwkl,
-  owner @{torbrowser_home_dir}/components/*.so mr,
-  owner @{torbrowser_home_dir}/browser/components/*.so mr,
+  owner @{torbrowser_home_dir}/browser/** r,
+  owner @{torbrowser_home_dir}/{,browser/}components/*.so mr,
+  owner @{torbrowser_home_dir}/Downloads/ rwk,
+  owner @{torbrowser_home_dir}/Downloads/** rwk,
   owner @{torbrowser_home_dir}/firefox rix,
-  owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/updater ix,
-  owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/0/MozUpdater/bgupdate/updater ix,
+  owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/* rw,
+  owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/{,MozUpdater/bgupdate/}updater ix,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/.parentwritetest rw,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profiles.ini r,
-  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/ r,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/{,**} rwk,
+  owner @{torbrowser_home_dir}/TorBrowser/Data/fontconfig/fonts.conf r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/tor px,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/ r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
 
-  # Web Content processes
-  owner @{torbrowser_firefox_executable} px -> torbrowser_plugin_container,
+  # parent Firefox process when restarting after upgrade, Web Content processes
+  owner @{torbrowser_firefox_executable} ixmr -> torbrowser_firefox,
 
   /etc/mailcap r,
   /etc/mime.types r,
