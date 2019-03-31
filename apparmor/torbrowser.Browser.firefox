@@ -4,6 +4,7 @@
 @{torbrowser_firefox_executable} = /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox.real
 
 profile torbrowser_firefox @{torbrowser_firefox_executable} {
+  #include <abstractions/audio>
   #include <abstractions/gnome>
 
   # Uncomment the following lines if you want to give the Tor Browser read-write
@@ -11,15 +12,8 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   # #include <abstractions/user-download>
   # @{HOME}/ r,
 
-  # Uncomment the following lines if you want Tor Browser
-  # to have direct access to your sound hardware. You will also
-  # need to remove, further bellow:
-  #  - the "deny" word in the machine-id lines
-  #  - the rules that deny reading /etc/pulse/client.conf
-  #    and executing /usr/bin/pulseaudio
-  # #include <abstractions/audio>
-  # /etc/asound.conf r,
-  # owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/tmp/mozilla-temp-* rw,
+  # Audio support
+  /{,usr/}bin/pulseaudio Pixr,
 
   #dbus,
   network netlink raw,
@@ -36,8 +30,8 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   deny /etc/group r,
   deny /etc/mailcap r,
 
-  deny /etc/machine-id r,
-  deny /var/lib/dbus/machine-id r,
+  /etc/machine-id r,
+  /var/lib/dbus/machine-id r,
 
   /dev/ r,
   /dev/shm/ r,
