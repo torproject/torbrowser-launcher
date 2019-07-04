@@ -196,7 +196,7 @@ class Common(object):
 
         p = subprocess.Popen(['/usr/bin/gpg2', '--status-fd', '2',
                               '--homedir', self.paths['gnupg_homedir'],
-                              '--keyserver', 'hkps://hkps.pool.sks-keyservers.net',
+                              '--keyserver', 'hkps://keys.openpgp.org',
                               '--keyserver-options', 'ca-cert-file=' + self.paths['keyserver_ca']
                               + ',include-revoked,no-honor-keyserver-url,no-honor-pka-record',
                               '--refresh-keys'], stderr=subprocess.PIPE)
