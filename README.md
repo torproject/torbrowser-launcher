@@ -22,6 +22,6 @@ If you want to always have the latest version of the `torbrowser-launcher` packa
 
 ```sh
 sudo add-apt-repository ppa:micahflee/ppa
-sudo apt-get update
-sudo apt-get install torbrowser-launcher
+sudo apt update
+sudo apt install torbrowser-launcher
 ```
