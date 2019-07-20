@@ -139,7 +139,6 @@ class Common(object):
                 'tbl_bin': sys.argv[0],
                 'icon_file': os.path.join(os.path.dirname(SHARE), 'pixmaps/torbrowser.png'),
                 'torproject_pem': os.path.join(SHARE, 'torproject.pem'),
-                'keyserver_ca': os.path.join(SHARE, 'sks-keyservers.netCA.pem'),
                 'signing_keys': {
                     'tor_browser_developers': os.path.join(SHARE, 'tor-browser-developers.asc')
                 },
@@ -197,8 +196,6 @@ class Common(object):
         p = subprocess.Popen(['/usr/bin/gpg2', '--status-fd', '2',
                               '--homedir', self.paths['gnupg_homedir'],
                               '--keyserver', 'hkps://keys.openpgp.org',
-                              '--keyserver-options', 'ca-cert-file=' + self.paths['keyserver_ca']
-                              + ',include-revoked,no-honor-keyserver-url,no-honor-pka-record',
                               '--refresh-keys'], stderr=subprocess.PIPE)
         p.wait()
 
