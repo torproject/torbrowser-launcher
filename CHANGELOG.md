@@ -1,5 +1,10 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.2
+
+* Switch to keys.openpgp.org when refreshing signing key, because SKS keyservers are broken
+* Use new Tor Browser logo
+
 ## 0.3.1
 
 * Ship with latest version of the Tor Browser Developers OpenPGP public key
