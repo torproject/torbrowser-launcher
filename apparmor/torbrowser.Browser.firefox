@@ -73,7 +73,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
 
   # parent Firefox process when restarting after upgrade, Web Content processes
-  owner @{torbrowser_firefox_executable} ixmr -> torbrowser_firefox,
+  owner @{torbrowser_firefox_executable} pxmr -> torbrowser_firefox,
 
   /etc/mailcap r,
   /etc/mime.types r,
