@@ -24,12 +24,12 @@ msgstr "Tor Browser Launcher"
 
 #: __init__.py:66
 msgid "By Micah Lee, licensed under MIT"
-msgstr "Par Micah Lee, sous license MIT"
+msgstr "Par Micah Lee, sous licence MIT"
 
 #: __init__.py:67
 #, python-brace-format
 msgid "version {0}"
-msgstr ""
+msgstr "version {0}"
 
 #: common.py:100
 #, python-brace-format
@@ -48,29 +48,27 @@ msgstr "Impossible de créer le dossier {0}"
 
 #: common.py:187
 msgid "Creating GnuPG homedir"
-msgstr "Creation du dossier GnuPG"
+msgstr "Création du dossier GnuPG"
 
 #: common.py:254
 #, python-format
 msgid "Could not import key with fingerprint: %s."
-msgstr "Impossible d'importer la clé: %s"
+msgstr "Impossible d'importer la clé avec l'empreinte : %s."
 
 #: common.py:259
 msgid "Not all keys were imported successfully!"
-msgstr "Certaines clés n'ont pas pu être importées"
+msgstr "Certaines clés n'ont pas pu être importées !"
 
 #: launcher.py:83
-#, fuzzy
 msgid "Downloading Tor Browser for the first time."
-msgstr "Premier téléchargement et installation du Tor Browser"
+msgstr "Téléchargement du Navigateur Tor pour la première fois."
 
 #: launcher.py:85
-#, fuzzy
 msgid ""
 "Your version of Tor Browser is out-of-date. Downloading the newest version."
 msgstr ""
-"Votre version du Tor Browser est obsolète. Téléchargement et installation de "
-"la nouvelle version."
+"Votre version du Navigateur Tor est obsolète. Téléchargement de la nouvelle "
+"version."
 
 #: launcher.py:100
 msgid "Downloading over Tor"
@@ -78,7 +76,7 @@ msgstr "Télécharger à travers Tor"
 
 #: launcher.py:111
 msgid "Tor Browser"
-msgstr "Tor Browser"
+msgstr "Navigateur Tor"
 
 #: launcher.py:128
 msgid "Start"
@@ -86,11 +84,11 @@ msgstr "Démarrer"
 
 #: launcher.py:174
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 #: launcher.py:178
 msgid "Exit"
-msgstr ""
+msgstr "Quitter"
 
 #: launcher.py:192 settings.py:136
 msgid "Cancel"
@@ -103,11 +101,11 @@ msgstr "Téléchargement"
 
 #: launcher.py:238
 msgid "Latest version: {}"
-msgstr "Dernière version: {}"
+msgstr "Dernière version : {}"
 
 #: launcher.py:241
 msgid "Error detecting Tor Browser version."
-msgstr "Impossible de détecter la version du Tor Browser."
+msgstr "Impossible de détecter la version du Navigateur Tor."
 
 #: launcher.py:256 launcher.py:357
 msgid "Verifying Signature"
@@ -127,7 +125,7 @@ msgstr "Télécharger à nouveau"
 
 #: launcher.py:279 launcher.py:295
 msgid "(over Tor)"
-msgstr ""
+msgstr "(à travers Tor)"
 
 #: launcher.py:293
 msgid "Downloaded"
@@ -147,29 +145,29 @@ msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
 msgstr ""
-"La version du Tor Browser installée est antérieure à l'actuelle, ce qui peut "
-"être la signature d'une attaque!"
+"La version du Navigateur Tor que vous avez installé est antérieure à ce "
+"qu'elle devrait, ce qui peut être le signe d'une attaque !"
 
 #: launcher.py:446
-#, fuzzy
 msgid "Downloading Tor Browser over again."
-msgstr "Nouveau téléchargement du Tor Browser Bundle."
+msgstr "Télécharger le Navigateur Tor à nouveau."
 
 #: launcher.py:516 launcher.py:525 launcher.py:533
 msgid "Download Error:"
-msgstr "Erreur de téléchargement:"
+msgstr "Erreur de téléchargement :"
 
 #: launcher.py:517
 msgid "You are currently using a non-default mirror"
-msgstr "Vous utilisez actuellement un miroir non-défaut"
+msgstr "Vous utilisez actuellement un miroir n'étant pas celui par défaut"
 
 #: launcher.py:518
 msgid "Would you like to switch back to the default?"
-msgstr "Voulez-vous revenir à la valeur par défaut?"
+msgstr "Voulez-vous revenir à la valeur par défaut ?"
 
 #: launcher.py:527
 msgid "Would you like to try the English version of Tor Browser instead?"
-msgstr "Voulez-vous essayer la version anglophone du Tor Browser à la place?"
+msgstr ""
+"Voulez-vous essayer la version anglophone du Navigateur Tor à la place ?"
 
 #: launcher.py:548
 #, python-brace-format
@@ -179,10 +177,14 @@ msgid ""
 "\n"
 "You may be under attack."
 msgstr ""
+"Certificat SSL invalide pour :\n"
+"{0}\n"
+"\n"
+"Vous pourriez être attaqué."
 
 #: launcher.py:550
 msgid "Try the download again using Tor?"
-msgstr "Essayez de télécharger à nouveau à travers Tor?"
+msgstr "Essayer de télécharger à nouveau à travers Tor ?"
 
 #: launcher.py:559
 #, python-brace-format
@@ -194,6 +196,12 @@ msgid ""
 "Trying to download over Tor. Are you sure Tor is configured correctly and "
 "running?"
 msgstr ""
+"Impossible de démarrer le téléchargement :\n"
+"\n"
+"{0}\n"
+"\n"
+"Essayez de télécharger à travers Tor. Êtes-vous sûr que Tor est configuré "
+"correctement et fonctionne ?"
 
 #: launcher.py:563
 #, python-brace-format
@@ -204,11 +212,11 @@ msgid ""
 "\n"
 "Are you connected to the internet?"
 msgstr ""
-"Impossible de démarrer le téléchargement:\n"
+"Impossible de démarrer le téléchargement :\n"
 "\n"
 "{0}\n"
 "\n"
-"Êtes-vous connecté à Internet?"
+"Êtes-vous connecté à Internet ?"
 
 #: settings.py:46
 msgid "Tor Browser Launcher Settings"
@@ -220,7 +228,7 @@ msgstr "Télécharger à travers le Tor installé sur le système"
 
 #: settings.py:57
 msgid "Force downloading English version of Tor Browser"
-msgstr "Forcer le téléchargement de la version anglophone du Tor Browser"
+msgstr "Forcer le téléchargement de la version anglophone du Navigateur Tor"
 
 #: settings.py:66
 msgid "Tor server"
@@ -228,26 +236,25 @@ msgstr "Serveur Tor"
 
 #: settings.py:82
 msgid "Status: Installed"
-msgstr "Status: Installé"
+msgstr "Statut : Installé"
 
 #: settings.py:84
 msgid "Status: Not Installed"
-msgstr "Status: Pas installé"
+msgstr "Statut : Pas installé"
 
 #: settings.py:87
 msgid "Install Tor Browser"
-msgstr "Installer le Tor Browser"
+msgstr "Installer le Navigateur Tor"
 
 #: settings.py:92
 msgid "Reinstall Tor Browser"
-msgstr "Réinstaller le Tor Browser"
+msgstr "Réinstaller le Navigateur Tor"
 
 #: settings.py:115
 msgid "Mirror"
 msgstr "Miroir"
 
 #: settings.py:131
-#, fuzzy
 msgid "Save && Exit"
 msgstr "Enregistrer et quitter"
 
