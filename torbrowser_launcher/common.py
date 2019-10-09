@@ -88,6 +88,14 @@ class Common(object):
             if self.language not in available_languages:
                 self.language = 'en-US'
 
+    # get value of environment variable, if it is not set return the default value
+    @staticmethod
+    def get_env(var_name, default_value):
+        value = os.getenv(var_name)
+        if not value:
+            value = default_value
+        return value
+
     # build all relevant paths
     def build_paths(self, tbb_version=None):
         homedir = os.getenv('HOME')
@@ -101,9 +109,9 @@ class Common(object):
         if not os.access(homedir, os.W_OK):
             self.set_gui('error', _("{0} is not writable").format(homedir), [], False)
 
-        tbb_config = '{0}/.config/torbrowser'.format(homedir)
-        tbb_cache = '{0}/.cache/torbrowser'.format(homedir)
-        tbb_local = '{0}/.local/share/torbrowser'.format(homedir)
+        tbb_config = '{0}/torbrowser'.format(self.get_env('XDG_CONFIG_HOME', '{0}/.config'.format(homedir)))
+        tbb_cache = '{0}/torbrowser'.format(self.get_env('XDG_CACHE_HOME', '{0}/.cache'.format(homedir)))
+        tbb_local = '{0}/torbrowser'.format(self.get_env('XDG_DATA_HOME', '{0}/.local/share'.format(homedir)))
         old_tbb_data = '{0}/.torbrowser'.format(homedir)
 
         if tbb_version:
