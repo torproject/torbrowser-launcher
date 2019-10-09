@@ -16,7 +16,7 @@ You might want to check out the [security design doc](/security_design.md).
 
 ![Tor Browser Launcher screenshot](/screenshot.png)
 
-# Installing torbrowser-launcher
+# Installing
 
 You can install `torbrowser-launcher` from your operating system's package manager, but it might be out-of-date and have issues working. If you want to make sure you always have the latest version, use one of the methods below to install:
 
