@@ -2,11 +2,14 @@
 Name=Tor Browser
 Name[hu]=Tor-böngésző
 Name[pt_BR]=Navegador Tor
+Name[be]=Tor Browser
 GenericName=Tor browser
 GenericName[hu]=Tor böngésző indító
+GenericName[be]=Tor Browser
 Comment=Launch Tor Browser
 Comment[hu]=Tor böngésző indító
 Comment[pt_BR]=Navegador Tor
+Comment[be]=Запуск Tor Browser
 Exec=torbrowser-launcher %u
 Terminal=false
 Type=Application
