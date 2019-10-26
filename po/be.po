@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: 2019-10-26 19:51+0300\n"
 "Last-Translator: Viktar Siarheichyk <vics@eq.by>\n"
 "Language-Team: Belarusian <debian-l10n-belarusian@lists.debian.org>\n"
-"Language: \n"
+"Language: be\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -141,12 +141,12 @@ msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
 msgstr ""
-"Гэта версія Tor Browser, якую вы паставілі, ёсць ранейшай, чым мае быць, што "
+"Версія Tor Browser, якую вы паставілі, ёсць ранейшай, чым мае быць, што "
 "можа паказваць на атаку!"
 
 #: launcher.py:446
 msgid "Downloading Tor Browser over again."
-msgstr "Атрыманне Tor Browser ізноў."
+msgstr "Атрыманне Tor Browser наноў."
 
 #: launcher.py:516 launcher.py:525 launcher.py:533
 msgid "Download Error:"
@@ -154,7 +154,7 @@ msgstr "Памылка загрузкі:"
 
 #: launcher.py:517
 msgid "You are currently using a non-default mirror"
-msgstr "Зараз вы карыстаецеся не стандартным люстэркам"
+msgstr "Зараз вы карыстаецеся нестандартным люстэркам"
 
 #: launcher.py:518
 msgid "Would you like to switch back to the default?"
