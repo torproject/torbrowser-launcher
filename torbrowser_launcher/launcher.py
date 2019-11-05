@@ -433,7 +433,8 @@ class Launcher(QtWidgets.QMainWindow):
             return
 
         # Run Tor Browser
-        subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
+        cmd = [self.common.paths['tbb']['start'], '--detach']
+        subprocess.call(cmd, cwd=self.common.paths['tbb']['dir_tbb'])
         sys.exit(0)
 
     # Start over and download TBB again
