@@ -133,5 +133,14 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /etc/xfce4/defaults.list r,
   /usr/share/xfce4/applications/ r,
 
+  # u2f (tested with Yubikey 4)
+  /sys/class/ r,
+  /sys/bus/ r,
+  /sys/class/hidraw/ r,
+  /run/udev/data/c24{7,9}:* r,
+  /dev/hidraw* rw,
+  # Yubikey NEO also needs this:
+  /sys/devices/**/hidraw/hidraw*/uevent r,
+
   #include <local/torbrowser.Browser.firefox>
 }
