@@ -63,6 +63,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/firefox rix,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/* rw,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/{,MozUpdater/bgupdate/}updater ix,
+  owner @{torbrowser_home_dir}/updater ix,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/.parentwritetest rw,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profiles.ini r,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/{,**} rwk,
