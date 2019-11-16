@@ -33,9 +33,13 @@ import subprocess
 from distutils.core import setup
 
 SHARE = 'share'
-
-# detect linux distribution
-distro = platform.dist()[0]
+try:
+    #for distributions that use python3.8
+    import distro as d
+    distro=d.LinuxDistribution()._os_release_info['name']
+except:
+    # detect linux distribution on python >=3.7
+    distro = platform.dist()[0]
 
 
 def file_list(path):
