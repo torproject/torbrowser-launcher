@@ -107,7 +107,7 @@ class Common(object):
                 except:
                     self.set_gui('error', _("Error creating {0}").format(homedir), [], False)
         if not os.access(homedir, os.W_OK):
-            self.set_gui('error', _("{0} is not writable").format(homedir), [], False)
+            self.set_gui('error', _("{0} is not writeable").format(homedir), [], False)
 
         tbb_config = '{0}/torbrowser'.format(self.get_env('XDG_CONFIG_HOME', '{0}/.config'.format(homedir)))
         tbb_cache = '{0}/torbrowser'.format(self.get_env('XDG_CACHE_HOME', '{0}/.cache'.format(homedir)))
