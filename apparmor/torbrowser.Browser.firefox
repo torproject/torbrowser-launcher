@@ -122,6 +122,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
   deny /run/user/[0-9]*/dconf/user rw,
+  deny /usr/bin/lsb_release x,
 
   # Silence denial logs about PulseAudio
   deny /etc/pulse/client.conf r,
