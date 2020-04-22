@@ -73,11 +73,19 @@ class Common(object):
 
         # figure out the language
         available_languages = ['ar', 'ca', 'da', 'de', 'en-US', 'es-ES', 'fa', 'fr', 'ga-IE', 'he', 'id', 'is', 'it', 'ja', 'ko', 'nb-NO', 'nl', 'pl', 'pt-BR', 'ru', 'sv-SE', 'tr', 'vi', 'zh-CN', 'zh-TW']
+
+        # a list of manually configured language fallback overriding
+        language_overrides = {
+            'zh-HK': 'zh-TW',
+        }
+
         default_locale = locale.getlocale()[0]
         if default_locale is None:
             self.language = 'en-US'
         else:
             self.language = default_locale.replace('_', '-')
+            if self.language in language_overrides:
+                self.language = language_overrides[self.language]
             if self.language not in available_languages:
                 self.language = self.language.split('-')[0]
                 if self.language not in available_languages:
