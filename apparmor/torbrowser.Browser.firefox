@@ -68,6 +68,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profiles.ini r,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/{,**} rwk,
   owner @{torbrowser_home_dir}/TorBrowser/Data/fontconfig/fonts.conf r,
+  owner @{torbrowser_home_dir}/fonts/* l,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/tor px,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/ r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
