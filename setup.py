@@ -34,9 +34,6 @@ from distutils.core import setup
 
 SHARE = "share"
 
-# detect linux distribution
-distro = platform.dist()[0]
-
 
 def file_list(path):
     files = []
@@ -72,24 +69,22 @@ for root, dirs, files in os.walk(SHARE):
     if files:
         datafiles.append((root, [os.path.join(root, f) for f in files]))
 
-# disable shipping apparmor profiles until they work in ubuntu (#128)
-if distro != "Ubuntu":
-    if not hasattr(sys, "real_prefix"):
-        # we're not in a virtualenv, so we can probably write to /etc
-        datafiles += [
-            (
-                "/etc/apparmor.d/",
-                ["apparmor/torbrowser.Browser.firefox", "apparmor/torbrowser.Tor.tor"],
-            ),
-            (
-                "/etc/apparmor.d/local/",
-                [
-                    "apparmor/local/torbrowser.Browser.firefox",
-                    "apparmor/local/torbrowser.Tor.tor",
-                ],
-            ),
-            ("/etc/apparmor.d/tunables/", ["apparmor/tunables/torbrowser"]),
-        ]
+if not hasattr(sys, "real_prefix"):
+    # we're not in a virtualenv, so we can probably write to /etc
+    datafiles += [
+        (
+            "/etc/apparmor.d/",
+            ["apparmor/torbrowser.Browser.firefox", "apparmor/torbrowser.Tor.tor"],
+        ),
+        (
+            "/etc/apparmor.d/local/",
+            [
+                "apparmor/local/torbrowser.Browser.firefox",
+                "apparmor/local/torbrowser.Tor.tor",
+            ],
+        ),
+        ("/etc/apparmor.d/tunables/", ["apparmor/tunables/torbrowser"]),
+    ]
 
 datafiles += [(os.path.dirname(f), [f]) for f in create_mo_files()]
 
