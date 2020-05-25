@@ -51,3 +51,17 @@ Run `torbrowser-launcher` either by using the GUI desktop launcher, or by runnin
 ```
 torbrowser-launcher
 ```
+
+## Installing in Arch Linux
+
+If you use Arch Linux you can install this package from official repositories:
+
+```sh
+sudo pacman -Suy torbrowser-launcher
+```
+
+Run `torbrowser-launcher` either by using the GUI desktop launcher, or by running:
+
+```
+torbrowser-launcher
+```
