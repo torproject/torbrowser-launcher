@@ -3,7 +3,15 @@
 VERSION=`cat share/torbrowser-launcher/version`
 
 # clean up from last build
-rm -r build dist
+if [ -d "build" ]
+then
+    rm -r build
+fi
+
+if [ -d "dist" ]
+then
+    rm -r dist
+fi
 
 # build binary package
 python3 setup.py bdist_rpm --requires="python3-qt5, python3-gpg, python3-requests, python3-pysocks, gnupg2"
