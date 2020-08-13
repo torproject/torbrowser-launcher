@@ -2,7 +2,7 @@
 Tor Browser Launcher
 https://github.com/micahflee/torbrowser-launcher/
 
-Copyright (c) 2013-2017 Micah Lee <micah@micahflee.com>
+Copyright (c) 2013-2020 Micah Lee <micah@micahflee.com>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -28,14 +28,14 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import sys
-import platform
+import distro
 import subprocess
 from distutils.core import setup
 
 SHARE = 'share'
 
 # detect linux distribution
-distro = platform.dist()[0]
+distro = distro.linux_distribution()[0]
 
 
 def file_list(path):
