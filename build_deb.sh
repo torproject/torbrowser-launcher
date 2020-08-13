@@ -3,7 +3,15 @@
 VERSION=`cat share/torbrowser-launcher/version`
 
 # clean up from last build
-rm -r build deb_dist
+if [ -d "build" ]
+then
+    rm -r build
+fi
+
+if [ -d "deb_dist" ]
+then
+    rm -r deb_dist
+fi
 
 # build binary package
 python3 setup.py --command-packages=stdeb.command bdist_deb
