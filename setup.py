@@ -35,7 +35,11 @@ from distutils.core import setup
 SHARE = "share"
 
 # detect linux distribution
-distro = platform.dist()[0]
+distro = ''
+if sys.version_info.major == 3:
+    distro = platform.platform()[0]
+else:
+    distro = platform.dist()[0]
 
 
 def file_list(path):

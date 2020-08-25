@@ -36,6 +36,7 @@ from PyQt5 import QtCore, QtWidgets
 from .common import Common, SHARE
 from .settings import Settings
 from .launcher import Launcher
+from .launcher_cli import LauncherCLI
 
 
 class Application(QtWidgets.QApplication):
@@ -59,10 +60,16 @@ def main():
         help="Open Tor Browser Launcher settings",
     )
     parser.add_argument("url", nargs="*", help="URL to load")
+    parser.add_argument(
+        '--cli',
+        action='store_true',
+        dest='cli',
+        help='Open Tor Browser Launcher in CLI mode')
     args = parser.parse_args()
 
     settings = bool(args.settings)
     url_list = args.url
+    cli_mode = bool(args.cli)
 
     # Load the version and print the banner
     with open(os.path.join(SHARE, "version")) as buf:
@@ -74,31 +81,37 @@ def main():
     print("https://github.com/micahflee/torbrowser-launcher")
 
     common = Common(tor_browser_launcher_version)
-    app = Application()
 
-    # Open the window
-    gui = None
-
-    if settings:
-        # Settings mode
-        gui = Settings(common, app)
+    if cli_mode:
+        cli = LauncherCLI(common, url_list)
+        cli.start()
+        sys.exit(0)
     else:
-        # Launcher mode
-        gui = Launcher(common, app, url_list)
+        app = Application()
 
-    # Center the window
-    desktop = app.desktop()
-    window_size = gui.size()
-    gui.move(
-        (desktop.width() - window_size.width()) / 2,
-        (desktop.height() - window_size.height()) / 2,
-    )
-    gui.show()
+        # Open the window
+        gui = None
 
-    # Allow ctrl-c to work
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
+        if settings:
+           # Settings mode
+           gui = Settings(common, app)
+        else:
+           # Launcher mode
+           gui = Launcher(common, app, url_list)
 
-    sys.exit(app.exec_())
+        # Center the window
+        desktop = app.desktop()
+        window_size = gui.size()
+        gui.move(
+            (desktop.width() - window_size.width()) / 2,
+            (desktop.height() - window_size.height()) / 2,
+        )
+        gui.show()
+
+        # Allow ctrl-c to work
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+        sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
