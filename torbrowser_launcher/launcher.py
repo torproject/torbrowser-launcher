@@ -417,7 +417,10 @@ class Launcher(QtWidgets.QMainWindow):
                 installed_version = line.split()[2].decode()
                 break
 
-        if self.min_version <= installed_version:
+        def version_tuple(v):
+            return tuple(map(int, v.split(".")))
+
+        if version_tuple(self.min_version) <= version_tuple(installed_version):
             return True
 
         return False
