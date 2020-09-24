@@ -164,7 +164,7 @@ class Common(object):
                     'dir': tbb_local + '/tbb/' + self.architecture,
                     'dir_tbb': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' + self.language,
                     'start': tbb_local + '/tbb/' + self.architecture + '/tor-browser_' +
-                             self.language + '/start-tor-browser.desktop'
+                             self.language + '/Browser/start-tor-browser',
                 },
             }
 
