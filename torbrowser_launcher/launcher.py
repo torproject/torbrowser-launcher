@@ -433,7 +433,9 @@ class Launcher(QtWidgets.QMainWindow):
             return
 
         # Run Tor Browser
-        subprocess.call([self.common.paths['tbb']['start']], cwd=self.common.paths['tbb']['dir_tbb'])
+        my_env = os.environ.copy()
+        my_env['LOGNAME'] = "torbrowserbundleuser"
+        subprocess.call([self.common.paths['tbb']['start'], '--allow-remote', self.url_list], cwd=self.common.paths['tbb']['dir_tbb'], env=my_env)
         sys.exit(0)
 
     # Start over and download TBB again
