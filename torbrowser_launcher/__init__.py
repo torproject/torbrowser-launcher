@@ -42,6 +42,7 @@ class Application(QtWidgets.QApplication):
     """
     Qt's QApplication class. It has been overridden to support threads.
     """
+
     def __init__(self):
         self.setAttribute(QtCore.Qt.AA_X11InitThreads, True)
         QtWidgets.QApplication.__init__(self, sys.argv)
@@ -51,21 +52,26 @@ class Application(QtWidgets.QApplication):
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--settings', action='store_true', dest='settings', help='Open Tor Browser Launcher settings')
-    parser.add_argument('url', nargs='*', help='URL to load')
+    parser.add_argument(
+        "--settings",
+        action="store_true",
+        dest="settings",
+        help="Open Tor Browser Launcher settings",
+    )
+    parser.add_argument("url", nargs="*", help="URL to load")
     args = parser.parse_args()
 
     settings = bool(args.settings)
     url_list = args.url
 
     # Load the version and print the banner
-    with open(os.path.join(SHARE, 'version')) as buf:
+    with open(os.path.join(SHARE, "version")) as buf:
         tor_browser_launcher_version = buf.read().strip()
 
-    print(_('Tor Browser Launcher'))
-    print(_('By Micah Lee, licensed under MIT'))
-    print(_('version {0}').format(tor_browser_launcher_version))
-    print('https://github.com/micahflee/torbrowser-launcher')
+    print(_("Tor Browser Launcher"))
+    print(_("By Micah Lee, licensed under MIT"))
+    print(_("version {0}").format(tor_browser_launcher_version))
+    print("https://github.com/micahflee/torbrowser-launcher")
 
     common = Common(tor_browser_launcher_version)
     app = Application()
@@ -85,7 +91,7 @@ def main():
     window_size = gui.size()
     gui.move(
         (desktop.width() - window_size.width()) / 2,
-        (desktop.height() - window_size.height()) / 2
+        (desktop.height() - window_size.height()) / 2,
     )
     gui.show()
 

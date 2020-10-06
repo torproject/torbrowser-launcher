@@ -63,17 +63,21 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/firefox rix,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/* rw,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/{,MozUpdater/bgupdate/}updater ix,
+  owner @{torbrowser_home_dir}/updater ix,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/.parentwritetest rw,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profiles.ini r,
   owner @{torbrowser_home_dir}/TorBrowser/Data/Browser/profile.default/{,**} rwk,
   owner @{torbrowser_home_dir}/TorBrowser/Data/fontconfig/fonts.conf r,
+  owner @{torbrowser_home_dir}/fonts/* l,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/tor px,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/ r,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so mr,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/libstdc++/*.so mr,
+  owner @{torbrowser_home_dir}/TorBrowser/Tor/libstdc++/*.so.* mr,
 
   # parent Firefox process when restarting after upgrade, Web Content processes
-  owner @{torbrowser_firefox_executable} ixmr -> torbrowser_firefox,
+  owner @{torbrowser_firefox_executable} pxmr -> torbrowser_firefox,
 
   /etc/mailcap r,
   /etc/mime.types r,
@@ -105,6 +109,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
 
   # Required for multiprocess Firefox (aka Electrolysis, i.e. e10s)
   owner /{dev,run}/shm/org.chromium.* rw,
+  owner /dev/shm/org.mozilla.ipc.[0-9]*.[0-9]* rw, # for Chromium IPC
 
   # Deny access to DRM nodes, that's granted by the X abstraction, which is
   # sourced by the gnome abstraction, that we include.
@@ -120,6 +125,8 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   deny /sys/devices/system/cpu/cpufreq/policy[0-9]*/cpuinfo_max_freq r,
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
   deny /run/user/[0-9]*/dconf/user rw,
+  deny /usr/bin/lsb_release x,
+  deny capability sys_admin,
 
   # Silence denial logs about PulseAudio
   deny /etc/pulse/client.conf r,
@@ -131,6 +138,15 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   # Xfce4
   /etc/xfce4/defaults.list r,
   /usr/share/xfce4/applications/ r,
+
+  # u2f (tested with Yubikey 4)
+  /sys/class/ r,
+  /sys/bus/ r,
+  /sys/class/hidraw/ r,
+  /run/udev/data/c24{7,9}:* r,
+  /dev/hidraw* rw,
+  # Yubikey NEO also needs this:
+  /sys/devices/**/hidraw/hidraw*/uevent r,
 
   #include <local/torbrowser.Browser.firefox>
 }
