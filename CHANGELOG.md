@@ -1,5 +1,12 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.3
+
+* Switch to Web Key Directory to refresh signing key from torproject.org, because everything is broken
+* Use proper version comparison now that Tor Browser 10.0 is out
+* Fix DNS leak when downloading over Tor
+* Various bug fixes, as well as AppData and AppArmor fixes
+
 ## 0.3.2
 
 * Switch to keys.openpgp.org when refreshing signing key, because SKS keyservers are broken
