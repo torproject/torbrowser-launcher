@@ -551,11 +551,12 @@ class DownloadThread(QtCore.QThread):
         self.path = path
 
         # Use tor socks5 proxy, if enabled
-        if self.common.settings["download_over_tor"]:
-            socks5_address = "socks5://{}".format(
-                self.common.settings["tor_socks_address"]
-            )
-            self.proxies = {"https": socks5_address, "http": socks5_address}
+        if self.common.settings['download_over_tor']:
+            socks5_address = 'socks5h://{}'.format(self.common.settings['tor_socks_address'])
+            self.proxies = {
+                'https': socks5_address,
+                'http': socks5_address
+            }
         else:
             self.proxies = None
 
