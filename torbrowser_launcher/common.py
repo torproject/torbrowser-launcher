@@ -255,7 +255,7 @@ class Common(object):
         # Fetch key from wkd, as per https://support.torproject.org/tbb/how-to-verify-signature/
         p = subprocess.Popen(
             [
-                "/usr/bin/gpg2",
+                "gpg2",
                 "--status-fd",
                 "2",
                 "--homedir",
