@@ -36,6 +36,7 @@ class Settings(QtWidgets.QMainWindow):
     """
     Settings window.
     """
+
     def __init__(self, common, app):
         super(Settings, self).__init__()
 
@@ -44,28 +45,30 @@ class Settings(QtWidgets.QMainWindow):
 
         # Set up the window
         self.setWindowTitle(_("Tor Browser Launcher Settings"))
-        self.setWindowIcon(QtGui.QIcon(self.common.paths['icon_file']))
+        self.setWindowIcon(QtGui.QIcon(self.common.paths["icon_file"]))
 
         # Download over system tor
         self.tor_download_checkbox = QtWidgets.QCheckBox(_("Download over system Tor"))
-        if self.common.settings['download_over_tor']:
+        if self.common.settings["download_over_tor"]:
             self.tor_download_checkbox.setCheckState(QtCore.Qt.Checked)
         else:
             self.tor_download_checkbox.setCheckState(QtCore.Qt.Unchecked)
 
         # Force en-US, only display if language isn't already en-US
-        self.force_en_checkbox = QtWidgets.QCheckBox(_("Force downloading English version of Tor Browser"))
-        if self.common.settings['force_en-US']:
+        self.force_en_checkbox = QtWidgets.QCheckBox(
+            _("Force downloading English version of Tor Browser")
+        )
+        if self.common.settings["force_en-US"]:
             self.force_en_checkbox.setCheckState(QtCore.Qt.Checked)
         else:
             self.force_en_checkbox.setCheckState(QtCore.Qt.Unchecked)
-        if self.common.language == 'en-US':
+        if self.common.language == "en-US":
             self.force_en_checkbox.hide()
 
         # Tor SOCKS address
-        tor_addr_label = QtWidgets.QLabel(_('Tor server'))
+        tor_addr_label = QtWidgets.QLabel(_("Tor server"))
         self.tor_addr = QtWidgets.QLineEdit()
-        self.tor_addr.setText(self.common.settings['tor_socks_address'])
+        self.tor_addr.setText(self.common.settings["tor_socks_address"])
         tor_addr_layout = QtWidgets.QHBoxLayout()
         tor_addr_layout.addWidget(tor_addr_label)
         tor_addr_layout.addWidget(self.tor_addr)
@@ -78,22 +81,26 @@ class Settings(QtWidgets.QMainWindow):
 
         # Status
         status_label = QtWidgets.QLabel()
-        if(self.common.settings['installed']):
-            status_label.setText(_('Status: Installed'))
+        if self.common.settings["installed"]:
+            status_label.setText(_("Status: Installed"))
         else:
-            status_label.setText(_('Status: Not Installed'))
+            status_label.setText(_("Status: Not Installed"))
 
         # Install button
         install_button = QtWidgets.QPushButton(_("Install Tor Browser"))
-        install_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
+        install_button.setIcon(
+            self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton)
+        )
         install_button.clicked.connect(self.install)
 
         # Reinstall buttons
         reinstall_button = QtWidgets.QPushButton(_("Reinstall Tor Browser"))
-        reinstall_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
+        reinstall_button.setIcon(
+            self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton)
+        )
         reinstall_button.clicked.connect(self.reinstall)
 
-        if(self.common.settings['installed']):
+        if self.common.settings["installed"]:
             install_button.hide()
             reinstall_button.show()
         else:
@@ -112,14 +119,16 @@ class Settings(QtWidgets.QMainWindow):
         top_layout.addLayout(status_layout)
 
         # Mirror
-        mirror_label = QtWidgets.QLabel(_('Mirror'))
+        mirror_label = QtWidgets.QLabel(_("Mirror"))
 
         self.mirror = QtWidgets.QComboBox()
         for mirror in self.common.mirrors:
             self.mirror.addItem(mirror)
 
-        if self.common.settings['mirror'] in self.common.mirrors:
-            self.mirror.setCurrentIndex(self.mirror.findText(self.common.settings['mirror']))
+        if self.common.settings["mirror"] in self.common.mirrors:
+            self.mirror.setCurrentIndex(
+                self.mirror.findText(self.common.settings["mirror"])
+            )
         else:
             self.mirror.setCurrentIndex(0)
 
@@ -129,12 +138,16 @@ class Settings(QtWidgets.QMainWindow):
 
         # Save & Exit button
         self.save_exit_button = QtWidgets.QPushButton(_("Save && Exit"))
-        self.save_exit_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton))
+        self.save_exit_button.setIcon(
+            self.style().standardIcon(QtWidgets.QStyle.SP_DialogApplyButton)
+        )
         self.save_exit_button.clicked.connect(self.save_exit)
 
         # Cancel button
         self.cancel_button = QtWidgets.QPushButton(_("Cancel"))
-        self.cancel_button.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
+        self.cancel_button.setIcon(
+            self.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton)
+        )
         self.cancel_button.clicked.connect(self.close)
 
         # Buttons layout
@@ -155,14 +168,14 @@ class Settings(QtWidgets.QMainWindow):
     # Install
     def install(self):
         self.save()
-        subprocess.Popen([self.common.paths['tbl_bin']])
+        subprocess.Popen([self.common.paths["tbl_bin"]])
         self.close()
 
     # Reinstall
     def reinstall(self):
         self.save()
-        shutil.rmtree(self.common.paths['tbb']['dir'])
-        subprocess.Popen([self.common.paths['tbl_bin']])
+        shutil.rmtree(self.common.paths["tbb"]["dir"])
+        subprocess.Popen([self.common.paths["tbl_bin"]])
         self.close()
 
     # Save & Exit
@@ -173,12 +186,14 @@ class Settings(QtWidgets.QMainWindow):
     # Save settings
     def save(self):
         # Checkbox options
-        self.common.settings['download_over_tor'] = self.tor_download_checkbox.isChecked()
-        self.common.settings['force_en-US'] = self.force_en_checkbox.isChecked()
-        self.common.settings['tor_socks_address'] = self.tor_addr.text()
+        self.common.settings[
+            "download_over_tor"
+        ] = self.tor_download_checkbox.isChecked()
+        self.common.settings["force_en-US"] = self.force_en_checkbox.isChecked()
+        self.common.settings["tor_socks_address"] = self.tor_addr.text()
 
         # Figure out the selected mirror
-        self.common.settings['mirror'] = self.mirror.currentText()
+        self.common.settings["mirror"] = self.mirror.currentText()
 
         # Save them
         self.common.save_settings()
