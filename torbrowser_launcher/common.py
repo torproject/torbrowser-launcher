@@ -193,10 +193,11 @@ class Common(object):
         else:
             print('Refreshing local keyring...')
 
+        # Fetch key from wkd, as per https://support.torproject.org/tbb/how-to-verify-signature/
         p = subprocess.Popen(['/usr/bin/gpg2', '--status-fd', '2',
                               '--homedir', self.paths['gnupg_homedir'],
-                              '--keyserver', 'hkps://keys.openpgp.org',
-                              '--refresh-keys'], stderr=subprocess.PIPE)
+                              '--auto-key-locate', 'nodefault,wkd',
+                              '--locate-keys', 'torbrowser@torproject.org'], stderr=subprocess.PIPE)
         p.wait()
 
         for output in p.stderr.readlines():
