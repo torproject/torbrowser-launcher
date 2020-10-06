@@ -37,6 +37,7 @@ import requests
 import gpg
 import shutil
 import xml.etree.ElementTree as ET
+from packaging import version
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 
@@ -417,7 +418,7 @@ class Launcher(QtWidgets.QMainWindow):
                 installed_version = line.split()[2].decode()
                 break
 
-        if self.min_version <= installed_version:
+        if version.parse(self.min_version) <= version.parse(installed_version):
             return True
 
         return False
