@@ -21,7 +21,7 @@ sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 
 ```sh
 sudo dnf install rpm-build python3-qt5 python3-gpg python3-requests python3-pysocks python3-packaging gnupg2 tor
-./build_rpm.sh
+sudo ./build_rpm.sh
 sudo yum install dist/torbrowser-launcher-*.rpm
 ```
 
