@@ -12,8 +12,8 @@ Then install dependencies, build a package, and install:
 ### Debian, Ubuntu, Linux Mint, etc.
 
 ```sh
-sudo apt install build-essential dh-python python3-all python3-stdeb python3-pyqt5 python3-gpg python3-requests python3-socks python3-packaging gnupg2 tor
-./build_deb.sh
+sudo apt install build-essential dh-python python3-all python3-stdeb python3-pyqt5 python3-gpg python3-requests python3-socks python3-packaging gnupg2 fakeroot tor
+sudo ./build_deb.sh
 sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 ```
 
