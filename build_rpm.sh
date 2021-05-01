@@ -14,7 +14,7 @@ then
 fi
 
 # build binary package
-python3 setup.py bdist_rpm --requires="python3-qt5, python3-gpg, python3-requests, python3-pysocks, gnupg2"
+python3 setup.py bdist_rpm --requires="python3-qt5, python3-gpg, python3-requests, python3-pysocks, python3-packaging, gnupg2"
 
 # install it
 echo ""

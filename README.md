@@ -18,7 +18,7 @@ You might want to check out the [security design doc](/security_design.md).
 
 # Installing
 
-You can install `torbrowser-launcher` from your operating system's package manager, but it might be out-of-date and have issues working. If you want to make sure you always have the latest version, use one of the methods below to install:
+You can install `torbrowser-launcher` from your operating system's package manager, but it might be out-of-date and have issues working. If you want to make sure you always have the latest version, use Flatpak:
 
 ## Installing in any Linux distro using Flatpak
 
@@ -34,20 +34,4 @@ Run `torbrowser-launcher` either by using the GUI desktop launcher, or by runnin
 
 ```
 flatpak run com.github.micahflee.torbrowser-launcher
-```
-
-## Installing from the PPA
-
-If you use Ubuntu or one of its derivatives:
-
-```sh
-sudo add-apt-repository ppa:micahflee/ppa
-sudo apt update
-sudo apt install torbrowser-launcher
-```
-
-Run `torbrowser-launcher` either by using the GUI desktop launcher, or by running:
-
-```
-torbrowser-launcher
 ```

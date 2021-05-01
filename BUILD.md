@@ -12,7 +12,7 @@ Then install dependencies, build a package, and install:
 ### Debian, Ubuntu, Linux Mint, etc.
 
 ```sh
-sudo apt install build-essential dh-python python3-all python3-stdeb python3-pyqt5 python3-gpg python3-requests python3-socks gnupg2 tor
+sudo apt install build-essential dh-python python3-all python3-stdeb python3-pyqt5 python3-gpg python3-requests python3-socks python3-packaging gnupg2 tor
 ./build_deb.sh
 sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 ```
@@ -20,7 +20,7 @@ sudo dpkg -i deb_dist/torbrowser-launcher_*.deb
 ### Red Hat, Fedora, CentOS, etc.
 
 ```sh
-sudo dnf install rpm-build python3-qt5 python3-gpg python3-requests python3-pysocks gnupg2 tor
+sudo dnf install rpm-build python3-qt5 python3-gpg python3-requests python3-pysocks python3-packaging gnupg2 tor
 ./build_rpm.sh
 sudo yum install dist/torbrowser-launcher-*.rpm
 ```
