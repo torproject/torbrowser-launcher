@@ -130,7 +130,6 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
   deny /run/user/[0-9]*/dconf/user rw,
   deny /usr/bin/lsb_release x,
-  deny capability sys_admin,
 
   # Silence denial logs about PulseAudio
   deny /etc/pulse/client.conf r,
@@ -151,6 +150,12 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /dev/hidraw* rw,
   # Yubikey NEO also needs this:
   /sys/devices/**/hidraw/hidraw*/uevent r,
+
+  # Needed for Firefox sandboxing via unprivileged user namespaces
+  capability sys_admin,
+  capability sys_chroot,
+  owner @{PROC}/@{pid}/{gid,uid}_map w,
+  owner @{PROC}/@{pid}/setgroups w,
 
   #include <local/torbrowser.Browser.firefox>
 }
