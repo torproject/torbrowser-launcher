@@ -38,6 +38,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /dev/ r,
   /dev/shm/ r,
 
+  owner @{PROC}/@{pid}/cgroup r,
   owner @{PROC}/@{pid}/environ r,
   owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
@@ -101,6 +102,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /sys/devices/system/cpu/present r,
   /sys/devices/system/node/ r,
   /sys/devices/system/node/node[0-9]*/meminfo r,
+  /sys/fs/cgroup/cpu,cpuacct/user.slice/cpu.cfs_quota_us r,
   deny /sys/devices/virtual/block/*/uevent r,
 
   # Should use abstractions/gstreamer instead once merged upstream
