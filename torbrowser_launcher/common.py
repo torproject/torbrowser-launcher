@@ -97,6 +97,7 @@ class Common(object):
             "lt",
             "mk",
             "ms",
+            "my",
             "nb-NO",
             "nl",
             "pl",
