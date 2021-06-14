@@ -28,14 +28,14 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import sys
-import platform
+import distro
 import subprocess
 from distutils.core import setup
 
 SHARE = "share"
 
 # detect linux distribution
-distro = platform.dist()[0]
+distro = distro.linux_distribution()[0]
 
 
 def file_list(path):
