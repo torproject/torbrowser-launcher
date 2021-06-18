@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Tor Browser
+Name[be]=Tor Browser
 Name[cs]=Tor Browser
 Name[da]=Tor Browser
 Name[hr]=Tor preglednik
@@ -7,10 +8,12 @@ Name[hu]=Tor-böngésző
 Name[pt_BR]=Navegador Tor
 Name[sv]=Tor Browser
 GenericName=Tor browser
+GenericName[be]=Tor Browser
 GenericName[da]=Tor Browser
 GenericName[hr]=Tor preglednik
 GenericName[hu]=Tor böngésző indító
 Comment=Launch Tor Browser
+Comment[be]=Запуск Tor Browser
 Comment[cs]=Spustit Tor Browser
 Comment[hr]=Pokreni Tor preglednika
 Comment[da]=Start Tor Browser

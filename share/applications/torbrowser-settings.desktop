@@ -7,10 +7,15 @@ Name[hu]=Tor-böngésző indító beállításai
 Name[nl]=Tor Browser Launcher Instellingen
 Name[pt_BR]=Navegador Tor (Configurações do Lançador)
 Name[ru]=Tor Browser (настройки запуска)
+<<<<<<< HEAD
 Name[sv]=Inställningar för Tor Browser Launcher
+=======
+Name[be]=Налады запускальніка Tor Browser
+>>>>>>> Belarusian localization is added.
 GenericName=Tor Browser Launcher Settings
 GenericName[hr]=Tor preglednik – postavke pokretanja
 GenericName[hu]=Tor-böngésző indító beállításai
+GenericName[be]=Налады запускальніка Tor Browser
 Comment=Tor Browser Launcher Settings
 Comment[cs]=Tor Browser Launcher nastavení
 Comment[fr]=Tor Browser Launcher configurations
@@ -19,7 +24,11 @@ Comment[hu]=Tor-böngésző indító beállításai
 Comment[nl]=Tor Browser Launcher Instellingen
 Comment[pt_BR]=Navegador Tor (Configurações do Lançador)
 Comment[ru]=Tor Browser (настройки запуска)
+<<<<<<< HEAD
 Comment[sv]=Inställningar för Tor Browser Launcher
+=======
+Comment[be]=Налады запускальніка Tor Browser
+>>>>>>> Belarusian localization is added.
 Exec=torbrowser-launcher --settings
 Terminal=false
 Type=Application
