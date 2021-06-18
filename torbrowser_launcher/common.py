@@ -111,11 +111,19 @@ class Common(object):
             "zh-CN",
             "zh-TW",
         ]
+
+        # a list of manually configured language fallback overriding
+        language_overrides = {
+            "zh-HK": "zh-TW",
+        }
+
         default_locale = locale.getlocale()[0]
         if default_locale is None:
             self.language = "en-US"
         else:
             self.language = default_locale.replace("_", "-")
+            if self.language in language_overrides:
+                self.language = language_overrides[self.language]
             if self.language not in available_languages:
                 self.language = self.language.split("-")[0]
                 if self.language not in available_languages:
@@ -147,10 +155,16 @@ class Common(object):
                         "error", _("Error creating {0}").format(homedir), [], False
                     )
 
-        tbb_config = '{0}/torbrowser'.format(self.get_env('XDG_CONFIG_HOME', '{0}/.config'.format(homedir)))
-        tbb_cache = '{0}/torbrowser'.format(self.get_env('XDG_CACHE_HOME', '{0}/.cache'.format(homedir)))
-        tbb_local = '{0}/torbrowser'.format(self.get_env('XDG_DATA_HOME', '{0}/.local/share'.format(homedir)))
-        old_tbb_data = '{0}/.torbrowser'.format(homedir)
+        tbb_config = "{0}/torbrowser".format(
+            self.get_env("XDG_CONFIG_HOME", "{0}/.config".format(homedir))
+        )
+        tbb_cache = "{0}/torbrowser".format(
+            self.get_env("XDG_CACHE_HOME", "{0}/.cache".format(homedir))
+        )
+        tbb_local = "{0}/torbrowser".format(
+            self.get_env("XDG_DATA_HOME", "{0}/.local/share".format(homedir))
+        )
+        old_tbb_data = "{0}/.torbrowser".format(homedir)
 
         if tbb_version:
             # tarball filename
@@ -184,7 +198,11 @@ class Common(object):
             self.paths["sig_filename"] = tarball_filename + ".asc"
         else:
             self.paths = {
-                "dirs": {"config": tbb_config, "cache": tbb_cache, "local": tbb_local,},
+                "dirs": {
+                    "config": tbb_config,
+                    "cache": tbb_cache,
+                    "local": tbb_local,
+                },
                 "old_data_dir": old_tbb_data,
                 "tbl_bin": sys.argv[0],
                 "icon_file": os.path.join(
