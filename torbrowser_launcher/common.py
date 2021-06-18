@@ -117,7 +117,8 @@ class Common(object):
             "zh-HK": "zh-TW",
         }
 
-        default_locale = locale.getlocale()[0]
+        locale.setlocale(locale.LC_MESSAGES, "")
+        default_locale = locale.getlocale(locale.LC_MESSAGES)[0]
         if default_locale is None:
             self.language = "en-US"
         else:
