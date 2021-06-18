@@ -1,5 +1,11 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.4
+
+* Ship with latest version of the Tor Browser Developers OpenPGP public key
+* Add several translations
+* Various small bug fixes
+
 ## 0.3.3
 
 * Switch to Web Key Directory to refresh signing key from torproject.org, because everything is broken

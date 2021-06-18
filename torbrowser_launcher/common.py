@@ -2,7 +2,7 @@
 Tor Browser Launcher
 https://github.com/micahflee/torbrowser-launcher/
 
-Copyright (c) 2013-2017 Micah Lee <micah@micahflee.com>
+Copyright (c) 2013-2021 Micah Lee <micah@micahflee.com>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -76,35 +76,54 @@ class Common(object):
         available_languages = [
             "ar",
             "ca",
+            "cs",
             "da",
             "de",
+            "el",
             "en-US",
+            "es-AR",
             "es-ES",
             "fa",
             "fr",
             "ga-IE",
             "he",
+            "hu",
             "id",
             "is",
             "it",
             "ja",
+            "ka",
             "ko",
+            "lt",
+            "mk",
+            "ms",
+            "my",
             "nb-NO",
             "nl",
             "pl",
             "pt-BR",
+            "ro",
             "ru",
             "sv-SE",
+            "th",
             "tr",
             "vi",
             "zh-CN",
             "zh-TW",
         ]
+
+        # a list of manually configured language fallback overriding
+        language_overrides = {
+            "zh-HK": "zh-TW",
+        }
+
         default_locale = locale.getlocale()[0]
         if default_locale is None:
             self.language = "en-US"
         else:
             self.language = default_locale.replace("_", "-")
+            if self.language in language_overrides:
+                self.language = language_overrides[self.language]
             if self.language not in available_languages:
                 self.language = self.language.split("-")[0]
                 if self.language not in available_languages:
@@ -135,13 +154,17 @@ class Common(object):
                     self.set_gui(
                         "error", _("Error creating {0}").format(homedir), [], False
                     )
-        if not os.access(homedir, os.W_OK):
-            self.set_gui("error", _("{0} is not writable").format(homedir), [], False)
 
-        tbb_config = '{0}/torbrowser'.format(self.get_env('XDG_CONFIG_HOME', '{0}/.config'.format(homedir)))
-        tbb_cache = '{0}/torbrowser'.format(self.get_env('XDG_CACHE_HOME', '{0}/.cache'.format(homedir)))
-        tbb_local = '{0}/torbrowser'.format(self.get_env('XDG_DATA_HOME', '{0}/.local/share'.format(homedir)))
-        old_tbb_data = '{0}/.torbrowser'.format(homedir)
+        tbb_config = "{0}/torbrowser".format(
+            self.get_env("XDG_CONFIG_HOME", "{0}/.config".format(homedir))
+        )
+        tbb_cache = "{0}/torbrowser".format(
+            self.get_env("XDG_CACHE_HOME", "{0}/.cache".format(homedir))
+        )
+        tbb_local = "{0}/torbrowser".format(
+            self.get_env("XDG_DATA_HOME", "{0}/.local/share".format(homedir))
+        )
+        old_tbb_data = "{0}/.torbrowser".format(homedir)
 
         if tbb_version:
             # tarball filename
@@ -175,7 +198,11 @@ class Common(object):
             self.paths["sig_filename"] = tarball_filename + ".asc"
         else:
             self.paths = {
-                "dirs": {"config": tbb_config, "cache": tbb_cache, "local": tbb_local,},
+                "dirs": {
+                    "config": tbb_config,
+                    "cache": tbb_cache,
+                    "local": tbb_local,
+                },
                 "old_data_dir": old_tbb_data,
                 "tbl_bin": sys.argv[0],
                 "icon_file": os.path.join(

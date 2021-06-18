@@ -28,14 +28,14 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import sys
-import platform
+import distro
 import subprocess
 from distutils.core import setup
 
 SHARE = "share"
 
 # detect linux distribution
-distro = platform.dist()[0]
+distro = distro.linux_distribution()[0]
 
 
 def file_list(path):
@@ -52,7 +52,9 @@ def create_mo_files():
         return []
     domain = "torbrowser-launcher"
     mo_files = []
-    po_files = [f for f in next(os.walk(po_dir))[2] if os.path.splitext(f)[1] == ".po"]
+    po_files = sorted(
+        [f for f in next(os.walk(po_dir))[2] if os.path.splitext(f)[1] == ".po"]
+    )
     for po_file in po_files:
         filename, extension = os.path.splitext(po_file)
         mo_file = domain + ".mo"

@@ -6,6 +6,8 @@
 profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/audio>
   #include <abstractions/gnome>
+  #include <abstractions/ibus>
+  #include if exists <abstractions/vulkan>
 
   # Uncomment the following lines if you want to give the Tor Browser read-write
   # access to most of your personal files.
@@ -36,6 +38,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /dev/ r,
   /dev/shm/ r,
 
+  owner @{PROC}/@{pid}/cgroup r,
   owner @{PROC}/@{pid}/environ r,
   owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
@@ -99,6 +102,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /sys/devices/system/cpu/present r,
   /sys/devices/system/node/ r,
   /sys/devices/system/node/node[0-9]*/meminfo r,
+  /sys/fs/cgroup/cpu,cpuacct/{,user.slice/}cpu.cfs_quota_us r,
   deny /sys/devices/virtual/block/*/uevent r,
 
   # Should use abstractions/gstreamer instead once merged upstream
@@ -126,7 +130,6 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   deny /sys/devices/system/cpu/*/cache/index[0-9]*/size r,
   deny /run/user/[0-9]*/dconf/user rw,
   deny /usr/bin/lsb_release x,
-  deny capability sys_admin,
 
   # Silence denial logs about PulseAudio
   deny /etc/pulse/client.conf r,
@@ -147,6 +150,12 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /dev/hidraw* rw,
   # Yubikey NEO also needs this:
   /sys/devices/**/hidraw/hidraw*/uevent r,
+
+  # Needed for Firefox sandboxing via unprivileged user namespaces
+  capability sys_admin,
+  capability sys_chroot,
+  owner @{PROC}/@{pid}/{gid,uid}_map w,
+  owner @{PROC}/@{pid}/setgroups w,
 
   #include <local/torbrowser.Browser.firefox>
 }
