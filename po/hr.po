@@ -1,0 +1,258 @@
+# Croatian translation of Tor Browser Launcher.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Milo Ivir <mail@milotype.de>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Tor Browser Launcher\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-23 15:47-0700\n"
+"PO-Revision-Date: 2020-01-22 13:20+0100\n"
+"Last-Translator: Milo Ivir <mail@milotype.de>\n"
+"Language-Team: \n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.12\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: __init__.py:65 launcher.py:470
+msgid "Tor Browser Launcher"
+msgstr "Pokretač Tor preglednika"
+
+#: __init__.py:66
+msgid "By Micah Lee, licensed under MIT"
+msgstr "Autor Micah Lee, MIT licenca"
+
+#: __init__.py:67
+#, python-brace-format
+msgid "version {0}"
+msgstr "verzija {0}"
+
+#: common.py:100
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "Greška prilikom stvaranja {0}"
+
+#: common.py:102 common.py:180
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "Nije moguće pisati u {0}"
+
+#: common.py:177
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "Nije moguće stvoriti mapu {0}"
+
+#: common.py:187
+msgid "Creating GnuPG homedir"
+msgstr "Izrada početne mape za GnuPG"
+
+#: common.py:254
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "Nije bilo moguće uvesti ključ s otiskom prsta: %s."
+
+#: common.py:259
+msgid "Not all keys were imported successfully!"
+msgstr "Nisu svi ključevi uspješno uvezeni!"
+
+#: launcher.py:83
+msgid "Downloading Tor Browser for the first time."
+msgstr "Preuzimanje Tor preglednika po prvi put."
+
+#: launcher.py:85
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading the newest version."
+msgstr ""
+"Tvoja verzija Tor preglednika je zastarjela. Preuzima se najnovija verzija."
+
+#: launcher.py:100
+msgid "Downloading over Tor"
+msgstr "Preuzimanje preko Tora"
+
+#: launcher.py:111
+msgid "Tor Browser"
+msgstr "Tor preglednik"
+
+#: launcher.py:128
+msgid "Start"
+msgstr "Pokreni"
+
+#: launcher.py:174
+msgid "Yes"
+msgstr "Da"
+
+#: launcher.py:178
+msgid "Exit"
+msgstr "Zatvori"
+
+#: launcher.py:192 settings.py:136
+msgid "Cancel"
+msgstr "Odustani"
+
+#: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
+#: launcher.py:281
+msgid "Downloading"
+msgstr "Preuzimanje"
+
+#: launcher.py:238
+msgid "Latest version: {}"
+msgstr "Zadnja verzija: {}"
+
+#: launcher.py:241
+msgid "Error detecting Tor Browser version."
+msgstr "Greška prilikom otkrivanja verzije Tor preglednika."
+
+#: launcher.py:256 launcher.py:357
+msgid "Verifying Signature"
+msgstr "Potvrđivanje potpisa"
+
+#: launcher.py:260
+msgid "Extracting"
+msgstr "Otpakiravanje"
+
+#: launcher.py:264
+msgid "Running"
+msgstr "Izvršava se"
+
+#: launcher.py:268
+msgid "Starting download over again"
+msgstr "Pokreće se ponovno preuzimanje"
+
+#: launcher.py:279 launcher.py:295
+msgid "(over Tor)"
+msgstr "(preko Tora)"
+
+#: launcher.py:293
+msgid "Downloaded"
+msgstr "Preuzeto"
+
+#: launcher.py:393
+msgid "Installing"
+msgstr "Instaliranje"
+
+#: launcher.py:401
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Pokretač Tor preglednika ne razumije format datoteke {0}"
+
+#: launcher.py:427
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr ""
+"Tvoja verzija Tor preglednika je starija nego što bi trebala biti, što može "
+"biti znak napada!"
+
+#: launcher.py:446
+msgid "Downloading Tor Browser over again."
+msgstr "Ponovno preuzimanje Tor preglednika."
+
+#: launcher.py:516 launcher.py:525 launcher.py:533
+msgid "Download Error:"
+msgstr "Greška prilikom preuzimanja:"
+
+#: launcher.py:517
+msgid "You are currently using a non-default mirror"
+msgstr "Trenutačno koristiš nestandardno zrcalo"
+
+#: launcher.py:518
+msgid "Would you like to switch back to the default?"
+msgstr "Želiš li vratiti na standardno?"
+
+#: launcher.py:527
+msgid "Would you like to try the English version of Tor Browser instead?"
+msgstr "Želiš li umjesto toga isprobati englesku verziju Tor preglednika?"
+
+#: launcher.py:548
+#, python-brace-format
+msgid ""
+"Invalid SSL certificate for:\n"
+"{0}\n"
+"\n"
+"You may be under attack."
+msgstr ""
+"Neispravni SSL certifikat za:\n"
+"{0}\n"
+"\n"
+"Možda si napadnut/a."
+
+#: launcher.py:550
+msgid "Try the download again using Tor?"
+msgstr "Ponovo pokušati preuzeti pomoću Tora?"
+
+#: launcher.py:559
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Trying to download over Tor. Are you sure Tor is configured correctly and "
+"running?"
+msgstr ""
+"Greška prilikom pokretanja preuzimanja:\n"
+"\n"
+"{0}\n"
+"\n"
+"Pokušava se preuzeti preko Tora. Je li je Tor ispravno konfiguriran i "
+"pokrenut?"
+
+#: launcher.py:563
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"Greška prilikom pokretanja preuzimanja:\n"
+"\n"
+"{0}\n"
+"\n"
+"Jesi li spojen/a na internet?"
+
+#: settings.py:46
+msgid "Tor Browser Launcher Settings"
+msgstr "Postavke pokretača Tor preglednika"
+
+#: settings.py:50
+msgid "Download over system Tor"
+msgstr "Preuzmi preko Tora sustava"
+
+#: settings.py:57
+msgid "Force downloading English version of Tor Browser"
+msgstr "Prisili preuzimanje engleske verzije Tor preglednika"
+
+#: settings.py:66
+msgid "Tor server"
+msgstr "Tor poslužitelj"
+
+#: settings.py:82
+msgid "Status: Installed"
+msgstr "Stanje: Instalirano"
+
+#: settings.py:84
+msgid "Status: Not Installed"
+msgstr "Stanje: Nije instalirano"
+
+#: settings.py:87
+msgid "Install Tor Browser"
+msgstr "Instaliraj Tor preglednik"
+
+#: settings.py:92
+msgid "Reinstall Tor Browser"
+msgstr "Ponovo instaliraj Tor preglednik"
+
+#: settings.py:115
+msgid "Mirror"
+msgstr "Zrcalo"
+
+#: settings.py:131
+msgid "Save && Exit"
+msgstr "Spremi i zatvori"
