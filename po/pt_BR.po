@@ -8,166 +8,166 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-23 15:47-0700\n"
-"PO-Revision-Date: 2016-12-02 15:16+0400\n"
-"Last-Translator: Andrey Kunitsyn <contact@libnaru.so>\n"
-"Language-Team: French\n"
-"Language: fr\n"
+"PO-Revision-Date: 2020-02-09 16:35-0300\n"
+"Language: pt_BR\n"
+"Language-Team: \n"
+"Last-Translator: João Vítor S. F. <jjoaovitor7@outlook.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.2.4\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: __init__.py:65 launcher.py:470
 msgid "Tor Browser Launcher"
-msgstr "Tor Browser Launcher"
+msgstr "Lançador do Navegador Tor"
 
 #: __init__.py:66
 msgid "By Micah Lee, licensed under MIT"
-msgstr "Par Micah Lee, sous licence MIT"
+msgstr "Por Micah Lee, licenciado sob o MIT"
 
 #: __init__.py:67
 #, python-brace-format
 msgid "version {0}"
-msgstr "version {0}"
+msgstr "versão {0}"
 
 #: common.py:100
 #, python-brace-format
 msgid "Error creating {0}"
-msgstr "Erreur lors de la création de {0}"
+msgstr "Erro ao criar {0}"
 
 #: common.py:102 common.py:180
 #, python-brace-format
 msgid "{0} is not writable"
-msgstr "Impossible d'écrire {0}"
+msgstr "{0} não é gravável"
 
 #: common.py:177
 #, python-brace-format
 msgid "Cannot create directory {0}"
-msgstr "Impossible de créer le dossier {0}"
+msgstr "Não é possível criar o diretório {0}"
 
 #: common.py:187
 msgid "Creating GnuPG homedir"
-msgstr "Création du dossier GnuPG"
+msgstr "Criando o diretório inicial do GnuPG"
 
 #: common.py:254
 #, python-format
 msgid "Could not import key with fingerprint: %s."
-msgstr "Impossible d'importer la clé avec l'empreinte : %s."
+msgstr "Não foi possível importar a chave com a impressão digital: %s."
 
 #: common.py:259
 msgid "Not all keys were imported successfully!"
-msgstr "Certaines clés n'ont pas pu être importées !"
+msgstr "Nem todas as chaves foram importadas com sucesso!"
 
 #: launcher.py:83
+#, fuzzy
 msgid "Downloading Tor Browser for the first time."
-msgstr "Téléchargement du Navigateur Tor pour la première fois."
+msgstr "Baixando o Navegador Tor pela primeira vez."
 
 #: launcher.py:85
-msgid ""
-"Your version of Tor Browser is out-of-date. Downloading the newest version."
-msgstr ""
-"Votre version du Navigateur Tor est obsolète. Téléchargement de la nouvelle "
-"version."
+#, fuzzy
+msgid "Your version of Tor Browser is out-of-date. Downloading the newest version."
+msgstr "Sua versão do Navegador Tor está desatualizada. Baixando a versão mais recente."
 
 #: launcher.py:100
 msgid "Downloading over Tor"
-msgstr "Télécharger à travers Tor"
+msgstr "Baixando pelo Tor"
 
 #: launcher.py:111
 msgid "Tor Browser"
-msgstr "Navigateur Tor"
+msgstr "Navegador Tor"
 
 #: launcher.py:128
 msgid "Start"
-msgstr "Démarrer"
+msgstr "Iniciar"
 
 #: launcher.py:174
 msgid "Yes"
-msgstr "Oui"
+msgstr "Sim"
 
 #: launcher.py:178
 msgid "Exit"
-msgstr "Quitter"
+msgstr "Sair"
 
 #: launcher.py:192 settings.py:136
 msgid "Cancel"
-msgstr "Annuler"
+msgstr "Cancelar"
 
 #: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
 #: launcher.py:281
 msgid "Downloading"
-msgstr "Téléchargement"
+msgstr "Baixando"
 
 #: launcher.py:238
 msgid "Latest version: {}"
-msgstr "Dernière version : {}"
+msgstr "Versão mais recente: {}"
 
 #: launcher.py:241
 msgid "Error detecting Tor Browser version."
-msgstr "Impossible de détecter la version du Navigateur Tor."
+msgstr "Erro ao detectar a versão do Navegador Tor."
 
 #: launcher.py:256 launcher.py:357
 msgid "Verifying Signature"
-msgstr "Vérification de la signature"
+msgstr "Verificando Assinatura"
 
 #: launcher.py:260
 msgid "Extracting"
-msgstr "Décompression"
+msgstr "Extraindo"
 
 #: launcher.py:264
 msgid "Running"
-msgstr "Exécution"
+msgstr "Rodando"
 
 #: launcher.py:268
 msgid "Starting download over again"
-msgstr "Télécharger à nouveau"
+msgstr "Iniciando o download novamente"
 
 #: launcher.py:279 launcher.py:295
 msgid "(over Tor)"
-msgstr "(à travers Tor)"
+msgstr "(pelo Tor)"
 
 #: launcher.py:293
 msgid "Downloaded"
-msgstr "Téléchargé"
+msgstr "Baixado"
 
 #: launcher.py:393
 msgid "Installing"
-msgstr "Installation en cours"
+msgstr "Instalando"
 
 #: launcher.py:401
 #, python-brace-format
 msgid "Tor Browser Launcher doesn't understand the file format of {0}"
-msgstr "Tor Browser Launcher ne comprend pas le format du fichier {0}"
+msgstr "O Lançador do Navegador Tor não entende o formato do arquivo de {0}"
 
 #: launcher.py:427
 msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
 msgstr ""
-"La version du Navigateur Tor que vous avez installé est antérieure à ce "
-"qu'elle devrait, ce qui peut être le signe d'une attaque !"
+"A versão do Navegador Tor que você instalou é anterior ao que deveria ser,
+"o que poderia ser um sinal de ataque!"
 
 #: launcher.py:446
+#, fuzzy
 msgid "Downloading Tor Browser over again."
-msgstr "Télécharger le Navigateur Tor à nouveau."
+msgstr "Baixando o Navegador Tor novamente.."
 
 #: launcher.py:516 launcher.py:525 launcher.py:533
 msgid "Download Error:"
-msgstr "Erreur de téléchargement :"
+msgstr "Erro de Download:"
 
 #: launcher.py:517
 msgid "You are currently using a non-default mirror"
-msgstr "Vous utilisez actuellement un miroir n'étant pas celui par défaut"
+msgstr "No momento você está usando espelho não-padrão"
 
 #: launcher.py:518
 msgid "Would you like to switch back to the default?"
-msgstr "Voulez-vous revenir à la valeur par défaut ?"
+msgstr "Você gostaria de retornar para o padrão?"
 
 #: launcher.py:527
 msgid "Would you like to try the English version of Tor Browser instead?"
-msgstr ""
-"Voulez-vous essayer la version anglophone du Navigateur Tor à la place ?"
+msgstr "Você gostaria de experimentar a versão em inglês do Navegador Tor?"
 
 #: launcher.py:548
 #, python-brace-format
@@ -177,14 +177,14 @@ msgid ""
 "\n"
 "You may be under attack."
 msgstr ""
-"Certificat SSL invalide pour :\n"
+"Certificado SSL inválido para:\n"
 "{0}\n"
 "\n"
-"Vous pourriez être attaqué."
+"Você pode estar sob ataque."
 
 #: launcher.py:550
 msgid "Try the download again using Tor?"
-msgstr "Essayer de télécharger à nouveau à travers Tor ?"
+msgstr "Tentar o download novamente usando o Tor?"
 
 #: launcher.py:559
 #, python-brace-format
@@ -196,12 +196,12 @@ msgid ""
 "Trying to download over Tor. Are you sure Tor is configured correctly and "
 "running?"
 msgstr ""
-"Impossible de démarrer le téléchargement :\n"
+"Erro ao iniciar o download:\n"
 "\n"
 "{0}\n"
 "\n"
-"Essayez de télécharger à travers Tor. Êtes-vous sûr que Tor est configuré "
-"correctement et fonctionne ?"
+"Tentando fazer o download pelo Tor. Você tem certeza de que o Tor está configurado corretamente e "
+"e funcionando?"
 
 #: launcher.py:563
 #, python-brace-format
@@ -212,70 +212,70 @@ msgid ""
 "\n"
 "Are you connected to the internet?"
 msgstr ""
-"Impossible de démarrer le téléchargement :\n"
+"Erro ao iniciar o download:\n"
 "\n"
 "{0}\n"
 "\n"
-"Êtes-vous connecté à Internet ?"
+"Você está conectado à internet?"
 
 #: settings.py:46
 msgid "Tor Browser Launcher Settings"
-msgstr "Configuration du Tor Browser Launcher"
+msgstr "Configurações do Lançador do Navegador Tor"
 
 #: settings.py:50
 msgid "Download over system Tor"
-msgstr "Télécharger à travers le Tor installé sur le système"
+msgstr "Download pelo sistema Tor"
 
 #: settings.py:57
 msgid "Force downloading English version of Tor Browser"
-msgstr "Forcer le téléchargement de la version anglophone du Navigateur Tor"
+msgstr "Forçar o download da versão em Inglês do Navegador Tor"
 
 #: settings.py:66
 msgid "Tor server"
-msgstr "Serveur Tor"
+msgstr "Servidor Tor"
 
 #: settings.py:82
 msgid "Status: Installed"
-msgstr "Statut : Installé"
+msgstr "Estado: Instalado"
 
 #: settings.py:84
 msgid "Status: Not Installed"
-msgstr "Statut : Pas installé"
+msgstr "Estado: Não Instalado"
 
 #: settings.py:87
 msgid "Install Tor Browser"
-msgstr "Installer le Navigateur Tor"
+msgstr "Instalar o Navegador Tor"
 
 #: settings.py:92
 msgid "Reinstall Tor Browser"
-msgstr "Réinstaller le Navigateur Tor"
+msgstr "Reinstalar o Navegador Tor"
 
 #: settings.py:115
 msgid "Mirror"
-msgstr "Miroir"
+msgstr "Espelho"
 
 #: settings.py:131
+#, fuzzy
 msgid "Save && Exit"
-msgstr "Enregistrer et quitter"
+msgstr "Salvar && Sair"
 
 #~ msgid ""
 #~ "The python-txsocksx package is missing, downloads will not happen over tor"
-#~ msgstr ""
-#~ "Le paquet python-txsocks est manquant, les téléchargements ne se feront "
-#~ "pas sur Tor."
+#~ msgstr
+#~ "O pacote python-txsocksx está faltando, os downloads não acontecerão pelo tor"
 
 #~ msgid "DNS Lookup Error"
-#~ msgstr "Erreur de type DNS Lookup"
+#~ msgstr "Erro de Pesquisa de DNS"
 
 #~ msgid ""
 #~ "The SSL certificate served by https://www.torproject.org is invalid! You "
 #~ "may be under attack."
 #~ msgstr ""
-#~ "Le certificat SSL servi par https://www.torproject.org n'est pas valide! "
-#~ "Vous pouvez être l'objet d'une attaque."
+#~ "O certificado SSL fornecido por https://www.torproject.org é inválido! Você "
+#~ "pode estar sob ataque."
 
 #~ msgid "Error connecting to Tor at {0}"
-#~ msgstr "Impossible de se connecter sur Tor au moyen de {0}"
+#~ msgstr "Erro ao conectar ao Tor em {0}"
 
 #~ msgid ""
 #~ "SIGNATURE VERIFICATION FAILED!\n"
@@ -283,27 +283,26 @@ msgstr "Enregistrer et quitter"
 #~ "You might be under attack, or there might just be a networking problem. "
 #~ "Click Start try the download again."
 #~ msgstr ""
-#~ "LA VÉRICATION DE LA SIGNATURE A ÉCHOUÉ\n"
+#~ "FALHA NA VERIFICAÇÃO DA ASSINATURA!\n"
 #~ "\n"
-#~ "Vous pourriez être l'objet d'une attaque, ou il peut s'agir d'un problème "
-#~ "de réseau. Cliquer sur Démarrer pour télécharger à nouveau."
+#~ "Você pode estar sob ataque, ou pode haver apenas um problema de rede. "
+#~ "Clique em Iniciar para tentar baixar novamente."
 
 #~ msgid ""
 #~ "The python-pygame package is missing, the modem sound is unavailable."
 #~ msgstr ""
-#~ "Le paquet python-pygame est manquant, le son de modem est indisponible."
+#~ "O pacote python-pygame está faltando, o som do modem não está disponível."
 
 #~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
 #~ msgstr ""
-#~ "Cette option n'est disponible qu'en conjonction avec une installation "
-#~ "système de Tor."
+#~ "Esta opção está apenas disponível ao usar uma instalação Tor do sistema."
 
 #~ msgid "This option requires the python-txsocksx package."
-#~ msgstr "Cette option nécessite le paquet python-txsocksx"
+#~ msgstr "Esta opção precisa do pacote python-txsocksx"
 
 #~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Jouer un son de modem, car Tor est lent :]"
+#~ msgstr "Reproduzir som do modem, porque o Tor é lento :]"
 
 #~ msgid "This option requires python-pygame to be installed"
-#~ msgstr "Cette option requiert le paquet python-pygame"
+#~ msgstr "Esta opção precisa do pacote python-pygame"

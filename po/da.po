@@ -1,0 +1,254 @@
+# Danish translation for Tor Browser Launcher.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# scootergrisen, 2018.
+msgid ""
+msgstr ""
+"Project-Id-Version: torbrowser-launcher\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-23 15:47-0700\n"
+"PO-Revision-Date: 2018-09-30 16:24+0200\n"
+"Last-Translator: scootergrisen\n"
+"Language-Team: Danish\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: __init__.py:65 launcher.py:470
+msgid "Tor Browser Launcher"
+msgstr "Tor Browser-opstarter"
+
+#: __init__.py:66
+msgid "By Micah Lee, licensed under MIT"
+msgstr "Af Micah Lee, licenseret under MIT"
+
+#: __init__.py:67
+#, python-brace-format
+msgid "version {0}"
+msgstr "version {0}"
+
+#: common.py:100
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "Fejl ved oprettelse af {0}"
+
+#: common.py:102 common.py:180
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "{0} er skrivebeskyttet"
+
+#: common.py:177
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "Kan ikke oprette mappen {0}"
+
+#: common.py:187
+msgid "Creating GnuPG homedir"
+msgstr "Opretter GnuPG-hjemmemappe"
+
+#: common.py:254
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "Kunne ikke importere nøgle med fingeraftryk: %s."
+
+#: common.py:259
+msgid "Not all keys were imported successfully!"
+msgstr "Det lykkedes ikke at importere alle nøgler!"
+
+#: launcher.py:83
+msgid "Downloading Tor Browser for the first time."
+msgstr "Downloader Tor Browser for første gang."
+
+#: launcher.py:85
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading the newest version."
+msgstr "Din version af Tor Browser er forældet. Downloader den nyeste version."
+
+#: launcher.py:100
+msgid "Downloading over Tor"
+msgstr "Downloader over Tor"
+
+#: launcher.py:111
+msgid "Tor Browser"
+msgstr "Tor Browser"
+
+#: launcher.py:128
+msgid "Start"
+msgstr "Start"
+
+#: launcher.py:174
+msgid "Yes"
+msgstr "Ja"
+
+#: launcher.py:178
+msgid "Exit"
+msgstr "Afslut"
+
+#: launcher.py:192 settings.py:136
+msgid "Cancel"
+msgstr "Annuller"
+
+#: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
+#: launcher.py:281
+msgid "Downloading"
+msgstr "Downloader"
+
+#: launcher.py:238
+msgid "Latest version: {}"
+msgstr "Seneste version: {}"
+
+#: launcher.py:241
+msgid "Error detecting Tor Browser version."
+msgstr "Fejl ved registrering af Tor Browser-version."
+
+#: launcher.py:256 launcher.py:357
+msgid "Verifying Signature"
+msgstr "Verificerer signatur"
+
+#: launcher.py:260
+msgid "Extracting"
+msgstr "Udpakker"
+
+#: launcher.py:264
+msgid "Running"
+msgstr "Kører"
+
+#: launcher.py:268
+msgid "Starting download over again"
+msgstr "Starter download på ny"
+
+#: launcher.py:279 launcher.py:295
+msgid "(over Tor)"
+msgstr "(over Tor)"
+
+#: launcher.py:293
+msgid "Downloaded"
+msgstr "Downloadet"
+
+#: launcher.py:393
+msgid "Installing"
+msgstr "Installerer"
+
+#: launcher.py:401
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Tor Browser-opstarter forstår ikke filformatet af {0}"
+
+#: launcher.py:427
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr ""
+"Den version af Tor Browser som du har installeret er tidligere end den bør "
+"være, hvilket kan være tegn på angreb!"
+
+#: launcher.py:446
+msgid "Downloading Tor Browser over again."
+msgstr "Downloader Tor Browser på ny."
+
+#: launcher.py:516 launcher.py:525 launcher.py:533
+msgid "Download Error:"
+msgstr "Fejl ved download:"
+
+#: launcher.py:517
+msgid "You are currently using a non-default mirror"
+msgstr "Du bruger i øjeblikket et spejl som ikke er standard"
+
+#: launcher.py:518
+msgid "Would you like to switch back to the default?"
+msgstr "Vil du skifte tilbage til standarden?"
+
+#: launcher.py:527
+msgid "Would you like to try the English version of Tor Browser instead?"
+msgstr "Vil du i stedet prøve den engelske version af Tor Browser?"
+
+#: launcher.py:548
+#, python-brace-format
+msgid ""
+"Invalid SSL certificate for:\n"
+"{0}\n"
+"\n"
+"You may be under attack."
+msgstr ""
+"Ugyldigt SSL-certifikat for:\n"
+"{0}\n"
+"\n"
+"Du er måske under angreb."
+
+#: launcher.py:550
+msgid "Try the download again using Tor?"
+msgstr "Prøv downloaden igen med Tor?"
+
+#: launcher.py:559
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Trying to download over Tor. Are you sure Tor is configured correctly and "
+"running?"
+msgstr ""
+"Fejl ved start af download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Prøver at downloade over Tor. Er du sikker på, at Tor er konfigureret "
+"korrekt og kører?"
+
+#: launcher.py:563
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"Fejl ved start af download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Har du forbindelse til internettet?"
+
+#: settings.py:46
+msgid "Tor Browser Launcher Settings"
+msgstr "Indstillinger for Tor Browser-opstarter"
+
+#: settings.py:50
+msgid "Download over system Tor"
+msgstr "Download over systemets Tor"
+
+#: settings.py:57
+msgid "Force downloading English version of Tor Browser"
+msgstr "Tving download af den engelske version af Tor Browser"
+
+#: settings.py:66
+msgid "Tor server"
+msgstr "Tor-server"
+
+#: settings.py:82
+msgid "Status: Installed"
+msgstr "Status: Installeret"
+
+#: settings.py:84
+msgid "Status: Not Installed"
+msgstr "Status: Ikke installeret"
+
+#: settings.py:87
+msgid "Install Tor Browser"
+msgstr "Installer Tor Browser"
+
+#: settings.py:92
+msgid "Reinstall Tor Browser"
+msgstr "Geninstaller Tor Browser"
+
+#: settings.py:115
+msgid "Mirror"
+msgstr "Spejl"
+
+#: settings.py:131
+msgid "Save && Exit"
+msgstr "Gem og afslut"
