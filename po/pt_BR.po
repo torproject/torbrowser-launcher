@@ -145,7 +145,7 @@ msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
 msgstr ""
-"A versão do Navegador Tor que você instalou é anterior ao que deveria ser,
+"A versão do Navegador Tor que você instalou é anterior ao que deveria ser, "
 "o que poderia ser um sinal de ataque!"
 
 #: launcher.py:446
