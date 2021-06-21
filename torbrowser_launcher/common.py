@@ -36,6 +36,7 @@ import json
 import re
 import gettext
 import gpg
+import requests
 
 SHARE = os.getenv("TBL_SHARE", sys.prefix + "/share") + "/torbrowser-launcher"
 
@@ -216,7 +217,8 @@ class Common(object):
                 "signing_keys": {
                     "tor_browser_developers": os.path.join(
                         SHARE, "tor-browser-developers.asc"
-                    )
+                    ),
+                    "wkd_tmp": os.path.join(tbb_cache, "torbrowser.gpg")
                 },
                 "mirrors_txt": [
                     os.path.join(SHARE, "mirrors.txt"),
@@ -251,8 +253,10 @@ class Common(object):
             }
 
         # Add the expected fingerprint for imported keys:
+        tor_browser_developers_fingerprint = "EF6E286DDA85EA2A4BA7DE684E2C6E8793298290"
         self.fingerprints = {
-            "tor_browser_developers": "EF6E286DDA85EA2A4BA7DE684E2C6E8793298290"
+            "tor_browser_developers": tor_browser_developers_fingerprint,
+            "wkd_tmp": tor_browser_developers_fingerprint,
         }
 
     # create a directory
@@ -277,41 +281,50 @@ class Common(object):
             self.mkdir(self.paths["gnupg_homedir"])
         self.import_keys()
 
-    def refresh_keyring(self, fingerprint=None):
-        if fingerprint is not None:
-            print("Refreshing local keyring... Missing key: " + fingerprint)
+    def proxies(self):
+        # Use tor socks5 proxy, if enabled
+        if self.settings["download_over_tor"]:
+            socks5_address = "socks5h://{}".format(self.settings["tor_socks_address"])
+            return {"https": socks5_address, "http": socks5_address}
         else:
-            print("Refreshing local keyring...")
+            return None
+
+    def refresh_keyring(self):
+        print("Downloading latest Tor Browser signing key...")
 
         # Fetch key from wkd, as per https://support.torproject.org/tbb/how-to-verify-signature/
-        p = subprocess.Popen(
-            [
-                "gpg",
-                "--status-fd",
-                "2",
-                "--homedir",
-                self.paths["gnupg_homedir"],
-                "--auto-key-locate",
-                "nodefault,wkd",
-                "--locate-keys",
-                "torbrowser@torproject.org",
-            ],
-            stderr=subprocess.PIPE,
-        )
-        p.wait()
+        # Sometimes GPG throws errors, so comment this out and download it directly
+        # p = subprocess.Popen(
+        #     [
+        #         "gpg",
+        #         "--status-fd",
+        #         "2",
+        #         "--homedir",
+        #         self.paths["gnupg_homedir"],
+        #         "--auto-key-locate",
+        #         "nodefault,wkd",
+        #         "--locate-keys",
+        #         "torbrowser@torproject.org",
+        #     ],
+        #     stderr=subprocess.PIPE,
+        # )
+        # p.wait()
 
-        for output in p.stderr.readlines():
-            match = gnupg_import_ok_pattern.match(output)
-            if match and match.group(2) == "IMPORT_OK":
-                fingerprint = str(match.group(4))
-                if match.group(3) == "0":
-                    print("Keyring refreshed successfully...")
-                    print("  No key updates for key: " + fingerprint)
-                elif match.group(3) == "4":
-                    print("Keyring refreshed successfully...")
-                    print("  New signatures for key: " + fingerprint)
-                else:
-                    print("Keyring refreshed successfully...")
+        # Download the key from WKD directly
+        r = requests.get(
+            "https://torproject.org/.well-known/openpgpkey/hu/kounek7zrdx745qydx6p59t9mqjpuhdf?l=torbrowser",
+            proxies=self.proxies(),
+        )
+        if r.status_code != 200:
+            print(f"Error fetching key, status code = {r.status_code}")
+        else:
+            with open(self.paths["signing_keys"]["wkd_tmp"], "wb") as f:
+                f.write(r.content)
+
+            if self.import_key_and_check_status("wkd_tmp"):
+                print("Key imported successfully")
+            else:
+                print("Key failed to import")
 
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.
