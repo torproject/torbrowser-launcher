@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install system dependencies
-      run: sudo apt-get install gettext python3
+      run: sudo apt-get install gettext python3 libgpgme-dev
     - name: Install python dependencies
       run: sudo pip3 install .
     - name: Build torbrowser-launcher

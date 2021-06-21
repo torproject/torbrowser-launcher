@@ -118,4 +118,11 @@ Browser.
     packages=["torbrowser_launcher"],
     scripts=["torbrowser-launcher"],
     data_files=datafiles,
+    install_requires=[
+        'gpg',
+        'packaging',
+        'PyQt5',
+        'requests',
+        'PySocks',
+    ],
 )
