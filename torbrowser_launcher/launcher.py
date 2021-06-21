@@ -66,7 +66,6 @@ class Launcher(QtWidgets.QMainWindow):
     def __init__(self, common, app, url_list):
         super(Launcher, self).__init__()
         self.common = common
-        self.common.refresh_keyring()
         self.app = app
 
         self.url_list = url_list
