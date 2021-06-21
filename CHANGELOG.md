@@ -1,5 +1,10 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.5
+
+* Fix refreshing Tor Browser signing key in Flatpak package
+* Fix issues with localization files
+
 ## 0.3.4
 
 * Ship with latest version of the Tor Browser Developers OpenPGP public key
