@@ -63,6 +63,8 @@ class Common(object):
             self.mkdir(self.paths["dirs"][d])
         self.load_mirrors()
         self.load_settings()
+        # some settings require a path rebuild, like force_en-US
+        self.build_paths()
         self.mkdir(self.paths["download_dir"])
         self.mkdir(self.paths["tbb"]["dir"])
         self.init_gnupg()
@@ -167,6 +169,11 @@ class Common(object):
         )
         old_tbb_data = "{0}/.torbrowser".format(homedir)
 
+        if hasattr(self, "settings") and self.settings["force_en-US"]:
+            language = "en-US"
+        else:
+            language = self.language
+
         if tbb_version:
             # tarball filename
             if self.architecture == "x86_64":
@@ -174,10 +181,6 @@ class Common(object):
             else:
                 arch = "linux32"
 
-            if hasattr(self, "settings") and self.settings["force_en-US"]:
-                language = "en-US"
-            else:
-                language = self.language
             tarball_filename = (
                 "tor-browser-" + arch + "-" + tbb_version + "_" + language + ".tar.xz"
             )
@@ -230,19 +233,19 @@ class Common(object):
                     + "/tbb/"
                     + self.architecture
                     + "/tor-browser_"
-                    + self.language
+                    + language
                     + "/Browser/TorBrowser/Docs/ChangeLog.txt",
                     "dir": tbb_local + "/tbb/" + self.architecture,
                     "dir_tbb": tbb_local
                     + "/tbb/"
                     + self.architecture
                     + "/tor-browser_"
-                    + self.language,
+                    + language,
                     "start": tbb_local
                     + "/tbb/"
                     + self.architecture
                     + "/tor-browser_"
-                    + self.language
+                    + language
                     + "/start-tor-browser.desktop",
                 },
             }
