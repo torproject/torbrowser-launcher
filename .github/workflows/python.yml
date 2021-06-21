@@ -19,3 +19,5 @@ jobs:
       run: python3 setup.py build
     - name: Install torbrowser-launcher
       run: sudo python3 setup.py install
+    - name: Test torbrowser-launcher install
+      run: torbrowser-launcher -h
