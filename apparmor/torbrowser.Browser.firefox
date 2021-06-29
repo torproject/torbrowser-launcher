@@ -9,6 +9,17 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/ibus>
   #include if exists <abstractions/vulkan>
   #include if exists <abstractions/dbus-session>
+  #include if exists <abstractions/X>
+  
+  # In Ubuntu 21.04 and later, there is a change to the X abstractions that will
+  # deny access to writing to the X display socket. This means that, even if we
+  # include the X abstractions, we won't be able to spin up the Firefox browser 
+  # on any non-GNOME environment which doesn't include the X read/write abstractions.
+  # 
+  # See https://bugs.launchpad.net/ubuntu/+source/apparmor/+bug/1934005
+  # Override the apparmor abstractions bit to permit readwrite on the
+  # X display sockets for now, though, so that Tor Browser can actually run.
+  /tmp/.X11-unix/* rw,
 
   # Uncomment the following lines if you want to give the Tor Browser read-write
   # access to most of your personal files.
