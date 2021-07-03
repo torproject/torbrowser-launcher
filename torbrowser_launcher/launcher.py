@@ -41,6 +41,8 @@ from packaging import version
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 
+from torbrowser_launcher.common import RETRY_ADAPTER
+
 
 class TryStableException(Exception):
     pass
@@ -549,12 +551,15 @@ class DownloadThread(QtCore.QThread):
         self.common = common
         self.url = url
         self.path = path
+        self.session = requests.Session()
+        self.session.mount("https://", RETRY_ADAPTER)
+        self.session.mount("http://", RETRY_ADAPTER)
 
     def run(self):
         with open(self.path, "wb") as f:
             try:
                 # Start the request
-                r = requests.get(
+                r = self.session.get(
                     self.url,
                     headers={"User-Agent": "torbrowser-launcher"},
                     stream=True,
@@ -602,6 +607,7 @@ class DownloadThread(QtCore.QThread):
                 else:
                     message = (_("Download Error:") + " {0}").format(e.response.status_code)
                     self.download_error.emit("error", message)
+                return
 
             except requests.exceptions.SSLError:
                 message = _(
@@ -612,9 +618,10 @@ class DownloadThread(QtCore.QThread):
                     self.download_error.emit("error_try_tor", message)
                 else:
                     self.download_error.emit("error", message)
+                return
 
             except requests.exceptions.ConnectionError:
-                # Connection error
+                # Connection error (will also catch a ConnectTimeout)
                 if self.common.settings["download_over_tor"]:
                     message = _(
                         "Error starting download:\n\n{0}\n\nTrying to download over Tor. "
@@ -626,6 +633,7 @@ class DownloadThread(QtCore.QThread):
                         "Error starting download:\n\n{0}\n\nAre you connected to the internet?"
                     ).format(self.url.decode())
                     self.download_error.emit("error", message)
+                return
 
         self.download_complete.emit()
 
