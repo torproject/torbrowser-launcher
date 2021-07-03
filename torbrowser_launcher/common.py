@@ -37,8 +37,11 @@ import re
 import gettext
 import gpg
 import requests
+from requests.adapters import HTTPAdapter
 
 SHARE = os.getenv("TBL_SHARE", sys.prefix + "/share") + "/torbrowser-launcher"
+
+RETRY_ADAPTER = HTTPAdapter(max_retries=3)
 
 gettext.install("torbrowser-launcher")
 
@@ -69,6 +72,12 @@ class Common(object):
         self.mkdir(self.paths["download_dir"])
         self.mkdir(self.paths["tbb"]["dir"])
         self.init_gnupg()
+
+        # Create a requests session to use for requests
+        self.session = requests.Session()
+        # Mount an adapter with a retry strategy
+        self.session.mount("https://", RETRY_ADAPTER)
+        self.session.mount("http://", RETRY_ADAPTER)
 
     # discover the architecture and language
     def discover_arch_lang(self):
@@ -312,12 +321,15 @@ class Common(object):
 
         # Download the key from WKD directly
         try:
-            r = requests.get(
+            r = self.session.get(
                 "https://torproject.org/.well-known/openpgpkey/hu/kounek7zrdx745qydx6p59t9mqjpuhdf?l=torbrowser",
                 proxies=self.proxies(),
                 timeout=5,
             )
             r.raise_for_status()
+        except requests.Timeout:
+            print(f"Error fetching key: the request timed out.")
+            return
         except requests.RequestException as e:
             print(f"Error fetching key, status code = {e.response.status_code}")
             return
