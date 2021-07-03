@@ -311,20 +311,24 @@ class Common(object):
         # p.wait()
 
         # Download the key from WKD directly
-        r = requests.get(
-            "https://torproject.org/.well-known/openpgpkey/hu/kounek7zrdx745qydx6p59t9mqjpuhdf?l=torbrowser",
-            proxies=self.proxies(),
-        )
-        if r.status_code != 200:
-            print(f"Error fetching key, status code = {r.status_code}")
-        else:
-            with open(self.paths["signing_keys"]["wkd_tmp"], "wb") as f:
-                f.write(r.content)
+        try:
+            r = requests.get(
+                "https://torproject.org/.well-known/openpgpkey/hu/kounek7zrdx745qydx6p59t9mqjpuhdf?l=torbrowser",
+                proxies=self.proxies(),
+                timeout=5,
+            )
+            r.raise_for_status()
+        except requests.RequestException as e:
+            print(f"Error fetching key, status code = {e.response.status_code}")
+            return
 
-            if self.import_key_and_check_status("wkd_tmp"):
-                print("Key imported successfully")
-            else:
-                print("Key failed to import")
+        with open(self.paths["signing_keys"]["wkd_tmp"], "wb") as f:
+            f.write(r.content)
+
+        if self.import_key_and_check_status("wkd_tmp"):
+            print("Key imported successfully")
+        else:
+            print("Key failed to import")
 
     def import_key_and_check_status(self, key):
         """Import a GnuPG key and check that the operation was successful.

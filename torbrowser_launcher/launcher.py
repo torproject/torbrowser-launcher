@@ -549,6 +549,7 @@ class DownloadThread(QtCore.QThread):
         self.common = common
         self.url = url
         self.path = path
+
     def run(self):
         with open(self.path, "wb") as f:
             try:
@@ -558,41 +559,10 @@ class DownloadThread(QtCore.QThread):
                     headers={"User-Agent": "torbrowser-launcher"},
                     stream=True,
                     proxies=self.common.proxies(),
+                    timeout=5,
                 )
-
-                # If status code isn't 200, something went wrong
-                if r.status_code != 200:
-                    # Should we use the default mirror?
-                    if self.common.settings["mirror"] != self.common.default_mirror:
-                        message = (
-                            _("Download Error:")
-                            + " {0}\n\n"
-                            + _("You are currently using a non-default mirror")
-                            + ":\n{1}\n\n"
-                            + _("Would you like to switch back to the default?")
-                        ).format(r.status_code, self.common.settings["mirror"])
-                        self.download_error.emit("error_try_default_mirror", message)
-
-                    # Should we switch to English?
-                    elif (
-                        self.common.language != "en-US"
-                        and not self.common.settings["force_en-US"]
-                    ):
-                        message = (
-                            _("Download Error:")
-                            + " {0}\n\n"
-                            + _(
-                                "Would you like to try the English version of Tor Browser instead?"
-                            )
-                        ).format(r.status_code)
-                        self.download_error.emit("error_try_forcing_english", message)
-
-                    else:
-                        message = (_("Download Error:") + " {0}").format(r.status_code)
-                        self.download_error.emit("error", message)
-
-                    r.close()
-                    return
+                # Check if we got a 200 OK and raise an HTTPError if not
+                r.raise_for_status()
 
                 # Start streaming the download
                 total_bytes = int(r.headers.get("content-length"))
@@ -601,6 +571,38 @@ class DownloadThread(QtCore.QThread):
                     bytes_so_far += len(data)
                     f.write(data)
                     self.progress_update.emit(total_bytes, bytes_so_far)
+
+            except requests.HTTPError as e:
+                # If status code isn't 200, something went wrong
+                # Should we use the default mirror?
+                if self.common.settings["mirror"] != self.common.default_mirror:
+                    message = (
+                        _("Download Error:")
+                        + " {0}\n\n"
+                        + _("You are currently using a non-default mirror")
+                        + ":\n{1}\n\n"
+                        + _("Would you like to switch back to the default?")
+                    ).format(e.response.status_code, self.common.settings["mirror"])
+                    self.download_error.emit("error_try_default_mirror", message)
+
+                # Should we switch to English?
+                elif (
+                    self.common.language != "en-US"
+                    and not self.common.settings["force_en-US"]
+                ):
+                    message = (
+                        _("Download Error:")
+                        + " {0}\n\n"
+                        + _(
+                            "Would you like to try the English version of Tor Browser instead?"
+                        )
+                    ).format(e.response.status_code)
+                    self.download_error.emit("error_try_forcing_english", message)
+
+                else:
+                    message = (_("Download Error:") + " {0}").format(e.response.status_code)
+                    self.download_error.emit("error", message)
+                return
 
             except requests.exceptions.SSLError:
                 message = _(
