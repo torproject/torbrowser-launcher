@@ -602,7 +602,6 @@ class DownloadThread(QtCore.QThread):
                 else:
                     message = (_("Download Error:") + " {0}").format(e.response.status_code)
                     self.download_error.emit("error", message)
-                return
 
             except requests.exceptions.SSLError:
                 message = _(
@@ -613,7 +612,6 @@ class DownloadThread(QtCore.QThread):
                     self.download_error.emit("error_try_tor", message)
                 else:
                     self.download_error.emit("error", message)
-                return
 
             except requests.exceptions.ConnectionError:
                 # Connection error
@@ -628,8 +626,6 @@ class DownloadThread(QtCore.QThread):
                         "Error starting download:\n\n{0}\n\nAre you connected to the internet?"
                     ).format(self.url.decode())
                     self.download_error.emit("error", message)
-
-                return
 
         self.download_complete.emit()
 
