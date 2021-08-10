@@ -115,6 +115,9 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner /{dev,run}/shm/org.chromium.* rw,
   owner /dev/shm/org.mozilla.ipc.[0-9]*.[0-9]* rw, # for Chromium IPC
 
+  # Required for Wayland display protocol support
+  owner /dev/shm/wayland.mozilla.ipc.[0-9]* rw,
+
   # Deny access to DRM nodes, that's granted by the X abstraction, which is
   # sourced by the gnome abstraction, that we include.
   deny /dev/dri/** rwklx,
