@@ -14,7 +14,7 @@
 
 VERSION=$(cat share/torbrowser-launcher/version)
 
-# Make a source pacakge
+# Make a source package
 rm -rf deb_dist
 python3 setup.py --command-packages=stdeb.command sdist_dsc
 
