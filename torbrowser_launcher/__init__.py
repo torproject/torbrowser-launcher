@@ -90,8 +90,8 @@ def main():
     desktop = app.desktop()
     window_size = gui.size()
     gui.move(
-        (desktop.width() - window_size.width()) / 2,
-        (desktop.height() - window_size.height()) / 2,
+        int((desktop.width() - window_size.width()) / 2),
+        int((desktop.height() - window_size.height()) / 2),
     )
     gui.show()
 
