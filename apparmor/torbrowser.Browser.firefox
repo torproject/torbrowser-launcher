@@ -30,6 +30,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   deny /etc/host.conf r,
   deny /etc/hosts r,
   deny /etc/nsswitch.conf r,
+  deny /etc/os-release r,
   deny /etc/resolv.conf r,
   deny /etc/passwd r,
   deny /etc/group r,
