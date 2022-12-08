@@ -183,7 +183,7 @@ class Common(object):
                 arch = "linux32"
 
             tarball_filename = (
-                "tor-browser-" + arch + "-" + tbb_version + "_" + language + ".tar.xz"
+                "tor-browser-" + arch + "-" + tbb_version + "_ALL.tar.xz"
             )
 
             # tarball
@@ -234,21 +234,16 @@ class Common(object):
                     "changelog": tbb_local
                     + "/tbb/"
                     + self.architecture
-                    + "/tor-browser_"
-                    + language
-                    + "/Browser/TorBrowser/Docs/ChangeLog.txt",
+                    + "/tor-browser/Browser/TorBrowser/Docs/ChangeLog.txt",
                     "dir": tbb_local + "/tbb/" + self.architecture,
                     "dir_tbb": tbb_local
                     + "/tbb/"
                     + self.architecture
-                    + "/tor-browser_"
-                    + language,
+                    + "/tor-browser",
                     "start": tbb_local
                     + "/tbb/"
                     + self.architecture
-                    + "/tor-browser_"
-                    + language
-                    + "/start-tor-browser.desktop",
+                    + "/tor-browser/start-tor-browser.desktop",
                 },
             }
 
