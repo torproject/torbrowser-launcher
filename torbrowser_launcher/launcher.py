@@ -219,8 +219,6 @@ class Launcher(QtWidgets.QMainWindow):
             self.try_stable()
         elif self.gui == "error_try_default_mirror":
             self.try_default_mirror()
-        elif self.gui == "error_try_forcing_english":
-            self.try_forcing_english()
         elif self.gui == "error_try_tor":
             self.try_tor()
 
@@ -357,13 +355,6 @@ class Launcher(QtWidgets.QMainWindow):
     def try_default_mirror(self):
         # change mirror to default and relaunch TBL
         self.common.settings["mirror"] = self.common.default_mirror
-        self.common.save_settings()
-        subprocess.Popen([self.common.paths["tbl_bin"]])
-        self.close()
-
-    def try_forcing_english(self):
-        # change force english to true and relaunch TBL
-        self.common.settings["force_en-US"] = True
         self.common.save_settings()
         subprocess.Popen([self.common.paths["tbl_bin"]])
         self.close()
@@ -572,21 +563,6 @@ class DownloadThread(QtCore.QThread):
                             + _("Would you like to switch back to the default?")
                         ).format(r.status_code, self.common.settings["mirror"])
                         self.download_error.emit("error_try_default_mirror", message)
-
-                    # Should we switch to English?
-                    elif (
-                        self.common.language != "en-US"
-                        and not self.common.settings["force_en-US"]
-                    ):
-                        message = (
-                            _("Download Error:")
-                            + " {0}\n\n"
-                            + _(
-                                "Would you like to try the English version of Tor Browser instead?"
-                            )
-                        ).format(r.status_code)
-                        self.download_error.emit("error_try_forcing_english", message)
-
                     else:
                         message = (_("Download Error:") + " {0}").format(r.status_code)
                         self.download_error.emit("error", message)

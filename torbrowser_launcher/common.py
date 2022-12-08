@@ -30,7 +30,6 @@ import os
 import sys
 import platform
 import subprocess
-import locale
 import pickle
 import json
 import re
@@ -57,86 +56,17 @@ class Common(object):
         self.tbl_version = tbl_version
 
         # initialize the app
+        self.architecture = "x86_64" if "64" in platform.architecture()[0] else "i686"
         self.default_mirror = "https://dist.torproject.org/"
-        self.discover_arch_lang()
         self.build_paths()
         for d in self.paths["dirs"]:
             self.mkdir(self.paths["dirs"][d])
         self.load_mirrors()
         self.load_settings()
-        # some settings require a path rebuild, like force_en-US
         self.build_paths()
         self.mkdir(self.paths["download_dir"])
         self.mkdir(self.paths["tbb"]["dir"])
         self.init_gnupg()
-
-    # discover the architecture and language
-    def discover_arch_lang(self):
-        # figure out the architecture
-        self.architecture = "x86_64" if "64" in platform.architecture()[0] else "i686"
-
-        # figure out the language
-        available_languages = [
-            "ar",
-            "ca",
-            "cs",
-            "da",
-            "de",
-            "el",
-            "en-US",
-            "es-AR",
-            "es-ES",
-            "fa",
-            "fr",
-            "ga-IE",
-            "he",
-            "hu",
-            "id",
-            "is",
-            "it",
-            "ja",
-            "ka",
-            "ko",
-            "lt",
-            "mk",
-            "ms",
-            "my",
-            "nb-NO",
-            "nl",
-            "pl",
-            "pt-BR",
-            "ro",
-            "ru",
-            "sv-SE",
-            "th",
-            "tr",
-            "vi",
-            "zh-CN",
-            "zh-TW",
-        ]
-
-        # a list of manually configured language fallback overriding
-        language_overrides = {
-            "zh-HK": "zh-TW",
-        }
-
-        locale.setlocale(locale.LC_MESSAGES, "")
-        default_locale = locale.getlocale(locale.LC_MESSAGES)[0]
-        if default_locale is None:
-            self.language = "en-US"
-        else:
-            self.language = default_locale.replace("_", "-")
-            if self.language in language_overrides:
-                self.language = language_overrides[self.language]
-            if self.language not in available_languages:
-                self.language = self.language.split("-")[0]
-                if self.language not in available_languages:
-                    for l in available_languages:
-                        if l[0:2] == self.language:
-                            self.language = l
-            # if language isn't available, default to english
-            if self.language not in available_languages:
-                self.language = "en-US"
 
     # get value of environment variable, if it is not set return the default value
     @staticmethod
@@ -170,11 +100,6 @@ class Common(object):
         )
         old_tbb_data = "{0}/.torbrowser".format(homedir)
 
-        if hasattr(self, "settings") and self.settings["force_en-US"]:
-            language = "en-US"
-        else:
-            language = self.language
-
         if tbb_version:
             # tarball filename
             if self.architecture == "x86_64":
@@ -183,7 +108,7 @@ class Common(object):
                 arch = "linux32"
 
             tarball_filename = (
-                "tor-browser-" + arch + "-" + tbb_version + "_" + language + ".tar.xz"
+                "tor-browser-" + arch + "-" + tbb_version + "_ALL.tar.xz"
             )
 
             # tarball
@@ -228,27 +153,22 @@ class Common(object):
                 "gnupg_homedir": tbb_local + "/gnupg_homedir",
                 "settings_file": tbb_config + "/settings.json",
                 "settings_file_pickle": tbb_config + "/settings",
-                "version_check_url": "https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/en-US",
+                "version_check_url": "https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/ALL",
                 "version_check_file": tbb_cache + "/download/release.xml",
                 "tbb": {
                     "changelog": tbb_local
                     + "/tbb/"
                     + self.architecture
-                    + "/tor-browser_"
-                    + language
-                    + "/Browser/TorBrowser/Docs/ChangeLog.txt",
+                    + "/tor-browser/Browser/TorBrowser/Docs/ChangeLog.txt",
                     "dir": tbb_local + "/tbb/" + self.architecture,
                     "dir_tbb": tbb_local
                     + "/tbb/"
                     + self.architecture
-                    + "/tor-browser_"
-                    + language,
+                    + "/tor-browser",
                     "start": tbb_local
                     + "/tbb/"
                     + self.architecture
-                    + "/tor-browser_"
-                    + language
-                    + "/start-tor-browser.desktop",
+                    + "/tor-browser/start-tor-browser.desktop",
                 },
             }
 
@@ -397,7 +317,6 @@ class Common(object):
             "download_over_tor": False,
             "tor_socks_address": "127.0.0.1:9050",
             "mirror": self.default_mirror,
-            "force_en-US": False,
         }
 
         if os.path.isfile(self.paths["settings_file"]):
