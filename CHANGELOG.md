@@ -1,5 +1,9 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.6
+
+* Tor Browser 12.0 no longer uses locales, so the download URL and local path have changed
+
 ## 0.3.5
 
 * Fix refreshing Tor Browser signing key in Flatpak package
