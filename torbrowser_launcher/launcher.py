@@ -72,7 +72,7 @@ class Launcher(QtWidgets.QMainWindow):
         self.force_redownload = False
 
         # This is the current version of Tor Browser, which should get updated with every release
-        self.min_version = "7.5.2"
+        self.min_version = "12.0"
 
         # Init launcher
         self.set_state(None, "", [])
@@ -540,6 +540,7 @@ class DownloadThread(QtCore.QThread):
         self.common = common
         self.url = url
         self.path = path
+
     def run(self):
         with open(self.path, "wb") as f:
             try:
