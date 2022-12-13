@@ -54,17 +54,6 @@ class Settings(QtWidgets.QMainWindow):
         else:
             self.tor_download_checkbox.setCheckState(QtCore.Qt.Unchecked)
 
-        # Force en-US, only display if language isn't already en-US
-        self.force_en_checkbox = QtWidgets.QCheckBox(
-            _("Force downloading English version of Tor Browser")
-        )
-        if self.common.settings["force_en-US"]:
-            self.force_en_checkbox.setCheckState(QtCore.Qt.Checked)
-        else:
-            self.force_en_checkbox.setCheckState(QtCore.Qt.Unchecked)
-        if self.common.language == "en-US":
-            self.force_en_checkbox.hide()
-
         # Tor SOCKS address
         tor_addr_label = QtWidgets.QLabel(_("Tor server"))
         self.tor_addr = QtWidgets.QLineEdit()
@@ -76,7 +65,6 @@ class Settings(QtWidgets.QMainWindow):
         # Settings layout
         settings_layout = QtWidgets.QVBoxLayout()
         settings_layout.addWidget(self.tor_download_checkbox)
-        settings_layout.addWidget(self.force_en_checkbox)
         settings_layout.addLayout(tor_addr_layout)
 
         # Status
@@ -189,7 +177,6 @@ class Settings(QtWidgets.QMainWindow):
         self.common.settings[
             "download_over_tor"
         ] = self.tor_download_checkbox.isChecked()
-        self.common.settings["force_en-US"] = self.force_en_checkbox.isChecked()
         self.common.settings["tor_socks_address"] = self.tor_addr.text()
 
         # Figure out the selected mirror
