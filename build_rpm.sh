@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=`cat share/torbrowser-launcher/version`
+VERSION=$(cat share/torbrowser-launcher/version)
 
 # clean up from last build
 rm -r build dist
