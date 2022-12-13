@@ -1,0 +1,255 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Oğuz Ersen <oguz@ersen.moe>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-27 08:41+0300\n"
+"PO-Revision-Date: 2022-03-06 09:00+0300\n"
+"Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
+"Language-Team: Turkish <tr>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+
+#: common.py:159
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "{0} oluşturulurken hata"
+
+#: common.py:270
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "{0} dizini oluşturulamıyor"
+
+#: common.py:273
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "{0} yazılabilir değil"
+
+#: common.py:280
+msgid "Creating GnuPG homedir"
+msgstr "GnuPG ana dizini oluşturuluyor"
+
+#: common.py:371
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "%s parmak izine sahip anahtar içe aktarılamadı."
+
+#: common.py:378
+msgid "Not all keys were imported successfully!"
+msgstr "Tüm anahtarlar başarıyla içe aktarılmadı!"
+
+#: __init__.py:71 launcher.py:528
+msgid "Tor Browser Launcher"
+msgstr "Tor Browser Başlatıcı"
+
+#: __init__.py:72
+msgid "By Micah Lee, licensed under MIT"
+msgstr "Micah Lee tarafından, MIT lisansı altında lisanslandı"
+
+#: __init__.py:73
+#, python-brace-format
+msgid "version {0}"
+msgstr "sürüm {0}"
+
+#: launcher.py:86
+msgid "Downloading Tor Browser for the first time."
+msgstr "Tor Browser ilk kez indiriliyor."
+
+#: launcher.py:89
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading the newest version."
+msgstr "Tor Browser sürümünüz güncel değil. En yeni sürüm indiriliyor."
+
+#: launcher.py:110
+msgid "Downloading over Tor"
+msgstr "Tor üzerinden indiriliyor"
+
+#: launcher.py:121
+msgid "Tor Browser"
+msgstr "Tor Browser"
+
+#: launcher.py:140
+msgid "Start"
+msgstr "Başlat"
+
+#: launcher.py:190
+msgid "Yes"
+msgstr "Evet"
+
+#: launcher.py:194
+msgid "Exit"
+msgstr "Çıkış"
+
+#: launcher.py:208 settings.py:147
+msgid "Cancel"
+msgstr "İptal"
+
+#: launcher.py:247 launcher.py:268 launcher.py:277 launcher.py:316
+#: launcher.py:319
+msgid "Downloading"
+msgstr "İndiriliyor"
+
+#: launcher.py:258
+msgid "Latest version: {}"
+msgstr "En son sürüm: {}"
+
+#: launcher.py:262
+msgid "Error detecting Tor Browser version."
+msgstr "Tor Browser sürümü algılanırken hata oluştu."
+
+#: launcher.py:292 launcher.py:397
+msgid "Verifying Signature"
+msgstr "İmza Doğrulanıyor"
+
+#: launcher.py:296
+msgid "Extracting"
+msgstr "Çıkartılıyor"
+
+#: launcher.py:300
+msgid "Running"
+msgstr "Çalıştırılıyor"
+
+#: launcher.py:304
+msgid "Starting download over again"
+msgstr "İndirme yeniden başlatılıyor"
+
+#: launcher.py:316 launcher.py:335
+msgid "(over Tor)"
+msgstr "(Tor üzerinden)"
+
+#: launcher.py:331
+msgid "Downloaded"
+msgstr "İndirildi"
+
+#: launcher.py:439
+msgid "Installing"
+msgstr "Kuruluyor"
+
+#: launcher.py:448
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Tor Browser Başlatıcı, {0} dosya biçimini anlamıyor"
+
+#: launcher.py:479
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr ""
+"Kurduğunuz Tor Browser sürümü olması gerekenden daha eski ve bu bir saldırı "
+"işareti olabilir!"
+
+#: launcher.py:496
+msgid "Downloading Tor Browser over again."
+msgstr "Tor Browser tekrar indiriliyor."
+
+#: launcher.py:568 launcher.py:582 launcher.py:591
+msgid "Download Error:"
+msgstr "İndirme Hatası:"
+
+#: launcher.py:570
+msgid "You are currently using a non-default mirror"
+msgstr "Şu anda öntanımlı olmayan bir yansı kullanıyorsunuz"
+
+#: launcher.py:572
+msgid "Would you like to switch back to the default?"
+msgstr "Öntanımlı olana geri dönmek ister misiniz?"
+
+#: launcher.py:585
+msgid "Would you like to try the English version of Tor Browser instead?"
+msgstr "Bunun yerine Tor Browser'ın İngilizce sürümünü denemek ister misiniz?"
+
+#: launcher.py:607
+#, python-brace-format
+msgid ""
+"Invalid SSL certificate for:\n"
+"{0}\n"
+"\n"
+"You may be under attack."
+msgstr ""
+"Şunun için geçersiz SSL sertifikası:\n"
+"{0}\n"
+"\n"
+"Saldırı altında olabilirsiniz."
+
+#: launcher.py:610
+msgid "Try the download again using Tor?"
+msgstr "Tor kullanarak indirme tekrar denensin mi?"
+
+#: launcher.py:620
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Trying to download over Tor. Are you sure Tor is configured correctly and "
+"running?"
+msgstr ""
+"İndirme başlatılırken hata oluştu:\n"
+"\n"
+"{0}\n"
+"\n"
+"Tor üzerinden indirmeye çalışılıyor. Tor'un doğru yapılandırıldığından ve "
+"çalıştığından emin misiniz?"
+
+#: launcher.py:626
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"İndirme başlatılırken hata oluştu:\n"
+"\n"
+"{0}\n"
+"\n"
+"İnternete bağlı mısınız?"
+
+#: settings.py:47
+msgid "Tor Browser Launcher Settings"
+msgstr "Tor Browser Başlatıcı Ayarları"
+
+#: settings.py:51
+msgid "Download over system Tor"
+msgstr "Sistem Tor'u üzerinden indir"
+
+#: settings.py:59
+msgid "Force downloading English version of Tor Browser"
+msgstr "Tor Browser'ın İngilizce sürümünü indirmeye zorla"
+
+#: settings.py:69
+msgid "Tor server"
+msgstr "Tor sunucusu"
+
+#: settings.py:85
+msgid "Status: Installed"
+msgstr "Durum: Kurulu"
+
+#: settings.py:87
+msgid "Status: Not Installed"
+msgstr "Durum: Kurulu Değil"
+
+#: settings.py:90
+msgid "Install Tor Browser"
+msgstr "Tor Browser'ı Kur"
+
+#: settings.py:97
+msgid "Reinstall Tor Browser"
+msgstr "Tor Browser'ı Yeniden Kur"
+
+#: settings.py:122
+msgid "Mirror"
+msgstr "Yansı"
+
+#: settings.py:140
+msgid "Save && Exit"
+msgstr "Kaydet && Çık"
