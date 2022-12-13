@@ -107,9 +107,7 @@ class Common(object):
             else:
                 arch = "linux32"
 
-            tarball_filename = (
-                "tor-browser-" + arch + "-" + tbb_version + "_ALL.tar.xz"
-            )
+            tarball_filename = "tor-browser-" + arch + "-" + tbb_version + "_ALL.tar.xz"
 
             # tarball
             self.paths["tarball_url"] = (
@@ -143,7 +141,7 @@ class Common(object):
                     "tor_browser_developers": os.path.join(
                         SHARE, "tor-browser-developers.asc"
                     ),
-                    "wkd_tmp": os.path.join(tbb_cache, "torbrowser.gpg")
+                    "wkd_tmp": os.path.join(tbb_cache, "torbrowser.gpg"),
                 },
                 "mirrors_txt": [
                     os.path.join(SHARE, "mirrors.txt"),
@@ -161,10 +159,7 @@ class Common(object):
                     + self.architecture
                     + "/tor-browser/Browser/TorBrowser/Docs/ChangeLog.txt",
                     "dir": tbb_local + "/tbb/" + self.architecture,
-                    "dir_tbb": tbb_local
-                    + "/tbb/"
-                    + self.architecture
-                    + "/tor-browser",
+                    "dir_tbb": tbb_local + "/tbb/" + self.architecture + "/tor-browser",
                     "start": tbb_local
                     + "/tbb/"
                     + self.architecture
