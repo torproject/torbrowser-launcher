@@ -59,6 +59,7 @@ class Common(object):
         self.architecture = "x86_64" if "64" in platform.architecture()[0] else "i686"
         self.default_mirror = "https://dist.torproject.org/"
         self.build_paths()
+        self.torbrowser12_rename_old_tbb()
         for d in self.paths["dirs"]:
             self.mkdir(self.paths["dirs"][d])
         self.load_mirrors()
@@ -173,6 +174,19 @@ class Common(object):
             "tor_browser_developers": tor_browser_developers_fingerprint,
             "wkd_tmp": tor_browser_developers_fingerprint,
         }
+
+    # Tor Browser 12.0 no longer has locales. If an old TBB folder exists with locals, rename it to just tor_browser
+    def torbrowser12_rename_old_tbb(self):
+        for filename in os.listdir(self.paths["tbb"]["dir"]):
+            abs_filename = os.path.join(self.paths["tbb"]["dir"], filename)
+            if filename.startswith("tor-browser_") and os.path.isdir(abs_filename):
+                os.rename(abs_filename, self.paths["tbb"]["dir_tbb"])
+                print(
+                    _("Renamed {0} to {1}").format(
+                        abs_filename, self.paths["tbb"]["dir_tbb"]
+                    )
+                )
+                break
 
     # create a directory
     @staticmethod
