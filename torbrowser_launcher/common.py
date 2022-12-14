@@ -177,6 +177,8 @@ class Common(object):
 
     # Tor Browser 12.0 no longer has locales. If an old TBB folder exists with locals, rename it to just tor_browser
     def torbrowser12_rename_old_tbb(self):
+        if not os.path.exists(self.paths["tbb"]["dir"]):
+            return
         for filename in os.listdir(self.paths["tbb"]["dir"]):
             abs_filename = os.path.join(self.paths["tbb"]["dir"], filename)
             if filename.startswith("tor-browser_") and os.path.isdir(abs_filename):
