@@ -10,7 +10,7 @@ torbrowser-launcher doesn't rely on the CA infrastructure. The only TLS it does 
 
 ## Downgrade attacks
 
-Downgrade attacks shouldn't be possible, unless they're committed by Tor devs themselves. If an attacker captures a valid old request to https://check.torproject.org/RecommendedTBBVersions that claims that the current version is an older version than what's currently installed, torbrowser-launcher prevents it from installing. (And by "installing" I mean extracting to the user's home dir.)
+Downgrade attacks shouldn't be possible, unless they're committed by Tor devs themselves. If an attacker captures a valid old request to https://aus1.torproject.org/torbrowser/update_3/release/Linux_x86_64-gcc3/x/ALL that claims that the current version is an older version than what's currently installed, torbrowser-launcher prevents it from installing. (And by "installing" I mean extracting to the user's home dir.)
 
 However, there is the scenario where the user has set a third-party mirror to download from instead of the default. The third-party mirror could serve a tarball and sig that have filenames of the latest version, but are actually an older version. This attack is mitigated by the fact that all mirror options use HTTPS -- though none of the mirror certs are pinned, so in this case it would rely on CA infrastructure. This is an edge case, and would only work against users who are using a non-default mirror, and who also have access to a trusted CA signing key.
 
