@@ -182,7 +182,7 @@ msgstr ""
 "Érvénytelen SSL-tanúsítvány ehhez:\n"
 "{0}\n"
 "\n"
-– Lehet, hogy támadás alatt állsz."
+"Lehet, hogy támadás alatt állsz."
 
 #: launcher.py:550
 msgid "Try the download again using Tor?"
