@@ -70,6 +70,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/Downloads/ rwk,
   owner @{torbrowser_home_dir}/Downloads/** rwk,
   owner @{torbrowser_home_dir}/firefox rix,
+  owner @{torbrowser_home_dir}/glxtest ix,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/* rw,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/{,MozUpdater/bgupdate/}updater ix,
   owner @{torbrowser_home_dir}/updater ix,
