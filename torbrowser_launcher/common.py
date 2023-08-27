@@ -26,9 +26,11 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
+import glob
 import os
 import sys
 import platform
+import shutil
 import subprocess
 import pickle
 import json
@@ -175,20 +177,42 @@ class Common(object):
             "wkd_tmp": tor_browser_developers_fingerprint,
         }
 
-    # Tor Browser 12.0 no longer has locales. If an old TBB folder exists with locals, rename it to just tor_browser
+    # Tor Browser 12.0 no longer has locales. If an old TBB folder exists with locales, rename it to just tor_browser
     def torbrowser12_rename_old_tbb(self):
         if not os.path.exists(self.paths["tbb"]["dir"]):
             return
-        for filename in os.listdir(self.paths["tbb"]["dir"]):
-            abs_filename = os.path.join(self.paths["tbb"]["dir"], filename)
-            if filename.startswith("tor-browser_") and os.path.isdir(abs_filename):
-                os.rename(abs_filename, self.paths["tbb"]["dir_tbb"])
+        locale_glob = glob.iglob(
+            os.path.join(glob.escape(self.paths["tbb"]["dir"]), 'tor-browser_*')
+        )
+        for path in locale_glob:
+            if not os.path.isdir(path):
+                continue
+            if os.path.exists(self.paths["tbb"]["dir_tbb"]):
+                try:
+                    # Tries to remove the locale directory if tor_browser
+                    # folder already exists
+                    shutil.rmtree(path)
+                    print(_("Deleted {0}").format(path))
+                    continue
+                except OSError as err:
+                    print(
+                        _(
+                            "Could not remove {0} due a system error: {1}"
+                        ).format(path, err)
+                    )
+                    continue
+
+            try:
+                os.rename(path, self.paths["tbb"]["dir_tbb"])
+            except OSError as err:
                 print(
-                    _("Renamed {0} to {1}").format(
-                        abs_filename, self.paths["tbb"]["dir_tbb"]
+                    _("Could not move {0} to {1} due an error: {2}").format(
+                        path, self.paths["tbb"]["dir_tbb"], err
                     )
                 )
-                break
+                continue
+
+            print(_("Renamed {0} to {1}").format(path, self.paths["tbb"]["dir_tbb"]))
 
     # create a directory
     @staticmethod
