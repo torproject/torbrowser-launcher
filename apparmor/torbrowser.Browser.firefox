@@ -46,6 +46,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{PROC}/@{pid}/environ r,
   owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
+  owner @{PROC}/@{pid}/oom_score_adj rw,
   owner @{PROC}/@{pid}/smaps r,
   owner @{PROC}/@{pid}/stat r,
   owner @{PROC}/@{pid}/statm r,
