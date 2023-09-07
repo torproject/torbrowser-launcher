@@ -12,6 +12,8 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/opencl>
   #include if exists <abstractions/vulkan>
 
+  deny capability sys_ptrace,
+
   # Uncomment the following lines if you want to give the Tor Browser read-write
   # access to most of your personal files.
   # #include <abstractions/user-download>
