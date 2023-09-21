@@ -1,7 +1,7 @@
 #include <tunables/global>
 #include <tunables/torbrowser>
 
-@{torbrowser_tor_executable} = /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/TorBrowser/Tor/tor
+@{torbrowser_tor_executable} = /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser/Browser/TorBrowser/Tor/tor
 
 profile torbrowser_tor @{torbrowser_tor_executable} {
   #include <abstractions/base>
