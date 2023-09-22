@@ -6,6 +6,13 @@
     "configurations": [
         
         {
+            "command": "npm start",
+            "name": "Run npm start",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+
+        {
             "name": "Attach to Edge",
             "port": 9222,
             "request": "attach",
