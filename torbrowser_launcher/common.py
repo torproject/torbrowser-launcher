@@ -243,7 +243,7 @@ class Common(object):
 
         # Download the key from WKD directly
         r = requests.get(
-            "https://torproject.org/.well-known/openpgpkey/hu/kounek7zrdx745qydx6p59t9mqjpuhdf?l=torbrowser",
+            "https://keys.openpgp.org/vks/v1/by-email/torbrowser@torproject.org",
             proxies=self.proxies(),
         )
         if r.status_code != 200:
