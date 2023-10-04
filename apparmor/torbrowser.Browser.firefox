@@ -1,7 +1,7 @@
 #include <tunables/global>
 #include <tunables/torbrowser>
 
-@{torbrowser_firefox_executable} = /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser_*/Browser/firefox.real
+@{torbrowser_firefox_executable} = /home/*/.local/share/torbrowser/tbb/{i686,x86_64}/tor-browser/Browser/firefox.real
 
 profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/audio>
