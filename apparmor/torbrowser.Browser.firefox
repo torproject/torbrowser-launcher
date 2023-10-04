@@ -12,6 +12,8 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/opencl>
   #include if exists <abstractions/vulkan>
 
+  deny capability sys_ptrace,
+
   # Uncomment the following lines if you want to give the Tor Browser read-write
   # access to most of your personal files.
   # #include <abstractions/user-download>
@@ -46,10 +48,13 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{PROC}/@{pid}/environ r,
   owner @{PROC}/@{pid}/fd/ r,
   owner @{PROC}/@{pid}/mountinfo r,
+  owner @{PROC}/@{pid}/oom_score_adj rw,
   owner @{PROC}/@{pid}/smaps r,
   owner @{PROC}/@{pid}/stat r,
   owner @{PROC}/@{pid}/statm r,
   owner @{PROC}/@{pid}/status r,
+  owner @{PROC}/@{pid}/task/ r,
+  owner @{PROC}/@{pid}/task/*/comm r,
   owner @{PROC}/@{pid}/task/*/stat r,
   @{PROC}/sys/kernel/random/uuid r,
 
@@ -70,6 +75,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/Downloads/ rwk,
   owner @{torbrowser_home_dir}/Downloads/** rwk,
   owner @{torbrowser_home_dir}/firefox rix,
+  owner @{torbrowser_home_dir}/glxtest ix,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/* rw,
   owner @{torbrowser_home_dir}/{,TorBrowser/UpdateInfo/}updates/[0-9]*/{,MozUpdater/bgupdate/}updater ix,
   owner @{torbrowser_home_dir}/updater ix,
@@ -111,6 +117,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /sys/devices/system/node/ r,
   /sys/devices/system/node/node[0-9]*/meminfo r,
   /sys/fs/cgroup/cpu,cpuacct/{,user.slice/}cpu.cfs_quota_us r,
+  deny /sys/class/input/ r,
   deny /sys/devices/virtual/block/*/uevent r,
 
   # Should use abstractions/gstreamer instead once merged upstream
