@@ -104,11 +104,11 @@ class Common(object):
         if tbb_version:
             # tarball filename
             if self.architecture == "x86_64":
-                arch = "linux64"
+                arch = "linux-x86_64"
             else:
-                arch = "linux32"
+                arch = "linux-i686"
 
-            tarball_filename = "tor-browser-" + arch + "-" + tbb_version + "_ALL.tar.xz"
+            tarball_filename = "tor-browser-" + arch + "-" + tbb_version + ".tar.xz"
 
             # tarball
             self.paths["tarball_url"] = (
