@@ -3,7 +3,7 @@
 First, clone the repository:
 
 ```sh
-git clone https://github.com/micahflee/torbrowser-launcher.git
+git clone https://gitlab.torproject.org/tpo/applications/torbrowser-launcher.git
 cd torbrowser-launcher
 ```
 
