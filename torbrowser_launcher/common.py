@@ -47,7 +47,7 @@ gettext.install("torbrowser-launcher")
 #  2. The second must be an integer between [0, 15], inclusive
 #  3. The third must be an uppercased hex-encoded 160-bit fingerprint
 gnupg_import_ok_pattern = re.compile(
-    b"(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})"
+    rb"(\[GNUPG\:\]) (IMPORT_OK) ([0-9]|[1]?[0-5]) ([A-F0-9]{40})"
 )
 
 
