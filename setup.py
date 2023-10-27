@@ -100,7 +100,7 @@ setup(
     version=version,
     author="Micah Lee",
     author_email="micah@micahflee.com",
-    url="https://www.github.com/micahflee/torbrowser-launcher",
+    url="https://www.github.com/torproject/torbrowser-launcher",
     platforms=["GNU/Linux"],
     license="MIT",
     description="A program to help you securely download and run Tor Browser",
