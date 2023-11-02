@@ -121,7 +121,7 @@ Browser.
     install_requires=[
         "gpg",
         "packaging",
-        "PyQt5",
+        "PySide6",
         "requests",
         "PySocks",
     ],
