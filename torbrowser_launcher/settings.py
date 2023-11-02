@@ -30,7 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 import subprocess
 import shutil
 
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets, QtGui
 
 
 class Settings(QtWidgets.QMainWindow):

@@ -32,7 +32,7 @@ import sys
 import argparse
 import signal
 
-from PyQt5 import QtCore, QtWidgets
+from PySide6 import QtWidgets
 
 from .common import Common, SHARE
 from .settings import Settings
@@ -45,7 +45,6 @@ class Application(QtWidgets.QApplication):
     """
 
     def __init__(self):
-        self.setAttribute(QtCore.Qt.AA_X11InitThreads, True)
         QtWidgets.QApplication.__init__(self, sys.argv)
         self.installEventFilter(self)
 
@@ -92,11 +91,11 @@ def main():
         gui = Launcher(common, app, url_list)
 
     # Center the window
-    desktop = app.desktop()
+    screen_size = app.primaryScreen().size()
     window_size = gui.size()
     gui.move(
-        (desktop.width() - window_size.width()) // 2,
-        (desktop.height() - window_size.height()) // 2,
+        (screen_size.width() - window_size.width()) // 2,
+        (screen_size.height() - window_size.height()) // 2,
     )
     gui.show()
 
