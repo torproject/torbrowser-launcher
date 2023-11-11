@@ -28,14 +28,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import sys
-import distro
 import subprocess
 from distutils.core import setup
 
 SHARE = "share"
-
-# detect linux distribution
-distro = distro.linux_distribution()[0]
 
 
 def file_list(path):
@@ -74,25 +70,6 @@ for root, dirs, files in os.walk(SHARE):
     if files:
         datafiles.append((root, [os.path.join(root, f) for f in files]))
 
-# disable shipping apparmor profiles until they work in ubuntu (#128)
-if distro != "Ubuntu":
-    if not hasattr(sys, "real_prefix"):
-        # we're not in a virtualenv, so we can probably write to /etc
-        datafiles += [
-            (
-                "/etc/apparmor.d/",
-                ["apparmor/torbrowser.Browser.firefox", "apparmor/torbrowser.Tor.tor"],
-            ),
-            (
-                "/etc/apparmor.d/local/",
-                [
-                    "apparmor/local/torbrowser.Browser.firefox",
-                    "apparmor/local/torbrowser.Tor.tor",
-                ],
-            ),
-            ("/etc/apparmor.d/tunables/", ["apparmor/tunables/torbrowser"]),
-        ]
-
 datafiles += [(os.path.dirname(f), [f]) for f in create_mo_files()]
 
 setup(
@@ -100,7 +77,7 @@ setup(
     version=version,
     author="Micah Lee",
     author_email="micah@micahflee.com",
-    url="https://www.github.com/micahflee/torbrowser-launcher",
+    url="https://www.github.com/torproject/torbrowser-launcher",
     platforms=["GNU/Linux"],
     license="MIT",
     description="A program to help you securely download and run Tor Browser",

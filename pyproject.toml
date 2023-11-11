@@ -1,0 +1,7 @@
+[project]
+name = "torbrowser-launcher"
+dynamic = ["version", "description", "dependencies", "authors", "license", "readme"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
