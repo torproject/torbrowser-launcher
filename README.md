@@ -1,6 +1,6 @@
 # Tor Browser Launcher
 
-_**Are you getting an error?** Sometimes updates in Tor Browser itself will break Tor Browser Launcher. There's a good chance that the problem you're experiencing has already been fixed in the [newest version](https://github.com/micahflee/torbrowser-launcher/releases). Try installing from Flatpak (instructions below), or [build from source](/BUILD.md)._
+_**Are you getting an error?** Sometimes updates in Tor Browser itself will break Tor Browser Launcher. There's a good chance that the problem you're experiencing has already been fixed in the [newest version](https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/-/tags). Try installing from Flatpak (instructions below), or [build from source](/BUILD.md)._
 
 Tor Browser Launcher is intended to make Tor Browser easier to install and use for GNU/Linux users. You install ```torbrowser-launcher``` from your distribution's package manager and it handles everything else:
 

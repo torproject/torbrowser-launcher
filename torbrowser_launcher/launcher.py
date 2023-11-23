@@ -1,6 +1,6 @@
 """
 Tor Browser Launcher
-https://github.com/micahflee/torbrowser-launcher/
+https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/
 
 Copyright (c) 2013-2021 Micah Lee <micah@micahflee.com>
 
@@ -407,7 +407,7 @@ class Launcher(QtWidgets.QMainWindow):
                 "A copy of the Tor Browser files you downloaded have been saved here:\n"
                 "{1}\n{2}\n\n"
                 "Click Start to refresh the keyring and try again. If the message persists report the above "
-                "error code here:\nhttps://github.com/micahflee/torbrowser-launcher/issues"
+                "error code here:\nhttps://gitlab.torproject.org/tpo/applications/torbrowser-launcher/-/issues/"
             )
             sigerror = sigerror.format(
                 message, backup_tarball_filename, backup_sig_filename

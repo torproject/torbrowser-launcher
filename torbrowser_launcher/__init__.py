@@ -1,6 +1,6 @@
 """
 Tor Browser Launcher
-https://github.com/micahflee/torbrowser-launcher/
+https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/
 
 Copyright (c) 2013-2021 Micah Lee <micah@micahflee.com>
 
@@ -71,7 +71,7 @@ def main():
     print(_("Tor Browser Launcher"))
     print(_("By Micah Lee, licensed under MIT"))
     print(_("version {0}").format(tor_browser_launcher_version))
-    print("https://github.com/micahflee/torbrowser-launcher")
+    print("https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/")
 
     common = Common(tor_browser_launcher_version)
     app = Application()

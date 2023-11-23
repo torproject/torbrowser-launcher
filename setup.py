@@ -1,6 +1,6 @@
 """
 Tor Browser Launcher
-https://github.com/micahflee/torbrowser-launcher/
+https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/
 
 Copyright (c) 2013-2017 Micah Lee <micah@micahflee.com>
 
@@ -100,7 +100,7 @@ setup(
     version=version,
     author="Micah Lee",
     author_email="micah@micahflee.com",
-    url="https://www.github.com/micahflee/torbrowser-launcher",
+    url="https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/",
     platforms=["GNU/Linux"],
     license="MIT",
     description="A program to help you securely download and run Tor Browser",
