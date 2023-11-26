@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 15:47-0700\n"
+"POT-Creation-Date: 2023-08-27 18:18-0400\n"
 "PO-Revision-Date: 2017-02-16 00:55+0100\n"
 "Last-Translator: Barcza Károly <kbarcza@blackpanther.hu>\n"
 "Language-Team: \n"
@@ -18,53 +18,53 @@ msgstr ""
 "X-Generator: Poedit 1.8.8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: __init__.py:65 launcher.py:470
+#: __init__.py:65 launcher.py:470 __init__.py:71 launcher.py:519
 msgid "Tor Browser Launcher"
 msgstr "Tor böngésző indító"
 
-#: __init__.py:66
+#: __init__.py:66 __init__.py:72
 msgid "By Micah Lee, licensed under MIT"
 msgstr "Micah Lee által MIT licenc alatt"
 
-#: __init__.py:67
+#: __init__.py:67 __init__.py:73
 #, python-brace-format
 msgid "version {0}"
 msgstr "verzió {0}"
 
-#: common.py:100
+#: common.py:100 common.py:92
 #, python-brace-format
 msgid "Error creating {0}"
 msgstr "Hiba a(z) {0} létrehozásakor"
 
-#: common.py:102 common.py:180
+#: common.py:102 common.py:180 common.py:228
 #, python-brace-format
 msgid "{0} is not writable"
 msgstr "{0} nem írható"
 
-#: common.py:177
+#: common.py:177 common.py:225
 #, python-brace-format
 msgid "Cannot create directory {0}"
 msgstr "Nem sikerült a(z) {0} létrehozása"
 
-#: common.py:187
+#: common.py:187 common.py:235
 msgid "Creating GnuPG homedir"
 msgstr "GnuPG könyvtár létrehozása"
 
-#: common.py:254
+#: common.py:254 common.py:326
 #, python-format
 msgid "Could not import key with fingerprint: %s."
 msgstr "Nem lehetett importálni a kulcsot ujjlenyomattal: %s."
 
-#: common.py:259
+#: common.py:259 common.py:333
 msgid "Not all keys were imported successfully!"
 msgstr ""
 
-#: launcher.py:83
+#: launcher.py:83 launcher.py:86
 #, fuzzy
 msgid "Downloading Tor Browser for the first time."
 msgstr "Tor böngésző letöltése és telepítése első alkalommal."
 
-#: launcher.py:85
+#: launcher.py:85 launcher.py:89
 #, fuzzy
 msgid ""
 "Your version of Tor Browser is out-of-date. Downloading the newest version."
@@ -72,77 +72,78 @@ msgstr ""
 "A Tor böngésző verziója elavult. Töltsük le és telepítsük a legfrissebb "
 "változatot."
 
-#: launcher.py:100
+#: launcher.py:100 launcher.py:110
 msgid "Downloading over Tor"
 msgstr "Letöltés Tor-on keresztül"
 
-#: launcher.py:111
+#: launcher.py:111 launcher.py:121
 msgid "Tor Browser"
 msgstr "Tor böngésző"
 
-#: launcher.py:128
+#: launcher.py:128 launcher.py:140
 msgid "Start"
 msgstr "Elindítás"
 
-#: launcher.py:174
+#: launcher.py:174 launcher.py:190
 msgid "Yes"
 msgstr ""
 
-#: launcher.py:178
+#: launcher.py:178 launcher.py:194
 msgid "Exit"
 msgstr ""
 
-#: launcher.py:192 settings.py:136
+#: launcher.py:192 settings.py:136 launcher.py:208 settings.py:135
 msgid "Cancel"
 msgstr "Megszakít"
 
 #: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
-#: launcher.py:281
+#: launcher.py:281 launcher.py:266 launcher.py:275 launcher.py:314
+#: launcher.py:317
 msgid "Downloading"
 msgstr "Letöltés"
 
-#: launcher.py:238
+#: launcher.py:238 launcher.py:256
 msgid "Latest version: {}"
 msgstr "Legújabb változat: {}"
 
-#: launcher.py:241
+#: launcher.py:241 launcher.py:260
 msgid "Error detecting Tor Browser version."
 msgstr "Hiba a Tor böngésző verzió felsimerésekor"
 
-#: launcher.py:256 launcher.py:357
+#: launcher.py:256 launcher.py:357 launcher.py:290 launcher.py:388
 msgid "Verifying Signature"
 msgstr "Aláírás ellenőrzése"
 
-#: launcher.py:260
+#: launcher.py:260 launcher.py:294
 msgid "Extracting"
 msgstr "Kibontás"
 
-#: launcher.py:264
+#: launcher.py:264 launcher.py:298
 msgid "Running"
 msgstr "Fut"
 
-#: launcher.py:268
+#: launcher.py:268 launcher.py:302
 msgid "Starting download over again"
 msgstr "Újra letöltés indítása"
 
-#: launcher.py:279 launcher.py:295
+#: launcher.py:279 launcher.py:295 launcher.py:314 launcher.py:333
 msgid "(over Tor)"
 msgstr ""
 
-#: launcher.py:293
+#: launcher.py:293 launcher.py:329
 msgid "Downloaded"
 msgstr "Letöltve"
 
-#: launcher.py:393
+#: launcher.py:393 launcher.py:430
 msgid "Installing"
 msgstr "Telepítés.."
 
-#: launcher.py:401
+#: launcher.py:401 launcher.py:439
 #, python-brace-format
 msgid "Tor Browser Launcher doesn't understand the file format of {0}"
 msgstr "Tor böngésző indító nem érti a(z) {0} fájl formátumot."
 
-#: launcher.py:427
+#: launcher.py:427 launcher.py:470
 msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
@@ -150,20 +151,21 @@ msgstr ""
 "A Tor böngésződ verziója egy korábbi verzió mint amilyennek lennie kellene, "
 "ami lehet egy támadás jele!"
 
-#: launcher.py:446
+#: launcher.py:446 launcher.py:487
 #, fuzzy
 msgid "Downloading Tor Browser over again."
 msgstr "Tör böngészőcsomag letöltése újra."
 
-#: launcher.py:516 launcher.py:525 launcher.py:533
+#: launcher.py:516 launcher.py:525 launcher.py:533 launcher.py:560
+#: launcher.py:568
 msgid "Download Error:"
 msgstr "Hiba a letöltésben:"
 
-#: launcher.py:517
+#: launcher.py:517 launcher.py:562
 msgid "You are currently using a non-default mirror"
 msgstr "Jelenleg használt tükörszerver nem az alapértelmezett"
 
-#: launcher.py:518
+#: launcher.py:518 launcher.py:564
 msgid "Would you like to switch back to the default?"
 msgstr "Valóban szeretnéd visszaváltani alapértelmezettre?"
 
@@ -171,7 +173,7 @@ msgstr "Valóban szeretnéd visszaváltani alapértelmezettre?"
 msgid "Would you like to try the English version of Tor Browser instead?"
 msgstr "Ehelyett megpróbálod a Tor böngésző angol változatát ?"
 
-#: launcher.py:548
+#: launcher.py:548 launcher.py:584
 #, python-brace-format
 msgid ""
 "Invalid SSL certificate for:\n"
@@ -180,11 +182,11 @@ msgid ""
 "You may be under attack."
 msgstr ""
 
-#: launcher.py:550
+#: launcher.py:550 launcher.py:587
 msgid "Try the download again using Tor?"
 msgstr "Megpróbálod újra a Tor letöltését?"
 
-#: launcher.py:559
+#: launcher.py:559 launcher.py:597
 #, python-brace-format
 msgid ""
 "Error starting download:\n"
@@ -195,7 +197,7 @@ msgid ""
 "running?"
 msgstr ""
 
-#: launcher.py:563
+#: launcher.py:563 launcher.py:603
 #, python-brace-format
 msgid ""
 "Error starting download:\n"
@@ -210,11 +212,11 @@ msgstr ""
 "\n"
 "Csatlakozva vagy az internethez?"
 
-#: settings.py:46
+#: settings.py:46 settings.py:47
 msgid "Tor Browser Launcher Settings"
 msgstr "Tör böngésző indító beállítások"
 
-#: settings.py:50
+#: settings.py:50 settings.py:51
 msgid "Download over system Tor"
 msgstr "Letöltés rendszer Tor-on keresztül"
 
@@ -222,34 +224,54 @@ msgstr "Letöltés rendszer Tor-on keresztül"
 msgid "Force downloading English version of Tor Browser"
 msgstr "Kényszerítse a Tor angol változatának letöltését"
 
-#: settings.py:66
+#: settings.py:66 settings.py:58
 msgid "Tor server"
 msgstr "Tor-szerver"
 
-#: settings.py:82
+#: settings.py:82 settings.py:73
 msgid "Status: Installed"
 msgstr "Állapot: Telepített"
 
-#: settings.py:84
+#: settings.py:84 settings.py:75
 msgid "Status: Not Installed"
 msgstr "Állapot: Nincs telepítve"
 
-#: settings.py:87
+#: settings.py:87 settings.py:78
 msgid "Install Tor Browser"
 msgstr "Tor-böngésző telepítése"
 
-#: settings.py:92
+#: settings.py:92 settings.py:85
 msgid "Reinstall Tor Browser"
 msgstr "Tor böngésző úratelepítése"
 
-#: settings.py:115
+#: settings.py:115 settings.py:110
 msgid "Mirror"
 msgstr "Tükrözés"
 
-#: settings.py:131
+#: settings.py:131 settings.py:128
 #, fuzzy
 msgid "Save && Exit"
 msgstr "Mentés és kilépés"
+
+#: common.py:195
+#, python-brace-format
+msgid "Deleted {0}"
+msgstr ""
+
+#: common.py:200
+#, python-brace-format
+msgid "Could not remove {0} due a system error: {1}"
+msgstr ""
+
+#: common.py:209
+#, python-brace-format
+msgid "Could not move {0} to {1} due an error: {2}"
+msgstr ""
+
+#: common.py:215
+#, python-brace-format
+msgid "Renamed {0} to {1}"
+msgstr ""
 
 #~ msgid ""
 #~ "The python-txsocksx package is missing, downloads will not happen over tor"

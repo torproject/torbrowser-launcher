@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 15:47-0700\n"
+"POT-Creation-Date: 2023-08-27 18:18-0400\n"
 "PO-Revision-Date: 2018-07-07 19:50+0400\n"
 "Last-Translator: Andrey Kunitsyn Sergeevich <contact@libnaru.so>\n"
 "Language-Team: Russian\n"
@@ -19,127 +19,128 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n % 10==1 && n % 100!=11 ? 0 : n % 10>=2 "
 "&& n % 10<=4 && (n % 100<10 || n % 100>=20) ? 1 : 2);\\n\n"
 
-#: __init__.py:65 launcher.py:470
+#: __init__.py:65 launcher.py:470 __init__.py:71 launcher.py:519
 msgid "Tor Browser Launcher"
 msgstr "Программа запуска Tor Browser"
 
-#: __init__.py:66
+#: __init__.py:66 __init__.py:72
 msgid "By Micah Lee, licensed under MIT"
 msgstr "Написана Micah Lee и распространяется по лицензии MIT"
 
-#: __init__.py:67
+#: __init__.py:67 __init__.py:73
 #, python-brace-format
 msgid "version {0}"
 msgstr "версия {0}"
 
-#: common.py:100
+#: common.py:100 common.py:92
 #, python-brace-format
 msgid "Error creating {0}"
 msgstr "Ошибка создания {0}"
 
-#: common.py:102 common.py:180
+#: common.py:102 common.py:180 common.py:228
 #, python-brace-format
 msgid "{0} is not writable"
 msgstr "Нельзя записать в {0}"
 
-#: common.py:177
+#: common.py:177 common.py:225
 #, python-brace-format
 msgid "Cannot create directory {0}"
 msgstr "Нельзя создать каталог {0}"
 
-#: common.py:187
+#: common.py:187 common.py:235
 msgid "Creating GnuPG homedir"
 msgstr "Создание домашнего каталога GnuPG"
 
-#: common.py:254
+#: common.py:254 common.py:326
 #, python-format
 msgid "Could not import key with fingerprint: %s."
 msgstr "Не удалось импортировать отпечаток ключа: %s."
 
-#: common.py:259
+#: common.py:259 common.py:333
 msgid "Not all keys were imported successfully!"
 msgstr "Не все ключи были успешно импортированы!"
 
-#: launcher.py:83
+#: launcher.py:83 launcher.py:86
 msgid "Downloading Tor Browser for the first time."
 msgstr "Загрузка Tor Browser в первый раз."
 
-#: launcher.py:85
+#: launcher.py:85 launcher.py:89
 msgid ""
 "Your version of Tor Browser is out-of-date. Downloading the newest version."
 msgstr "Ваша версия Tor Browser устарела. Загрузка новой версии."
 
-#: launcher.py:100
+#: launcher.py:100 launcher.py:110
 msgid "Downloading over Tor"
 msgstr "Загрузка через Tor"
 
-#: launcher.py:111
+#: launcher.py:111 launcher.py:121
 msgid "Tor Browser"
 msgstr "Tor Browser"
 
-#: launcher.py:128
+#: launcher.py:128 launcher.py:140
 msgid "Start"
 msgstr "Запуск"
 
-#: launcher.py:174
+#: launcher.py:174 launcher.py:190
 msgid "Yes"
 msgstr "Да"
 
-#: launcher.py:178
+#: launcher.py:178 launcher.py:194
 msgid "Exit"
 msgstr "Выход"
 
-#: launcher.py:192 settings.py:136
+#: launcher.py:192 settings.py:136 launcher.py:208 settings.py:135
 msgid "Cancel"
 msgstr "Отмена"
 
 #: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
-#: launcher.py:281
+#: launcher.py:281 launcher.py:266 launcher.py:275 launcher.py:314
+#: launcher.py:317
 msgid "Downloading"
 msgstr "Загрузка"
 
-#: launcher.py:238
+#: launcher.py:238 launcher.py:256
 msgid "Latest version: {}"
 msgstr "Последняя версия: {}"
 
-#: launcher.py:241
+#: launcher.py:241 launcher.py:260
 msgid "Error detecting Tor Browser version."
 msgstr "Ошибка получения версии Tor Browser."
 
-#: launcher.py:256 launcher.py:357
+#: launcher.py:256 launcher.py:357 launcher.py:290 launcher.py:388
 msgid "Verifying Signature"
 msgstr "Сверка подписи"
 
-#: launcher.py:260
+#: launcher.py:260 launcher.py:294
 msgid "Extracting"
 msgstr "Распаковка"
 
-#: launcher.py:264
+#: launcher.py:264 launcher.py:298
 msgid "Running"
 msgstr "Запуск"
 
-#: launcher.py:268
+#: launcher.py:268 launcher.py:302
 msgid "Starting download over again"
 msgstr "Повторная загрузка"
 
-#: launcher.py:279 launcher.py:295
+#: launcher.py:279 launcher.py:295 launcher.py:314 launcher.py:333
 msgid "(over Tor)"
 msgstr "через Tor"
 
-#: launcher.py:293
+#: launcher.py:293 launcher.py:329
 msgid "Downloaded"
 msgstr "Загружено"
 
-#: launcher.py:393
+#: launcher.py:393 launcher.py:430
 msgid "Installing"
 msgstr "Установка"
 
-#: launcher.py:401
+#: launcher.py:401 launcher.py:439
 #, python-brace-format
 msgid "Tor Browser Launcher doesn't understand the file format of {0}"
 msgstr "Программа запуска Tor Browser не понимает формат файла {0}"
 
-#: launcher.py:427
+#: launcher.py:427 launcher.py:470
 msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
@@ -147,19 +148,20 @@ msgstr ""
 "Вы установили новую версию Tor Browser раньше, чем это должно быть. Это "
 "может быть атакой!"
 
-#: launcher.py:446
+#: launcher.py:446 launcher.py:487
 msgid "Downloading Tor Browser over again."
 msgstr "Повторная загрузка Tor Browser"
 
-#: launcher.py:516 launcher.py:525 launcher.py:533
+#: launcher.py:516 launcher.py:525 launcher.py:533 launcher.py:560
+#: launcher.py:568
 msgid "Download Error:"
 msgstr "Ошибка загрузки:"
 
-#: launcher.py:517
+#: launcher.py:517 launcher.py:562
 msgid "You are currently using a non-default mirror"
 msgstr "Вы используете нестандартное зеркало"
 
-#: launcher.py:518
+#: launcher.py:518 launcher.py:564
 msgid "Would you like to switch back to the default?"
 msgstr "Хотите вернуться к стандартному?"
 
@@ -167,7 +169,7 @@ msgstr "Хотите вернуться к стандартному?"
 msgid "Would you like to try the English version of Tor Browser instead?"
 msgstr "Попробовать загрузить английскую версию Tor Browser?"
 
-#: launcher.py:548
+#: launcher.py:548 launcher.py:584
 #, python-brace-format
 msgid ""
 "Invalid SSL certificate for:\n"
@@ -180,11 +182,11 @@ msgstr ""
 "\n"
 "Возможно, вы под атакой."
 
-#: launcher.py:550
+#: launcher.py:550 launcher.py:587
 msgid "Try the download again using Tor?"
 msgstr "Загрузить снова через Tor?"
 
-#: launcher.py:559
+#: launcher.py:559 launcher.py:597
 #, python-brace-format
 msgid ""
 "Error starting download:\n"
@@ -200,7 +202,7 @@ msgstr ""
 "\n"
 "Не удалось загрузить через Tor. Проверьте, что Tor запущен и верно настроен."
 
-#: launcher.py:563
+#: launcher.py:563 launcher.py:603
 #, python-brace-format
 msgid ""
 "Error starting download:\n"
@@ -215,11 +217,11 @@ msgstr ""
 "\n"
 "Вы подключены к сети?"
 
-#: settings.py:46
+#: settings.py:46 settings.py:47
 msgid "Tor Browser Launcher Settings"
 msgstr "Настройки программы запуска Tor Browser"
 
-#: settings.py:50
+#: settings.py:50 settings.py:51
 msgid "Download over system Tor"
 msgstr "Загружать через Tor"
 
@@ -227,33 +229,53 @@ msgstr "Загружать через Tor"
 msgid "Force downloading English version of Tor Browser"
 msgstr "Загружать только английскую версию Tor Browser"
 
-#: settings.py:66
+#: settings.py:66 settings.py:58
 msgid "Tor server"
 msgstr "Сервер Tor"
 
-#: settings.py:82
+#: settings.py:82 settings.py:73
 msgid "Status: Installed"
 msgstr "Статус: установлен"
 
-#: settings.py:84
+#: settings.py:84 settings.py:75
 msgid "Status: Not Installed"
 msgstr "Статус: не установлен"
 
-#: settings.py:87
+#: settings.py:87 settings.py:78
 msgid "Install Tor Browser"
 msgstr "Установить Tor Browser"
 
-#: settings.py:92
+#: settings.py:92 settings.py:85
 msgid "Reinstall Tor Browser"
 msgstr "Переустановить Tor Browser"
 
-#: settings.py:115
+#: settings.py:115 settings.py:110
 msgid "Mirror"
 msgstr "Зеркало"
 
-#: settings.py:131
+#: settings.py:131 settings.py:128
 msgid "Save && Exit"
 msgstr "Сохранить и выйти"
+
+#: common.py:195
+#, python-brace-format
+msgid "Deleted {0}"
+msgstr ""
+
+#: common.py:200
+#, python-brace-format
+msgid "Could not remove {0} due a system error: {1}"
+msgstr ""
+
+#: common.py:209
+#, python-brace-format
+msgid "Could not move {0} to {1} due an error: {2}"
+msgstr ""
+
+#: common.py:215
+#, python-brace-format
+msgid "Renamed {0} to {1}"
+msgstr ""
 
 #~ msgid ""
 #~ "The python-txsocksx package is missing, downloads will not happen over tor"

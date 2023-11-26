@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 15:47-0700\n"
+"POT-Creation-Date: 2023-08-27 18:18-0400\n"
 "PO-Revision-Date: 2018-11-10 11:36+0100\n"
 "Last-Translator: Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>\n"
 "Language-Team: Swedish\n"
@@ -18,127 +18,128 @@ msgstr ""
 "X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: __init__.py:65 launcher.py:470
+#: __init__.py:65 launcher.py:470 __init__.py:71 launcher.py:519
 msgid "Tor Browser Launcher"
 msgstr "Tor Browser Launcher"
 
-#: __init__.py:66
+#: __init__.py:66 __init__.py:72
 msgid "By Micah Lee, licensed under MIT"
 msgstr "Av Mika Lee, licensierad under MIT"
 
-#: __init__.py:67
+#: __init__.py:67 __init__.py:73
 #, python-brace-format
 msgid "version {0}"
 msgstr "version {0}"
 
-#: common.py:100
+#: common.py:100 common.py:92
 #, python-brace-format
 msgid "Error creating {0}"
 msgstr "Ett fel uppstod vid skapande {0}"
 
-#: common.py:102 common.py:180
+#: common.py:102 common.py:180 common.py:228
 #, python-brace-format
 msgid "{0} is not writable"
 msgstr "{0} är inte skrivbar"
 
-#: common.py:177
+#: common.py:177 common.py:225
 #, python-brace-format
 msgid "Cannot create directory {0}"
 msgstr "Kan inte att skapa katalog {0}"
 
-#: common.py:187
+#: common.py:187 common.py:235
 msgid "Creating GnuPG homedir"
 msgstr "Skapa GnuPG-homedir"
 
-#: common.py:254
+#: common.py:254 common.py:326
 #, python-format
 msgid "Could not import key with fingerprint: %s."
 msgstr "Kunde inte importera nyckel med fingeravtryck: %s."
 
-#: common.py:259
+#: common.py:259 common.py:333
 msgid "Not all keys were imported successfully!"
 msgstr "Inte alla nycklar importerades!"
 
-#: launcher.py:83
+#: launcher.py:83 launcher.py:86
 msgid "Downloading Tor Browser for the first time."
 msgstr "Hämtar Tor Browser för första gången."
 
-#: launcher.py:85
+#: launcher.py:85 launcher.py:89
 msgid ""
 "Your version of Tor Browser is out-of-date. Downloading the newest version."
 msgstr "Din version av Tor Browser är föråldrad. Hämta den senaste versionen."
 
-#: launcher.py:100
+#: launcher.py:100 launcher.py:110
 msgid "Downloading over Tor"
 msgstr "Hämtar över Tor"
 
-#: launcher.py:111
+#: launcher.py:111 launcher.py:121
 msgid "Tor Browser"
 msgstr "Tor Browser"
 
-#: launcher.py:128
+#: launcher.py:128 launcher.py:140
 msgid "Start"
 msgstr "Börja"
 
-#: launcher.py:174
+#: launcher.py:174 launcher.py:190
 msgid "Yes"
 msgstr "Ja"
 
-#: launcher.py:178
+#: launcher.py:178 launcher.py:194
 msgid "Exit"
 msgstr "Avsluta"
 
-#: launcher.py:192 settings.py:136
+#: launcher.py:192 settings.py:136 launcher.py:208 settings.py:135
 msgid "Cancel"
 msgstr "Avbryt"
 
 #: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
-#: launcher.py:281
+#: launcher.py:281 launcher.py:266 launcher.py:275 launcher.py:314
+#: launcher.py:317
 msgid "Downloading"
 msgstr "Hämtar"
 
-#: launcher.py:238
+#: launcher.py:238 launcher.py:256
 msgid "Latest version: {}"
 msgstr "Senaste versionen: {}"
 
-#: launcher.py:241
+#: launcher.py:241 launcher.py:260
 msgid "Error detecting Tor Browser version."
 msgstr "Fel vid detektering av Tor Browser-versionen."
 
-#: launcher.py:256 launcher.py:357
+#: launcher.py:256 launcher.py:357 launcher.py:290 launcher.py:388
 msgid "Verifying Signature"
 msgstr "Verifierar signaturen"
 
-#: launcher.py:260
+#: launcher.py:260 launcher.py:294
 msgid "Extracting"
 msgstr "Packar upp"
 
-#: launcher.py:264
+#: launcher.py:264 launcher.py:298
 msgid "Running"
 msgstr "Körs"
 
-#: launcher.py:268
+#: launcher.py:268 launcher.py:302
 msgid "Starting download over again"
 msgstr "Börja hämtningen igen"
 
-#: launcher.py:279 launcher.py:295
+#: launcher.py:279 launcher.py:295 launcher.py:314 launcher.py:333
 msgid "(over Tor)"
 msgstr "(över Tor)"
 
-#: launcher.py:293
+#: launcher.py:293 launcher.py:329
 msgid "Downloaded"
 msgstr "Hämtad"
 
-#: launcher.py:393
+#: launcher.py:393 launcher.py:430
 msgid "Installing"
 msgstr "Installerar"
 
-#: launcher.py:401
+#: launcher.py:401 launcher.py:439
 #, python-brace-format
 msgid "Tor Browser Launcher doesn't understand the file format of {0}"
 msgstr "Tor Browser Launcher förstår inte filformatet {0}"
 
-#: launcher.py:427
+#: launcher.py:427 launcher.py:470
 msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
@@ -146,19 +147,20 @@ msgstr ""
 "Den version av Tor Browser du har installerat är tidigare än den borde vara, "
 "vilket kan vara ett tecken på en attack!"
 
-#: launcher.py:446
+#: launcher.py:446 launcher.py:487
 msgid "Downloading Tor Browser over again."
 msgstr "Hämtar Tor Browser igen."
 
-#: launcher.py:516 launcher.py:525 launcher.py:533
+#: launcher.py:516 launcher.py:525 launcher.py:533 launcher.py:560
+#: launcher.py:568
 msgid "Download Error:"
 msgstr "Hämtningsfel:"
 
-#: launcher.py:517
+#: launcher.py:517 launcher.py:562
 msgid "You are currently using a non-default mirror"
 msgstr "Du använder för närvarande en icke-standardspegel"
 
-#: launcher.py:518
+#: launcher.py:518 launcher.py:564
 msgid "Would you like to switch back to the default?"
 msgstr "Vill du byta tillbaka till standard?"
 
@@ -166,7 +168,7 @@ msgstr "Vill du byta tillbaka till standard?"
 msgid "Would you like to try the English version of Tor Browser instead?"
 msgstr "Vill du prova den engelska versionen av Tor Browser istället?"
 
-#: launcher.py:548
+#: launcher.py:548 launcher.py:584
 #, python-brace-format
 msgid ""
 "Invalid SSL certificate for:\n"
@@ -179,11 +181,11 @@ msgstr ""
 "\n"
 "Du kan vara under attack."
 
-#: launcher.py:550
+#: launcher.py:550 launcher.py:587
 msgid "Try the download again using Tor?"
 msgstr "Försök att hämta igen med Tor?"
 
-#: launcher.py:559
+#: launcher.py:559 launcher.py:597
 #, python-brace-format
 msgid ""
 "Error starting download:\n"
@@ -200,7 +202,7 @@ msgstr ""
 "Försöker att hämta över Tor. Är du säker på att Tor är korrekt konfigurerad "
 "och körs?"
 
-#: launcher.py:563
+#: launcher.py:563 launcher.py:603
 #, python-brace-format
 msgid ""
 "Error starting download:\n"
@@ -215,11 +217,11 @@ msgstr ""
 "\n"
 "Är du ansluten till internet?"
 
-#: settings.py:46
+#: settings.py:46 settings.py:47
 msgid "Tor Browser Launcher Settings"
 msgstr "Inställningar för Tor Browser Launcher"
 
-#: settings.py:50
+#: settings.py:50 settings.py:51
 msgid "Download over system Tor"
 msgstr "Hämta över Tor-system"
 
@@ -227,38 +229,57 @@ msgstr "Hämta över Tor-system"
 msgid "Force downloading English version of Tor Browser"
 msgstr "Tvinga att hämta engelsk version av Tor Browser"
 
-#: settings.py:66
+#: settings.py:66 settings.py:58
 msgid "Tor server"
 msgstr "Tor-server"
 
-#: settings.py:82
+#: settings.py:82 settings.py:73
 msgid "Status: Installed"
 msgstr "Tillstånd: Installerad"
 
-#: settings.py:84
+#: settings.py:84 settings.py:75
 msgid "Status: Not Installed"
 msgstr "Tillstånd: Inte installerad"
 
-#: settings.py:87
+#: settings.py:87 settings.py:78
 msgid "Install Tor Browser"
 msgstr "Installera Tor Browser"
 
-#: settings.py:92
+#: settings.py:92 settings.py:85
 msgid "Reinstall Tor Browser"
 msgstr "Installera om Tor Browser"
 
-#: settings.py:115
+#: settings.py:115 settings.py:110
 msgid "Mirror"
 msgstr "Spegel"
 
-#: settings.py:131
+#: settings.py:131 settings.py:128
 msgid "Save && Exit"
 msgstr "Spara && avsluta"
+
+#: common.py:195
+#, python-brace-format
+msgid "Deleted {0}"
+msgstr ""
+
+#: common.py:200
+#, python-brace-format
+msgid "Could not remove {0} due a system error: {1}"
+msgstr ""
+
+#: common.py:209
+#, python-brace-format
+msgid "Could not move {0} to {1} due an error: {2}"
+msgstr ""
+
+#: common.py:215
+#, python-brace-format
+msgid "Renamed {0} to {1}"
+msgstr ""
 
 #~ msgid ""
 #~ "The python-txsocksx package is missing, downloads will not happen over tor"
 #~ msgstr ""
-#~ ""
 #~ "Python-txsocksx-paketet saknas, hämtningar kommer inte att hända över Tor."
 
 #~ msgid "DNS Lookup Error"
@@ -268,8 +289,8 @@ msgstr "Spara && avsluta"
 #~ "The SSL certificate served by https://www.torproject.org is invalid! You "
 #~ "may be under attack."
 #~ msgstr ""
-#~ "SSL-certifikatet som betjänas av https://www.torproject.org är ogiltig!"
-#~ "Du kan vara under attack."
+#~ "SSL-certifikatet som betjänas av https://www.torproject.org är ogiltig!Du "
+#~ "kan vara under attack."
 
 #~ msgid "Error connecting to Tor at {0}"
 #~ msgstr "Fel vid anslutning till Tor på {0}"
@@ -287,8 +308,7 @@ msgstr "Spara && avsluta"
 
 #~ msgid ""
 #~ "The python-pygame package is missing, the modem sound is unavailable."
-#~ msgstr ""
-#~ "Python-pygame-paketet saknas, modemljudet är otillgängligt."
+#~ msgstr "Python-pygame-paketet saknas, modemljudet är otillgängligt."
 
 #~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
