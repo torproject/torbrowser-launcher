@@ -64,6 +64,10 @@ def main():
     settings = bool(args.settings)
     url_list = args.url
 
+    # Set the TORBROWSER_LAUNCHER env variable to make it easier to
+    # detect that torbrowser-launcher is being used
+    os.environ["TORBROWSER_LAUNCHER"] = "1"
+
     # Load the version and print the banner
     with open(os.path.join(SHARE, "version")) as buf:
         tor_browser_launcher_version = buf.read().strip()
