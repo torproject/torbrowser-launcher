@@ -72,7 +72,7 @@ class Launcher(QtWidgets.QMainWindow):
         self.force_redownload = False
 
         # This is the current version of Tor Browser, which should get updated with every release
-        self.min_version = "12.0"
+        self.min_version = "13.0"
 
         # Init launcher
         self.set_state(None, "", [])
