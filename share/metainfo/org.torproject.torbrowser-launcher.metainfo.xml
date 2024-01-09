@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2014 Micah Lee <micah@micahflee.com> -->
+<!-- Copyright 2014-2023 Micah Lee <micah@micahflee.com> -->
+<!-- Copyright 2024 Tor Project -->
 <component type="desktop-application">
  <id>org.torproject.torbrowser-launcher</id>
  <launchable type="desktop-id">torbrowser.desktop</launchable>
@@ -27,7 +28,7 @@
   </screenshot>
  </screenshots>
  <url type="homepage">https://gitlab.torproject.org/tpo/applications/torbrowser-launcher</url>
- <update_contact>micah@micahflee.com</update_contact>
+ <update_contact>boklm@torproject.org</update_contact>
  <content_rating type="oars-1.1"/>
  <releases>
   <release version="0.3.6" date="2022-12-13"/>

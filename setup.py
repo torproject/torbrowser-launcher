@@ -2,7 +2,8 @@
 Tor Browser Launcher
 https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/
 
-Copyright (c) 2013-2017 Micah Lee <micah@micahflee.com>
+Copyright (c) 2013-2023 Micah Lee <micah@micahflee.com>
+Copyright (c) 2024 Tor Project
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -100,6 +101,8 @@ setup(
     version=version,
     author="Micah Lee",
     author_email="micah@micahflee.com",
+    maintainer="Nicolas Vigier",
+    maintainer_email="boklm@torproject.org",
     url="https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/",
     platforms=["GNU/Linux"],
     license="MIT",

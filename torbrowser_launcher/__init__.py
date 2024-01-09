@@ -2,7 +2,8 @@
 Tor Browser Launcher
 https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/
 
-Copyright (c) 2013-2021 Micah Lee <micah@micahflee.com>
+Copyright (c) 2013-2023 Micah Lee <micah@micahflee.com>
+Copyright (c) 2024 Tor Project
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -73,7 +74,7 @@ def main():
         tor_browser_launcher_version = buf.read().strip()
 
     print(_("Tor Browser Launcher"))
-    print(_("By Micah Lee, licensed under MIT"))
+    print(_("By Micah Lee & Tor Project, licensed under MIT"))
     print(_("version {0}").format(tor_browser_launcher_version))
     print("https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/")
 
