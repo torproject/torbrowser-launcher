@@ -1,5 +1,19 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.7
+
+* Use Tor Browser 13.0 new filenames
+* Adapt AppArmor profile for Tor Browser 13.0
+* Set the TORBROWSER_LAUNCHER environment variable to make it easier
+  for Tor Browser to see that it is being run by torbrowser-launcher
+* Use a proper rDNS ID in AppStream metainfo
+* Update to latest version of the Tor Browser OpenPGP signing key
+* Remove some unused code to fix a warning
+* Add dbus-glib to the rpm package dependencies
+* Maintenance of torbrowser-launcher has been handed to Tor Project,
+  and the git repository moved to
+  https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/
+
 ## 0.3.6
 
 * Tor Browser 12.0 no longer uses locales, so the download URL and local path have changed
