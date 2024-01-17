@@ -27,11 +27,11 @@ Install Flatpak using these [instructions](https://flatpak.org/setup/).
 Then install `torbrowser-launcher` like this:
 
 ```
-flatpak install flathub com.github.micahflee.torbrowser-launcher -y
+flatpak install flathub org.torproject.torbrowser-launcher -y
 ```
 
 Run `torbrowser-launcher` either by using the GUI desktop launcher, or by running:
 
 ```
-flatpak run com.github.micahflee.torbrowser-launcher
+flatpak run org.torproject.torbrowser-launcher
 ```
