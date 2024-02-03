@@ -7,6 +7,7 @@
  <metadata_license>CC0-1.0</metadata_license>
  <project_license>MIT</project_license>
  <name>Tor Browser Launcher</name>
+ <developer_name>Tor Project</developer_name>
  <summary>A program to help you download, keep updated, and run the Tor Browser Bundle</summary>
  <description>
   <p>Tor Browser Launcher is intended to make the Tor Browser Bundle (TBB) easier to maintain and use for GNU/Linux users. It downloads the same TBB from torproject.org that everyone else uses, and it doesn't alter it in any way. But it does make it much more usable, and it makes the task of keeping it up-to-date more secure.</p>
