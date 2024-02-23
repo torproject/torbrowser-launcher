@@ -289,20 +289,12 @@ msgstr "Salvar && Sair"
 #~ "Clique em Iniciar para tentar baixar novamente."
 
 #~ msgid ""
-#~ "The python-pygame package is missing, the modem sound is unavailable."
-#~ msgstr ""
-#~ "O pacote python-pygame está faltando, o som do modem não está disponível."
-
-#~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
 #~ msgstr ""
 #~ "Esta opção está apenas disponível ao usar uma instalação Tor do sistema."
 
 #~ msgid "This option requires the python-txsocksx package."
 #~ msgstr "Esta opção precisa do pacote python-txsocksx"
-
-#~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Reproduzir som do modem, porque o Tor é lento :]"
 
 #~ msgid "This option requires python-pygame to be installed"
 #~ msgstr "Esta opção precisa do pacote python-pygame"

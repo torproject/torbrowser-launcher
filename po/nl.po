@@ -268,8 +268,5 @@ msgstr "Opslaan & afsluiten"
 #~ msgid "This option requires the python-txsocksx package."
 #~ msgstr "Voor deze optie is het python-txsocksx pakket nodig."
 
-#~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Speel modem geluid, omdat Tor langzaam is :]"
-
 #~ msgid "This option requires python-pygame to be installed"
 #~ msgstr "Voor deze optie moet python-pygame geïnstalleerd zijn"

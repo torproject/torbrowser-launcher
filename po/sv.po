@@ -286,11 +286,6 @@ msgstr "Spara && avsluta"
 #~ "Klicka på Start för försöka hämta igen."
 
 #~ msgid ""
-#~ "The python-pygame package is missing, the modem sound is unavailable."
-#~ msgstr ""
-#~ "Python-pygame-paketet saknas, modemljudet är otillgängligt."
-
-#~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
 #~ msgstr ""
 #~ "Det här alternativet är endast tillgängligt när du använder en "
@@ -298,9 +293,6 @@ msgstr "Spara && avsluta"
 
 #~ msgid "This option requires the python-txsocksx package."
 #~ msgstr "Det här alternativet kräver python-txsocksx-paketet."
-
-#~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Spela modemljud, eftersom Tor är långsamt :]"
 
 #~ msgid "This option requires python-pygame to be installed"
 #~ msgstr "Det här alternativet kräver att python-pygame installeras"

@@ -286,18 +286,11 @@ msgstr "Сохранить и выйти"
 #~ "кнопку Пуск и попробуйте снова."
 
 #~ msgid ""
-#~ "The python-pygame package is missing, the modem sound is unavailable."
-#~ msgstr "Пакет python-pygame не найден, звуки модема недоступны."
-
-#~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
 #~ msgstr "Эта опция доступна только при установки Tor в систему."
 
 #~ msgid "This option requires the python-txsocksx package."
 #~ msgstr "Эта опция требует пакет python-txsocksx."
-
-#~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Играть звуки модема, если Tor слишком медленный :]"
 
 #~ msgid "This option requires python-pygame to be installed"
 #~ msgstr "Эта опция требует установленный python-pygame"

@@ -282,10 +282,6 @@ msgstr "Mentés és kilépés"
 #~ "is. Kattints az indításra az újbóli letöltéshez."
 
 #~ msgid ""
-#~ "The python-pygame package is missing, the modem sound is unavailable."
-#~ msgstr "A python-pygame csomag nem található, a modem hang nem elérhető."
-
-#~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
 #~ msgstr ""
 #~ "Ehhez az opció akkor elérhető amikor használatban van a rendszer szintű "
@@ -293,9 +289,6 @@ msgstr "Mentés és kilépés"
 
 #~ msgid "This option requires the python-txsocksx package."
 #~ msgstr "Ehhez az opcióhoz szükséges a python-txsocksx csomag"
-
-#~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Modem hang lejátszása, mert a Tor lassú :]"
 
 #~ msgid "This option requires python-pygame to be installed"
 #~ msgstr "Ehhez az opcióhoz szükséges  hogy a python-pygame telepítve legyen"

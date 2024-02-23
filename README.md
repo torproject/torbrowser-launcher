@@ -8,7 +8,6 @@ Tor Browser Launcher is intended to make Tor Browser easier to install and use f
 * Verifies Tor Browser's [signature](https://support.torproject.org/tbb/how-to-verify-signature/) for you, to ensure the version you downloaded was cryptographically signed by Tor developers and was not tampered with
 * Adds "Tor Browser" and "Tor Browser Launcher Settings" application launcher to your desktop environment's menu
 * Includes AppArmor profiles to make a Tor Browser compromise not as bad
-* Optionally plays a modem sound when you open Tor Browser (because Tor is so slow)
 
 Tor Browser Launcher is included in Ubuntu, Debian, and Fedora. To install it in any other distribution, see the [build instructions](/BUILD.md).
 

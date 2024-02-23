@@ -284,19 +284,12 @@ msgstr "Uložit a ukončit"
 #~ "nové stažení klikněte na Spustit."
 
 #~ msgid ""
-#~ "The python-pygame package is missing, the modem sound is unavailable."
-#~ msgstr "Chybí balíček python-pygame, zvuk modemu není dostupný."
-
-#~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
 #~ msgstr ""
 #~ "Tato možnost je dostupná, pouze pokud se používá systémová instalace Toru."
 
 #~ msgid "This option requires the python-txsocksx package."
 #~ msgstr "Tato možnost vyžaduje balíček python-txsocksx."
-
-#~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Přehrávat zvuk modemu, jelikož je Tor pomalý :]"
 
 #~ msgid "This option requires python-pygame to be installed"
 #~ msgstr "Tato možnost vyžaduje nainstalovaný python-pygame"

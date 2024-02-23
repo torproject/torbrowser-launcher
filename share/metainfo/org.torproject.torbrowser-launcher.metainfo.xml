@@ -19,7 +19,6 @@
    <li>Includes AppArmor profiles to make a Tor Browser compromise not as bad (in some distros)</li>
    <li>Adding a Tor Browser application launcher to your desktop environment's menu</li>
    <li>Lets you set Tor Browser as your default browser</li>
-   <li>Optionally playing a modem sound when you open Tor Browser (because Tor is so slow)</li>
   </ul>
  </description>
  <screenshots>

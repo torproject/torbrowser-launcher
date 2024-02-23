@@ -289,11 +289,6 @@ msgstr "Enregistrer et quitter"
 #~ "de réseau. Cliquer sur Démarrer pour télécharger à nouveau."
 
 #~ msgid ""
-#~ "The python-pygame package is missing, the modem sound is unavailable."
-#~ msgstr ""
-#~ "Le paquet python-pygame est manquant, le son de modem est indisponible."
-
-#~ msgid ""
 #~ "This option is only available when using a system wide Tor installation."
 #~ msgstr ""
 #~ "Cette option n'est disponible qu'en conjonction avec une installation "
@@ -301,9 +296,6 @@ msgstr "Enregistrer et quitter"
 
 #~ msgid "This option requires the python-txsocksx package."
 #~ msgstr "Cette option nécessite le paquet python-txsocksx"
-
-#~ msgid "Play modem sound, because Tor is slow :]"
-#~ msgstr "Jouer un son de modem, car Tor est lent :]"
 
 #~ msgid "This option requires python-pygame to be installed"
 #~ msgstr "Cette option requiert le paquet python-pygame"
