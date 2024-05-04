@@ -1,0 +1,249 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-09 17:04+0100\n"
+"PO-Revision-Date: 2024-04-13 09:05+0800\n"
+"Last-Translator: Red Guard <redg@disroot.org>\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: __init__.py:76 launcher.py:520
+msgid "Tor Browser Launcher"
+msgstr "Tor 浏览器启动器"
+
+#: __init__.py:77
+msgid "By Micah Lee & Tor Project, licensed under MIT"
+msgstr "由 Micah Lee 和 Tor Project 编写，在 MIT 许可下发布"
+
+#: __init__.py:78
+#, python-brace-format
+msgid "version {0}"
+msgstr "版本 {0}"
+
+#: common.py:90
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "创建 {0} 出现错误"
+
+#: common.py:187
+#, python-brace-format
+msgid "Renamed {0} to {1}"
+msgstr "重命名 {0} 为 {1}"
+
+#: common.py:201
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "无法创建文件夹 {0}"
+
+#: common.py:204
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "{0} 不可写入"
+
+#: common.py:211
+msgid "Creating GnuPG homedir"
+msgstr "创建 GnuPG 主目录中"
+
+#: common.py:302
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "无法导入指纹为 %s 的密钥。"
+
+#: common.py:309
+msgid "Not all keys were imported successfully!"
+msgstr "仅部分密钥导入成功！"
+
+#: launcher.py:87
+msgid "Downloading Tor Browser for the first time."
+msgstr "第一次下载 Tor 浏览器中。"
+
+#: launcher.py:90
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading the newest version."
+msgstr "您的 Tor 浏览器版本过老。正在下载新版本。"
+
+#: launcher.py:111
+msgid "Downloading over Tor"
+msgstr "通过 Tor 下载中"
+
+#: launcher.py:122
+msgid "Tor Browser"
+msgstr "Tor 浏览器"
+
+#: launcher.py:141
+msgid "Start"
+msgstr "开始"
+
+#: launcher.py:191
+msgid "Yes"
+msgstr "是"
+
+#: launcher.py:195
+msgid "Exit"
+msgstr "退出"
+
+#: launcher.py:209 settings.py:136
+msgid "Cancel"
+msgstr "关闭"
+
+#: launcher.py:246 launcher.py:267 launcher.py:276 launcher.py:315
+#: launcher.py:318
+msgid "Downloading"
+msgstr "下载中"
+
+#: launcher.py:257
+msgid "Latest version: {}"
+msgstr "最新版本：{}"
+
+#: launcher.py:261
+msgid "Error detecting Tor Browser version."
+msgstr "检测 Tor 浏览器版本时出现错误。"
+
+#: launcher.py:291 launcher.py:389
+msgid "Verifying Signature"
+msgstr "验证签名中"
+
+#: launcher.py:295
+msgid "Extracting"
+msgstr "解压中"
+
+#: launcher.py:299
+msgid "Running"
+msgstr "正在运行"
+
+#: launcher.py:303
+msgid "Starting download over again"
+msgstr "正在重新下载"
+
+#: launcher.py:315 launcher.py:334
+msgid "(over Tor)"
+msgstr "（通过 Tor）"
+
+#: launcher.py:330
+msgid "Downloaded"
+msgstr "已下载"
+
+#: launcher.py:431
+msgid "Installing"
+msgstr "安装中"
+
+#: launcher.py:440
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Tor 浏览器启动器无法理解 {0} 的文件格式"
+
+#: launcher.py:471
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr "您安装的 Tor 浏览器的版本比预期版本要早，您可能受到攻击！"
+
+#: launcher.py:488
+msgid "Downloading Tor Browser over again."
+msgstr "正在重新下载 Tor 浏览器。"
+
+#: launcher.py:561 launcher.py:569
+msgid "Download Error:"
+msgstr "下载错误："
+
+#: launcher.py:563
+msgid "You are currently using a non-default mirror"
+msgstr "您正在使用非默认镜像"
+
+#: launcher.py:565
+msgid "Would you like to switch back to the default?"
+msgstr "您想切换回默认的吗？"
+
+#: launcher.py:585
+#, python-brace-format
+msgid ""
+"Invalid SSL certificate for:\n"
+"{0}\n"
+"\n"
+"You may be under attack."
+msgstr ""
+"错误的 SSL 证书:\n"
+"{0}\n"
+"\n"
+"您可能受到攻击."
+
+#: launcher.py:588
+msgid "Try the download again using Tor?"
+msgstr "尝试使用 Tor 重新下载？"
+
+#: launcher.py:598
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Trying to download over Tor. Are you sure Tor is configured correctly and "
+"running?"
+msgstr ""
+"开始下载时出现错误:\n"
+"\n"
+"{0}\n"
+"\n"
+"正在尝试通过 Tor 下载。您确定 Tor 配置正确并正在运行吗？"
+
+#: launcher.py:604
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"开始下载时出现错误:\n"
+"\n"
+"{0}\n"
+"\n"
+"您是否连接到互联网？"
+
+#: settings.py:48
+msgid "Tor Browser Launcher Settings"
+msgstr "Tor 浏览器启动器设置"
+
+#: settings.py:52
+msgid "Download over system Tor"
+msgstr "通过系统 Tor 下载"
+
+#: settings.py:59
+msgid "Tor server"
+msgstr "Tor 服务器"
+
+#: settings.py:74
+msgid "Status: Installed"
+msgstr "状态：已安装"
+
+#: settings.py:76
+msgid "Status: Not Installed"
+msgstr "状态：未安装"
+
+#: settings.py:79
+msgid "Install Tor Browser"
+msgstr "安装 Tor 浏览器"
+
+#: settings.py:86
+msgid "Reinstall Tor Browser"
+msgstr "重新安装 Tor 浏览器"
+
+#: settings.py:111
+msgid "Mirror"
+msgstr "镜像"
+
+#: settings.py:129
+msgid "Save && Exit"
+msgstr "保存并退出"
