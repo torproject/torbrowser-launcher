@@ -64,12 +64,13 @@ class Launcher(QtWidgets.QMainWindow):
     Launcher window.
     """
 
-    def __init__(self, common, app, url_list):
+    def __init__(self, common, app, url_list, debug=False):
         super(Launcher, self).__init__()
         self.common = common
         self.app = app
 
         self.url_list = url_list
+        self.debug = debug
         self.force_redownload = False
 
         # This is the current version of Tor Browser, which should get updated with every release
@@ -478,7 +479,7 @@ class Launcher(QtWidgets.QMainWindow):
 
         # Run Tor Browser
         subprocess.call(
-            [self.common.paths["tbb"]["start"], "--detach"],
+            [self.common.paths["tbb"]["start"], "--verbose" if self.debug else "--detach"],
             cwd=self.common.paths["tbb"]["dir_tbb"],
         )
         sys.exit(0)
