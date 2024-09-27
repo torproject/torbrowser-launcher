@@ -1,0 +1,258 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-23 15:47-0700\n"
+"PO-Revision-Date: 2023-12-26 18:12+0900\n"
+"Last-Translator: Gnuey56 <gnuey56@proton.me>\n"
+"Language-Team: \n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.1\n"
+
+#: __init__.py:65 launcher.py:470
+msgid "Tor Browser Launcher"
+msgstr "Tor Browser ランチャー"
+
+#: __init__.py:66
+msgid "By Micah Lee, licensed under MIT"
+msgstr "By Micah Lee、MIT ライセンスの下でライセンス"
+
+#: __init__.py:67
+#, python-brace-format
+msgid "version {0}"
+msgstr "バージョン {0}"
+
+#: common.py:100
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "発生したエラー {0}"
+
+#: common.py:102 common.py:180
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "{0} は書き込み不可です"
+
+#: common.py:177
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "ディレクトリ {0} を作成できません"
+
+#: common.py:187
+msgid "Creating GnuPG homedir"
+msgstr "GnuPG のホームディレクトリ(homedir)を作成"
+
+#: common.py:254
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "指紋: %s の鍵をインポートできません。"
+
+#: common.py:259
+msgid "Not all keys were imported successfully!"
+msgstr "いくつかの鍵は正常にインポートされませんでした！"
+
+#: launcher.py:83
+msgid "Downloading Tor Browser for the first time."
+msgstr "Tor Browser を初めてダウンロードしています。"
+
+#: launcher.py:85
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading the newest version."
+msgstr ""
+"Tor Browser のバージョンが古くなっています。最新バージョンの Tor Browser を"
+"ダウンロードしています。"
+
+#: launcher.py:100
+msgid "Downloading over Tor"
+msgstr "Tor を使用してダウンロードする"
+
+#: launcher.py:111
+msgid "Tor Browser"
+msgstr "Tor Browser"
+
+#: launcher.py:128
+msgid "Start"
+msgstr "スタート"
+
+#: launcher.py:174
+msgid "Yes"
+msgstr "はい"
+
+#: launcher.py:178
+msgid "Exit"
+msgstr "終了"
+
+#: launcher.py:192 settings.py:136
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: launcher.py:231 launcher.py:245 launcher.py:249 launcher.py:279
+#: launcher.py:281
+msgid "Downloading"
+msgstr "ダウンロード中"
+
+#: launcher.py:238
+msgid "Latest version: {}"
+msgstr "最新のバージョン: {}"
+
+#: launcher.py:241
+msgid "Error detecting Tor Browser version."
+msgstr "Tor Browser のバージョンの検出に失敗しました。"
+
+#: launcher.py:256 launcher.py:357
+msgid "Verifying Signature"
+msgstr "署名を検証"
+
+#: launcher.py:260
+msgid "Extracting"
+msgstr "展開中"
+
+#: launcher.py:264
+msgid "Running"
+msgstr "実行中"
+
+#: launcher.py:268
+msgid "Starting download over again"
+msgstr "再ダウンロードを開始中"
+
+#: launcher.py:279 launcher.py:295
+msgid "(over Tor)"
+msgstr "(Tor を使用)"
+
+#: launcher.py:293
+msgid "Downloaded"
+msgstr "ダウンロード済み"
+
+#: launcher.py:393
+msgid "Installing"
+msgstr "インストール中"
+
+#: launcher.py:401
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Tor Browser Launcher は、{0} のファイルフォーマットを認識しません。"
+
+#: launcher.py:427
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr ""
+"インストールされている Tor Browser のバージョンは、インストールされているべ"
+"きバージョンよりも後のバージョンであり、これは攻撃の兆候である可能性がありま"
+"す！"
+
+#: launcher.py:446
+msgid "Downloading Tor Browser over again."
+msgstr "Tor Browser をもう一度ダウンロードしています。"
+
+#: launcher.py:516 launcher.py:525 launcher.py:533
+msgid "Download Error:"
+msgstr "ダウンロードエラー:"
+
+#: launcher.py:517
+msgid "You are currently using a non-default mirror"
+msgstr "デフォルトではないミラーを使用しています"
+
+#: launcher.py:518
+msgid "Would you like to switch back to the default?"
+msgstr "デフォルトのミラーに切り替えますか？"
+
+#: launcher.py:527
+msgid "Would you like to try the English version of Tor Browser instead?"
+msgstr "変わりに英語版の Tor Browser を試しますか？"
+
+#: launcher.py:548
+#, python-brace-format
+msgid ""
+"Invalid SSL certificate for:\n"
+"{0}\n"
+"\n"
+"You may be under attack."
+msgstr ""
+"無効な SSL 証明書: \n"
+"{0}\n"
+"\n"
+"攻撃されている可能性があります。"
+
+#: launcher.py:550
+msgid "Try the download again using Tor?"
+msgstr "Tor を使用してもう一度ダウンロードしますか？"
+
+#: launcher.py:559
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Trying to download over Tor. Are you sure Tor is configured correctly and "
+"running?"
+msgstr ""
+"ダウンロード開始エラー:\n"
+"\n"
+"{0}\n"
+"\n"
+"Tor を使用したダウンロードを試行しました。Tor が適切に設定されていて、起動し"
+"ていることを確認してください。"
+
+#: launcher.py:563
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"ダウンロード開始エラー:\n"
+"\n"
+"{0}\n"
+"\n"
+"インターネットに接続されていますか？"
+
+#: settings.py:46
+msgid "Tor Browser Launcher Settings"
+msgstr "Tor Browser ランチャー設定"
+
+#: settings.py:50
+msgid "Download over system Tor"
+msgstr "システムの Tor を使用してダウンロード"
+
+#: settings.py:57
+msgid "Force downloading English version of Tor Browser"
+msgstr "英語版の Tor Browser のダウンロードを強制"
+
+#: settings.py:66
+msgid "Tor server"
+msgstr "Tor サーバー"
+
+#: settings.py:82
+msgid "Status: Installed"
+msgstr "ステータス: インストール済み"
+
+#: settings.py:84
+msgid "Status: Not Installed"
+msgstr "ステータス: 未インストール"
+
+#: settings.py:87
+msgid "Install Tor Browser"
+msgstr "Tor Browser をインストール"
+
+#: settings.py:92
+msgid "Reinstall Tor Browser"
+msgstr "Tor Browser を再インストール"
+
+#: settings.py:115
+msgid "Mirror"
+msgstr "ミラー"
+
+#: settings.py:131
+msgid "Save && Exit"
+msgstr "セーブして終了"
