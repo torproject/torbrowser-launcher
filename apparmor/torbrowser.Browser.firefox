@@ -11,6 +11,8 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/mesa>
   #include <abstractions/opencl>
   #include if exists <abstractions/vulkan>
+  #include if exists <abstractions/dbus-session>
+  #include if exists <abstractions/X>
 
   deny capability sys_ptrace,
 
@@ -25,6 +27,9 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #dbus,
   network netlink raw,
   network tcp,
+
+  # ibus socket
+  owner @{HOME}/.cache/ibus/dbus-* rw,
 
   ptrace (trace) peer=@{profile_name},
   signal (receive, send) set=("term") peer=@{profile_name},
