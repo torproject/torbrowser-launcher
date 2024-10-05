@@ -40,7 +40,7 @@ import shutil
 import xml.etree.ElementTree as ET
 from packaging import version
 
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets, QtGui
 
 
 class TryStableException(Exception):
@@ -532,9 +532,9 @@ class DownloadThread(QtCore.QThread):
     Download a file in a separate thread.
     """
 
-    progress_update = QtCore.pyqtSignal(int, int)
-    download_complete = QtCore.pyqtSignal()
-    download_error = QtCore.pyqtSignal(str, str)
+    progress_update = QtCore.Signal(int, int)
+    download_complete = QtCore.Signal()
+    download_error = QtCore.Signal(str, str)
 
     def __init__(self, common, url, path):
         super(DownloadThread, self).__init__()
@@ -615,8 +615,8 @@ class VerifyThread(QtCore.QThread):
     Verify the signature in a separate thread
     """
 
-    success = QtCore.pyqtSignal()
-    error = QtCore.pyqtSignal(str)
+    success = QtCore.Signal()
+    error = QtCore.Signal(str)
 
     def __init__(self, common):
         super(VerifyThread, self).__init__()
@@ -657,8 +657,8 @@ class ExtractThread(QtCore.QThread):
     Extract the tarball in a separate thread
     """
 
-    success = QtCore.pyqtSignal()
-    error = QtCore.pyqtSignal()
+    success = QtCore.Signal()
+    error = QtCore.Signal()
 
     def __init__(self, common):
         super(ExtractThread, self).__init__()
