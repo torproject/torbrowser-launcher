@@ -137,6 +137,11 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   # Required for Wayland display protocol support
   owner /dev/shm/wayland.mozilla.ipc.[0-9]* rw,
 
+  # The Wayland Proxy prevents certain types of Wayland issues from
+  # crashing the client application. Details:
+  # https://mastransky.wordpress.com/2023/12/22/wayland-proxy-load-balancer/
+  owner @{run}/user/[0-9]*/wayland-proxy-@{pid} rw,
+
   # Silence denial logs about permissions we don't need
   deny @{HOME}/.cache/fontconfig/ rw,
   deny @{HOME}/.cache/fontconfig/** rw,
