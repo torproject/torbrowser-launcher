@@ -36,8 +36,17 @@ from distutils.core import setup
 SHARE = "share"
 
 # detect linux distribution
-distro = distro.linux_distribution()[0]
-
+# (fixing deprecation warning, noticed the following:
+#  distro.linux_distribution() returns ('Debian GNU/Linux', '12', 'bookworm')
+#  on my system. But the deprecation warning says to use
+#  "distro.id(), distro.version() and distro.name() instead.", which would be,
+#  in order, ('debian', '12', 'Debian GNU/Linux')
+#  To get the same output as `linux_distribution()`, one would need to use
+#  (distro.name(), distro.version(), distro.codename()).
+#  But since this variable is only used to check for the value "Ubuntu",
+#  it seems `distro.name` is the desired value, not `distro.id`.)
+# (jc@unternet.net)
+distro = distro.name()
 
 def file_list(path):
     files = []
