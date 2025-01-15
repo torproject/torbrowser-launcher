@@ -1,4 +1,3 @@
-#!/usr/bin/python3 -OO
 """
 Tor Browser Launcher
 https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/
@@ -32,9 +31,6 @@ import os
 import sys
 import argparse
 import signal
-import logging
-
-logging.basicConfig(level=logging.DEBUG if __debug__ else logging.WARNING)
 
 from PyQt5 import QtCore, QtWidgets
 
@@ -93,7 +89,6 @@ def main():
         gui = Settings(common, app)
     else:
         # Launcher mode
-        logging.debug('url_list: %s', url_list)
         gui = Launcher(common, app, url_list)
 
     # Center the window
