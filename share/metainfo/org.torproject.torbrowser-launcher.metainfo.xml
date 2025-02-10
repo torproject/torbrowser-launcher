@@ -8,6 +8,9 @@
  <project_license>MIT</project_license>
  <name>Tor Browser Launcher</name>
  <developer_name>Tor Project</developer_name>
+ <developer id="org.torproject">
+  <name>Tor Project</name>
+ </developer>
  <summary>A program to help you download, keep updated, and run Tor Browser</summary>
  <description>
   <p>Tor Browser Launcher is intended to make Tor Browser easier to maintain and use for GNU/Linux users. It downloads the same Tor Browser from torproject.org that everyone else uses, and it doesn't alter it in any way. But it does make it much more usable, and it makes the task of keeping it up-to-date more secure.</p>
