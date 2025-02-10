@@ -11,7 +11,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   #include <abstractions/mesa>
   #include <abstractions/opencl>
   #include if exists <abstractions/vulkan>
-  #include if exists <abstractions/dbus-session>
+  #include if exists <abstractions/dbus-session-strict>
 
   deny capability sys_ptrace,
 
