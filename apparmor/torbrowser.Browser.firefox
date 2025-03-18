@@ -96,6 +96,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   owner @{torbrowser_home_dir}/TorBrowser/Tor/*.so.* mr,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/libstdc++/*.so mr,
   owner @{torbrowser_home_dir}/TorBrowser/Tor/libstdc++/*.so.* mr,
+  owner @{torbrowser_home_dir}/vaapitest ix,
 
   # parent Firefox process when restarting after upgrade, Web Content processes
   owner @{torbrowser_firefox_executable} pxmr -> torbrowser_firefox,
