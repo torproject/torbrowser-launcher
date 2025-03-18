@@ -123,6 +123,7 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /sys/devices/system/node/ r,
   /sys/devices/system/node/node[0-9]*/meminfo r,
   /sys/fs/cgroup/cpu,cpuacct/{,user.slice/}cpu.cfs_quota_us r,
+  /sys/fs/cgroup/user.slice/user-[0-9]*.slice/user@[0-9]*.service/app.slice/app-gnome-torbrowser-[0-9]*.scope/cpu.max r,
   deny /sys/class/input/ r,
   deny /sys/devices/virtual/block/*/uevent r,
 
