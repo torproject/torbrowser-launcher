@@ -82,7 +82,7 @@ def main():
     app = Application()
 
     if "WAYLAND_DISPLAY" in os.environ:
-        app.setDesktopFileName("torbrowser")
+        app.setDesktopFileName("org.torproject.torbrowser-launcher")
 
     # Open the window
     gui = None

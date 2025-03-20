@@ -126,7 +126,7 @@ class Common(object):
                 "old_data_dir": old_tbb_data,
                 "tbl_bin": sys.argv[0],
                 "icon_file": os.path.join(
-                    os.path.dirname(SHARE), "pixmaps/torbrowser.png"
+                    os.path.dirname(SHARE), "icons/hicolor/128x128/apps/org.torproject.torbrowser-launcher.png"
                 ),
                 "torproject_pem": os.path.join(SHARE, "torproject.pem"),
                 "signing_keys": {

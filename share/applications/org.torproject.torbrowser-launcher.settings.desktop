@@ -32,5 +32,5 @@ Comment[tr]=Tor Browser Başlatıcı Ayarları
 Exec=torbrowser-launcher --settings
 Terminal=false
 Type=Application
-Icon=torbrowser
+Icon=org.torproject.torbrowser-launcher
 Categories=Network;WebBrowser;
