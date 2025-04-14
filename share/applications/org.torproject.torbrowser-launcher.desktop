@@ -26,6 +26,6 @@ Comment[tr]=Tor Browser Başlat
 Exec=torbrowser-launcher %u
 Terminal=false
 Type=Application
-Icon=torbrowser
+Icon=org.torproject.torbrowser-launcher
 Categories=Network;WebBrowser;
 StartupWMClass=Tor Browser
