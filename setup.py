@@ -31,7 +31,7 @@ import os
 import sys
 import distro
 import subprocess
-from distutils.core import setup
+from setuptools import setup
 
 SHARE = "share"
 
