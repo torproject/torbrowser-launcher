@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Tor Browser Launcher Settings
+Name[ar]=إعدادات مشغّل متصفح تور
 Name[be]=Налады запускальніка Tor Browser
 Name[cs]=Tor Browser Launcher nastavení
 Name[da]=Indstillinger for Tor Browser-opstarter
@@ -12,12 +13,14 @@ Name[ru]=Tor Browser (настройки запуска)
 Name[sv]=Inställningar för Tor Browser Launcher
 Name[tr]=Tor Browser Başlatıcı Ayarları
 GenericName=Tor Browser Launcher Settings
+GenericName[ar]=إعدادات مشغّل متصفح تور
 GenericName[be]=Налады запускальніка Tor Browser
 GenericName[da]=Indstillinger for Tor Browser-opstarter
 GenericName[hr]=Tor preglednik – postavke pokretanja
 GenericName[hu]=Tor-böngésző indító beállításai
 GenericName[tr]=Tor Browser Başlatıcı Ayarları
 Comment=Tor Browser Launcher Settings
+Comment[ar]=إعدادات مشغّل متصفح تور
 Comment[be]=Налады запускальніка Tor Browser
 Comment[cs]=Tor Browser Launcher nastavení
 Comment[da]=Indstillinger for Tor Browser-opstarter
