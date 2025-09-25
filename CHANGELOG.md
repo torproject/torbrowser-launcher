@@ -1,5 +1,35 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.8
+
+* Update Tor Browser gpg key for new subkey (tor-browser-build#40964)
+* Migrate code from PyQt5 to PySide6
+* Fix window icon under wayland
+* Move setup.py to setuptools
+* AppArmor
+  * Update/Add Additional Abstractions
+  * Remove duplicate rule
+  * Allow the Wayland Proxy to run
+  * Don't grant full D-Bus session bus access
+  * Allow unprivileged user namespaces
+  * Allow reading cgroups-v2 CPU bandwidth quota information
+  * Allow executing Firefox' own VA-API probe utility
+  * Allow reading intel-media-driver feature files
+* Desktop files
+  * Rename desktop files to rDNS format
+  * Add Spanish language
+  * Add Arabic language
+  * Sort translated desktop strings by language
+* AppStream metadata (metainfo.xml)
+  * Add developer name
+  * Add developer tag
+  * Remove references to Bundle/TBB
+  * Add Arabic language
+* Documentation
+  * Update README.md for Flatpak name change
+  * Remove modem sound references
+  * Add gitlab issue template to document steps for making a release
+
 ## 0.3.7
 
 * Use Tor Browser 13.0 new filenames
