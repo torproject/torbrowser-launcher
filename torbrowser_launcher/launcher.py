@@ -71,6 +71,7 @@ class Launcher(QtWidgets.QMainWindow):
 
         self.url_list = url_list
         self.force_redownload = False
+        self._threads = []
 
         # This is the current version of Tor Browser, which should get updated with every release
         self.min_version = "13.0"
@@ -350,8 +351,10 @@ class Launcher(QtWidgets.QMainWindow):
         t.progress_update.connect(progress_update)
         t.download_complete.connect(download_complete)
         t.download_error.connect(download_error)
+        self._threads.append(t)
         t.start()
         time.sleep(0.2)
+
 
     def try_default_mirror(self):
         # change mirror to default and relaunch TBL
@@ -420,6 +423,7 @@ class Launcher(QtWidgets.QMainWindow):
         t = VerifyThread(self.common)
         t.error.connect(error)
         t.success.connect(success)
+        self._threads.append(t)
         t.start()
         time.sleep(0.2)
 
@@ -449,6 +453,7 @@ class Launcher(QtWidgets.QMainWindow):
         t = ExtractThread(self.common)
         t.error.connect(error)
         t.success.connect(success)
+        self._threads.append(t)
         t.start()
         time.sleep(0.2)
 
