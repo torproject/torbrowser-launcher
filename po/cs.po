@@ -1,26 +1,26 @@
-# SOME DESCRIPTIVE TITLE.
+# Czech translation of Tor Browser Launcher.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# This file is distributed under the same license as the torbrowser-launcher package.
+# Daniel Rusek <mail@asciiwolf.com>, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-23 15:47-0700\n"
-"PO-Revision-Date: 2021-06-20 19:42+0200\n"
+"PO-Revision-Date: 2025-09-28 12:38+0200\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: \n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.3\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Poedit 3.7\n"
 
 #: __init__.py:65 launcher.py:470
 msgid "Tor Browser Launcher"
-msgstr "Spouštěč prohlížeče Tor"
+msgstr "Spouštěč Prohlížeče Tor"
 
 #: __init__.py:66
 msgid "By Micah Lee, licensed under MIT"
@@ -136,14 +136,14 @@ msgstr "Instaluje se"
 #: launcher.py:401
 #, python-brace-format
 msgid "Tor Browser Launcher doesn't understand the file format of {0}"
-msgstr "Spouštěč prohlížeče Tor nerozumí formátu souboru {0}"
+msgstr "Spouštěč Prohlížeče Tor nerozumí formátu souboru {0}"
 
 #: launcher.py:427
 msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
 msgstr ""
-"Verze prohlížeče Tor, kterou máte nainstalovanou, je ranější, než by měla "
+"Verze Prohlížeče Tor, kterou máte nainstalovanou, je ranější, než by měla "
 "být, což může značit útok!"
 
 #: launcher.py:446
@@ -217,7 +217,7 @@ msgstr ""
 
 #: settings.py:46
 msgid "Tor Browser Launcher Settings"
-msgstr "Nastavení Spouštěče prohlížeče Tor"
+msgstr "Nastavení Spouštěče Prohlížeče Tor"
 
 #: settings.py:50
 msgid "Download over system Tor"
