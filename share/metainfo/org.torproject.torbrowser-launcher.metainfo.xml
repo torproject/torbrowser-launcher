@@ -8,30 +8,40 @@
  <project_license>MIT</project_license>
  <name>Tor Browser Launcher</name>
  <name xml:lang="ar">مشغّل متصفح تور</name>
+ <name xml:lang="cs">Spouštěč Prohlížeče Tor</name>
  <developer_name>Tor Project</developer_name>
  <developer id="org.torproject">
   <name>Tor Project</name>
  </developer>
  <summary>A program to help you download, keep updated, and run Tor Browser</summary>
  <summary xml:lang="ar">برنامج لمساعدتك في تنزيل متصفح تور وتحديثه وتشغيله</summary>
+ <summary xml:lang="cs">Program, který vám pomůže stáhnout, udržet aktualizovaný a spustit Prohlížeč Tor</summary>
  <description>
   <p>Tor Browser Launcher is intended to make Tor Browser easier to maintain and use for GNU/Linux users. It downloads the same Tor Browser from torproject.org that everyone else uses, and it doesn't alter it in any way. But it does make it much more usable, and it makes the task of keeping it up-to-date more secure.</p>
   <p xml:lang="ar">يهدف مشغّل متصفّح تور إلى تسهيل صيانة واستخدام متصفّح تور لمستخدمي جنو/لينكس. يقوم بتحميل نفس متصفّح تور من torproject.org الذي يستخدمه الجميع، ولا يغيّره بأي شكل. لكنه يجعله أكثر قابلية للاستخدام ويجعل مهمة إبقائه محدثًا أكثر أمانًا.</p>
+  <p xml:lang="cs">Spouštěč Prohlížeče Tor má uživatelům GNU/Linuxu usnadnit správu a používání Prohlížeče Tor. Stahuje stejný Prohlížeč Tor z torproject.org, který používají všichni ostatní, a nijak ho nemění. Dělá jej však mnohem použitelnější a jeho udržování v aktuálním stavu bezpečnější.</p>
   <p>You install torbrowser-launcher from your distribution's package manager and it handles everything else, including:</p>
   <p xml:lang="ar">تثبّت torbrowser-launcher من مدير حزم توزيعتك وهو يتولّى الباقي، بما في ذلك:</p>
+  <p xml:lang="cs">Aplikaci torbrowser-launcher si nainstalujete ze správce balíčků vaší distribuce a ta se postará o vše ostatní, včetně:</p>
   <ul>
    <li>Downloading the most recent version of Tor Browser for you, in your language and for your architecture</li>
    <li xml:lang="ar">تنزيل أحدث إصدار من متصفّح تور لك، باللغة التي تختارها ولنسخة متوافقة مع بنية جهازك</li>
+   <li xml:lang="cs">Stažení nejnovější verze Prohlížeče Tor pro vás, ve vašem jazyce a pro vaši architekturu</li>
    <li>Automatically updating (while preserving your bookmarks and preferences)</li>
    <li xml:lang="ar">التحديث التلقائي (مع الحفاظ على علاماتك والإعدادات)</li>
+   <li xml:lang="cs">Automatickou aktualizaci (při zachování vašich záložek a nastavení)</li>
    <li>Verifying Tor Browser's GnuPG signature</li>
    <li xml:lang="ar">التحقق من توقيع GnuPG لمتصفّح تور</li>
+   <li xml:lang="cs">Ověření podpisu GnuPG Prohlížeče Tor</li>
    <li>Includes AppArmor profiles to make a Tor Browser compromise not as bad (in some distros)</li>
    <li xml:lang="ar">يتضمّن ملفات تعريف AppArmor لتقليل تأثير اختراق متصفّح تور (في بعض التوزيعات)</li>
+   <li xml:lang="cs">Zahrnuje profily AppArmor, aby kompromitace Prohlížeče Tor nebyla tak závažná (pro některé distribuce)</li>
    <li>Adding a Tor Browser application launcher to your desktop environment's menu</li>
    <li xml:lang="ar">إضافة مشغّل لتطبيق متصفّح تور إلى قائمة بيئة سطح المكتب</li>
+   <li xml:lang="cs">Přidání spouštěče Prohlížeče Tor do nabídky vašeho prostředí pracovní plochy</li>
    <li>Lets you set Tor Browser as your default browser</li>
    <li xml:lang="ar">يمكنّك من جعل متصفّح تور المتصفّح المبدئي</li>
+   <li xml:lang="cs">Umožní nastavit Prohlížeč Tor jako výchozí prohlížeč</li>
   </ul>
  </description>
  <screenshots>
@@ -39,6 +49,7 @@
    <image>https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/-/raw/main/screenshot.png</image>
    <caption>Window to change Tor Browser Launcher settings</caption>
    <caption xml:lang="ar">نافذة لتغيير إعدادات مشغّل متصفّح تور</caption>
+   <caption xml:lang="cs">Okno pro změnu nastavení Spouštěče Prohlížeče Tor</caption>
   </screenshot>
  </screenshots>
  <url type="homepage">https://gitlab.torproject.org/tpo/applications/torbrowser-launcher</url>
