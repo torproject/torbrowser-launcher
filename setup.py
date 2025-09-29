@@ -36,7 +36,7 @@ from setuptools import setup
 SHARE = "share"
 
 # detect linux distribution
-distro = distro.linux_distribution()[0]
+distro = distro.name()
 
 
 def file_list(path):
