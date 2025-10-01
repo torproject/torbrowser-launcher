@@ -9,7 +9,6 @@
  <name>Tor Browser Launcher</name>
  <name xml:lang="ar">مشغّل متصفح تور</name>
  <name xml:lang="cs">Spouštěč Prohlížeče Tor</name>
- <developer_name>Tor Project</developer_name>
  <developer id="org.torproject">
   <name>Tor Project</name>
  </developer>
