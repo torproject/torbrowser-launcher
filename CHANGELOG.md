@@ -1,5 +1,12 @@
 # Tor Browser Launcher Changelog
 
+## 0.3.9
+
+* Fix PySide6 Debian build dependencies
+* Keep thread references to fix crash
+* Use non-deprecated distro.name
+* Update Czech translation
+
 ## 0.3.8
 
 * Update Tor Browser gpg key for new subkey (tor-browser-build#40964)
