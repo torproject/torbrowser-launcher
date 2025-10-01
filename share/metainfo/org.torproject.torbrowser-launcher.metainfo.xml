@@ -51,6 +51,7 @@
    <caption xml:lang="cs">Okno pro změnu nastavení Spouštěče Prohlížeče Tor</caption>
   </screenshot>
  </screenshots>
+ <url type="bugtracker">https://gitlab.torproject.org/tpo/applications/torbrowser-launcher/-/issues</url>
  <url type="homepage">https://gitlab.torproject.org/tpo/applications/torbrowser-launcher</url>
  <update_contact>boklm@torproject.org</update_contact>
  <content_rating type="oars-1.1"/>
