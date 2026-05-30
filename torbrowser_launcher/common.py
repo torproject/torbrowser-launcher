@@ -47,7 +47,7 @@ class Common(object):
         self.tbl_version = tbl_version
 
         # initialize the app
-        self.architecture = "x86_64" if "64" in platform.architecture()[0] else "i686"
+        self.architecture = platform.machine()
         self.default_mirror = "https://dist.torproject.org/"
         self.build_paths()
         self.torbrowser12_rename_old_tbb()
@@ -96,8 +96,10 @@ class Common(object):
             # tarball filename
             if self.architecture == "x86_64":
                 arch = "linux-x86_64"
-            else:
+            elif self.architecture == "i686":
                 arch = "linux-i686"
+            elif self.architecture == "aarch64":
+                arch = "linux-aarch64"
 
             tarball_filename = "tor-browser-" + arch + "-" + tbb_version + ".tar.xz"
 
