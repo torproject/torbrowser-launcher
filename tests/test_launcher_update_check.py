@@ -56,6 +56,10 @@ class UpdateBeforeLaunchTest(unittest.TestCase):
             "version_check_file": os.path.join(
                 self.temporary_directory.name, "release.xml"
             ),
+            "sig_file": os.path.join(self.temporary_directory.name, "browser.asc"),
+            "tarball_file": os.path.join(
+                self.temporary_directory.name, "browser.tar.xz"
+            ),
             "tbb": {
                 "changelog": self.changelog,
                 "start": "/tor-browser/start",
@@ -92,6 +96,12 @@ class UpdateBeforeLaunchTest(unittest.TestCase):
             thread.download_error.emit(
                 "error_try_default_mirror", "Metadata download failed."
             )
+
+    def select_required_update(self, launcher):
+        self.write_metadata("14.5.5")
+        launcher.gui_task_i = 1
+        with mock.patch.object(launcher, "update"):
+            launcher.run_task()
 
     def test_flagged_acceptable_installation_checks_fresh_metadata_before_run(self):
         launcher = self.make_launcher(update_before_launch=True)
@@ -200,6 +210,130 @@ class UpdateBeforeLaunchTest(unittest.TestCase):
         self.assertEqual(launcher.gui, "error")
         self.assertEqual(launcher.gui_tasks, [])
         self.common.build_paths.assert_not_called()
+
+    def test_flagged_required_update_download_failures_are_terminal(self):
+        for name in ("signature", "tarball"):
+            with self.subTest(name=name):
+                launcher = self.make_launcher(update_before_launch=True)
+                self.select_required_update(launcher)
+                thread = mock.Mock(
+                    progress_update=_Signal(),
+                    download_complete=_Signal(),
+                    download_error=_Signal(),
+                )
+
+                with (
+                    mock.patch(
+                        "torbrowser_launcher.launcher.DownloadThread",
+                        return_value=thread,
+                    ),
+                    mock.patch("torbrowser_launcher.launcher.time.sleep"),
+                    mock.patch.object(launcher, "update"),
+                ):
+                    launcher.download(name, "{}/download", "/tmp/download")
+                    thread.download_error.emit(
+                        "error_try_default_mirror", f"{name} download failed."
+                    )
+
+                self.assertEqual(launcher.gui, "error")
+                self.assertEqual(launcher.gui_tasks, [])
+
+    def test_flagged_required_update_verification_failure_is_terminal(self):
+        launcher = self.make_launcher(update_before_launch=True)
+        self.select_required_update(launcher)
+        thread = mock.Mock(error=_Signal(), success=_Signal())
+
+        with (
+            mock.patch(
+                "torbrowser_launcher.launcher.VerifyThread", return_value=thread
+            ),
+            mock.patch("torbrowser_launcher.launcher.shutil.copyfile"),
+            mock.patch("torbrowser_launcher.launcher.time.sleep"),
+            mock.patch.object(launcher, "update"),
+        ):
+            launcher.verify()
+            thread.error.emit("bad signature")
+
+        self.assertEqual(launcher.gui, "error")
+        self.assertEqual(launcher.gui_tasks, [])
+        self.assertNotIn("Click Start", launcher.gui_message)
+
+    def test_flagged_required_update_extraction_failure_is_terminal(self):
+        launcher = self.make_launcher(update_before_launch=True)
+        self.select_required_update(launcher)
+        thread = mock.Mock(error=_Signal(), success=_Signal())
+
+        with (
+            mock.patch(
+                "torbrowser_launcher.launcher.ExtractThread", return_value=thread
+            ),
+            mock.patch("torbrowser_launcher.launcher.time.sleep"),
+            mock.patch.object(launcher, "update"),
+        ):
+            launcher.extract()
+            thread.error.emit("bad archive")
+
+        self.assertEqual(launcher.gui, "error")
+        self.assertEqual(launcher.gui_tasks, [])
+
+    def test_unflagged_verification_failure_retains_start_over(self):
+        launcher = self.make_launcher(update_before_launch=False)
+        thread = mock.Mock(error=_Signal(), success=_Signal())
+
+        with (
+            mock.patch(
+                "torbrowser_launcher.launcher.VerifyThread", return_value=thread
+            ),
+            mock.patch("torbrowser_launcher.launcher.shutil.copyfile"),
+            mock.patch("torbrowser_launcher.launcher.time.sleep"),
+            mock.patch.object(launcher, "update"),
+        ):
+            launcher.verify()
+            thread.error.emit("bad signature")
+
+        self.assertEqual(launcher.gui, "task")
+        self.assertEqual(launcher.gui_tasks, ["start_over"])
+        self.assertIn("Click Start", launcher.gui_message)
+
+    def test_unflagged_extraction_failure_retains_start_over(self):
+        launcher = self.make_launcher(update_before_launch=False)
+        thread = mock.Mock(error=_Signal(), success=_Signal())
+
+        with (
+            mock.patch(
+                "torbrowser_launcher.launcher.ExtractThread", return_value=thread
+            ),
+            mock.patch("torbrowser_launcher.launcher.time.sleep"),
+            mock.patch.object(launcher, "update"),
+        ):
+            launcher.extract()
+            thread.error.emit("bad archive")
+
+        self.assertEqual(launcher.gui, "task")
+        self.assertEqual(launcher.gui_tasks, ["start_over"])
+
+    def test_flagged_first_install_download_failure_retains_mirror_relaunch(self):
+        self.common.settings["installed"] = False
+        launcher = self.make_launcher(update_before_launch=True)
+        thread = mock.Mock(
+            progress_update=_Signal(),
+            download_complete=_Signal(),
+            download_error=_Signal(),
+        )
+
+        with (
+            mock.patch(
+                "torbrowser_launcher.launcher.DownloadThread", return_value=thread
+            ),
+            mock.patch("torbrowser_launcher.launcher.time.sleep"),
+            mock.patch.object(launcher, "update"),
+        ):
+            launcher.download("signature", "{}/signature", "/tmp/signature")
+            thread.download_error.emit(
+                "error_try_default_mirror", "Signature download failed."
+            )
+
+        self.assertEqual(launcher.gui, "error_try_default_mirror")
 
     def test_malformed_fresh_metadata_stops_before_run_or_installation(self):
         launcher = self.make_launcher(update_before_launch=True)
