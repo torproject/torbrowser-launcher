@@ -81,13 +81,39 @@ class Launcher(QtWidgets.QMainWindow):
         self.set_state(None, "", [])
         self.launch_gui = True
 
+        installed = self.common.settings["installed"]
+        installed_version_error = False
+        installed_meets_minimum = False
+        if installed:
+            try:
+                installed_meets_minimum = self.check_min_version()
+            except (
+                OSError,
+                UnicodeError,
+                IndexError,
+                TypeError,
+                version.InvalidVersion,
+            ):
+                if not self.update_before_launch:
+                    raise
+                installed_version_error = True
+                self.set_state(
+                    "error",
+                    _("Error detecting the installed Tor Browser version."),
+                    [],
+                    False,
+                )
+
         # If Tor Browser is not installed, detect latest version, download, and install
-        if not self.common.settings["installed"] or not self.check_min_version():
+        if installed_version_error:
+            print(self.gui_message)
+
+        elif not installed or not installed_meets_minimum:
             # Different message if downloading for the first time, or because your installed version is too low
             download_message = ""
-            if not self.common.settings["installed"]:
+            if not installed:
                 download_message = _("Downloading Tor Browser for the first time.")
-            elif not self.check_min_version():
+            elif not installed_meets_minimum:
                 download_message = _(
                     "Your version of Tor Browser is out-of-date. "
                     "Downloading the newest version."
@@ -111,6 +137,15 @@ class Launcher(QtWidgets.QMainWindow):
 
             if self.common.settings["download_over_tor"]:
                 print(_("Downloading over Tor"))
+
+        elif self.update_before_launch:
+            check_message = _("Checking for a Tor Browser update.")
+            print(check_message)
+            self.set_state(
+                "task",
+                check_message,
+                ["download_version_check", "check_stable_version"],
+            )
 
         else:
             # Tor Browser is already installed, so run
@@ -253,16 +288,55 @@ class Launcher(QtWidgets.QMainWindow):
             )
 
         if task == "set_version":
-            version = self.get_stable_version()
-            if version:
-                self.common.build_paths(self.get_stable_version())
-                print(_("Latest version: {}").format(version))
+            stable_version = self.get_stable_version()
+            if stable_version:
+                self.common.build_paths(stable_version)
+                print(_("Latest version: {}").format(stable_version))
                 self.run_task()
             else:
                 self.set_state(
                     "error", _("Error detecting Tor Browser version."), [], False
                 )
                 self.update()
+
+        elif task == "check_stable_version":
+            try:
+                stable_version = version.parse(self.get_stable_version())
+                installed_version = self.get_installed_version()
+            except (
+                OSError,
+                UnicodeError,
+                ET.ParseError,
+                IndexError,
+                KeyError,
+                TypeError,
+                version.InvalidVersion,
+            ):
+                self.set_state(
+                    "error", _("Error detecting Tor Browser version."), [], False
+                )
+                self.update()
+                return
+
+            if stable_version <= installed_version:
+                if stable_version < installed_version:
+                    print(
+                        _(
+                            "The advertised stable release {} is older than "
+                            "the installed version {}."
+                        ).format(stable_version, installed_version)
+                    )
+                launch_message = _("Launching Tor Browser.")
+                print(launch_message)
+                self.set_state("task", launch_message, ["run"])
+            else:
+                self.set_state(
+                    "error",
+                    _("A newer stable Tor Browser release is available."),
+                    [],
+                    False,
+                )
+            self.update()
 
         elif task == "download_sig":
             print(
@@ -345,6 +419,8 @@ class Launcher(QtWidgets.QMainWindow):
 
         def download_error(gui, message):
             print(message)
+            if self.update_before_launch and name == "version check":
+                gui = "error"
             self.set_state(gui, message, [], False)
             self.update()
 
@@ -458,14 +534,18 @@ class Launcher(QtWidgets.QMainWindow):
         t.start()
         time.sleep(0.2)
 
-    def check_min_version(self):
+    def get_installed_version(self):
         installed_version = None
-        for line in open(self.common.paths["tbb"]["changelog"], "rb").readlines():
-            if line.startswith(b"Tor Browser "):
-                installed_version = line.split()[2].decode()
-                break
+        with open(self.common.paths["tbb"]["changelog"], "rb") as changelog:
+            for line in changelog:
+                if line.startswith(b"Tor Browser "):
+                    installed_version = line.split()[2].decode()
+                    break
 
-        if version.parse(self.min_version) <= version.parse(installed_version):
+        return version.parse(installed_version)
+
+    def check_min_version(self):
+        if version.parse(self.min_version) <= self.get_installed_version():
             return True
 
         return False
@@ -549,7 +629,14 @@ class DownloadThread(QtCore.QThread):
         self.path = path
 
     def run(self):
-        with open(self.path, "wb") as f:
+        try:
+            downloaded_file = open(self.path, "wb")
+        except OSError as error:
+            message = (_("Download Error:") + " {0}").format(error)
+            self.download_error.emit("error", message)
+            return
+
+        with downloaded_file as f:
             try:
                 # Start the request
                 r = requests.get(
@@ -611,6 +698,16 @@ class DownloadThread(QtCore.QThread):
                     ).format(self.url.decode())
                     self.download_error.emit("error", message)
 
+                return
+
+            except (
+                requests.exceptions.RequestException,
+                OSError,
+                TypeError,
+                ValueError,
+            ) as error:
+                message = (_("Download Error:") + " {0}").format(error)
+                self.download_error.emit("error", message)
                 return
 
         self.download_complete.emit()
