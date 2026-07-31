@@ -215,6 +215,13 @@ class Launcher(QtWidgets.QMainWindow):
         self.gui_task_i = 0
         self.gui_autostart = autostart
 
+    def set_failure_state(self, gui, message, tasks):
+        if self.checking_for_update:
+            gui = "error"
+            tasks = []
+        self.set_state(gui, message, tasks, False)
+        self.update()
+
     # Show and hide parts of the UI based on the current state
     def update(self):
         # Hide widgets
@@ -426,10 +433,7 @@ class Launcher(QtWidgets.QMainWindow):
 
         def download_error(gui, message):
             print(message)
-            if self.checking_for_update and name == "version check":
-                gui = "error"
-            self.set_state(gui, message, [], False)
-            self.update()
+            self.set_failure_state(gui, message, [])
 
         t = DownloadThread(self.common, mirror_url, path)
         t.progress_update.connect(progress_update)
@@ -494,15 +498,25 @@ class Launcher(QtWidgets.QMainWindow):
                 "recently added Tor Browser verification key.\n\n"
                 "A copy of the Tor Browser files you downloaded have been saved here:\n"
                 "{1}\n{2}\n\n"
-                "Click Start to refresh the keyring and try again. If the message persists report the above "
-                "error code here:\nhttps://gitlab.torproject.org/tpo/applications/torbrowser-launcher/-/issues/"
             )
             sigerror = sigerror.format(
                 message, backup_tarball_filename, backup_sig_filename
             )
 
-            self.set_state("task", sigerror, ["start_over"], False)
-            self.update()
+            if self.checking_for_update:
+                sigerror += (
+                    "Report the above error code here:\n"
+                    "https://gitlab.torproject.org/tpo/applications/"
+                    "torbrowser-launcher/-/issues/"
+                )
+            else:
+                sigerror += (
+                    "Click Start to refresh the keyring and try again. If the "
+                    "message persists report the above error code here:\n"
+                    "https://gitlab.torproject.org/tpo/applications/"
+                    "torbrowser-launcher/-/issues/"
+                )
+            self.set_failure_state("task", sigerror, ["start_over"])
 
         t = VerifyThread(self.common)
         t.error.connect(error)
@@ -522,17 +536,12 @@ class Launcher(QtWidgets.QMainWindow):
             self.run_task()
 
         def error(message):
-            self.set_state(
-                "task",
-                _(
-                    "Tor Browser Launcher doesn't understand the file format of {0}".format(
-                        self.common.paths["tarball_file"]
-                    )
-                ),
-                ["start_over"],
-                False,
+            error_message = _(
+                "Tor Browser Launcher doesn't understand the file format of {0}".format(
+                    self.common.paths["tarball_file"]
+                )
             )
-            self.update()
+            self.set_failure_state("task", error_message, ["start_over"])
 
         t = ExtractThread(self.common)
         t.error.connect(error)
