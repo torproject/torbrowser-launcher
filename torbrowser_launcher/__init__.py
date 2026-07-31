@@ -52,16 +52,23 @@ class Application(QtWidgets.QApplication):
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--settings",
         action="store_true",
         dest="settings",
         help="Open Tor Browser Launcher settings",
     )
+    mode.add_argument(
+        "--update-before-launch",
+        action="store_true",
+        help="Check for a Tor Browser update before launching",
+    )
     parser.add_argument("url", nargs="*", help="URL to load")
     args = parser.parse_args()
 
     settings = bool(args.settings)
+    update_before_launch = bool(args.update_before_launch)
     url_list = args.url
 
     # Set the TORBROWSER_LAUNCHER env variable to make it easier to
@@ -91,7 +98,7 @@ def main():
         gui = Settings(common, app)
     else:
         # Launcher mode
-        gui = Launcher(common, app, url_list)
+        gui = Launcher(common, app, url_list, update_before_launch)
 
     # Center the window
     screen_size = app.primaryScreen().size()

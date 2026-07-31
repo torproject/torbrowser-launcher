@@ -64,12 +64,13 @@ class Launcher(QtWidgets.QMainWindow):
     Launcher window.
     """
 
-    def __init__(self, common, app, url_list):
+    def __init__(self, common, app, url_list, update_before_launch=False):
         super(Launcher, self).__init__()
         self.common = common
         self.app = app
 
         self.url_list = url_list
+        self.update_before_launch = update_before_launch
         self.force_redownload = False
         self._threads = []
 
