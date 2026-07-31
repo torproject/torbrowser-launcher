@@ -21,6 +21,16 @@ class _Signal:
 
 
 class UpdateBeforeLaunchTest(unittest.TestCase):
+    install_tasks = [
+        "set_version",
+        "download_sig",
+        "download_tarball",
+        "verify",
+        "extract",
+        "run",
+    ]
+    first_install_tasks = ["download_version_check", *install_tasks]
+
     @classmethod
     def setUpClass(cls):
         cls.app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
@@ -65,6 +75,24 @@ class UpdateBeforeLaunchTest(unittest.TestCase):
                 )
             )
 
+    def fail_version_check(self, launcher):
+        thread = mock.Mock(
+            progress_update=_Signal(),
+            download_complete=_Signal(),
+            download_error=_Signal(),
+        )
+        with (
+            mock.patch(
+                "torbrowser_launcher.launcher.DownloadThread", return_value=thread
+            ),
+            mock.patch("torbrowser_launcher.launcher.time.sleep"),
+        ):
+            launcher.run_task()
+        with mock.patch.object(launcher, "update"):
+            thread.download_error.emit(
+                "error_try_default_mirror", "Metadata download failed."
+            )
+
     def test_flagged_acceptable_installation_checks_fresh_metadata_before_run(self):
         launcher = self.make_launcher(update_before_launch=True)
 
@@ -88,6 +116,33 @@ class UpdateBeforeLaunchTest(unittest.TestCase):
         self.assertEqual(launcher.gui_tasks, ["run"])
         self.assertFalse(os.path.exists(self.common.paths["version_check_file"]))
 
+    def test_missing_installation_selects_first_install_tasks_with_or_without_flag(self):
+        self.common.settings["installed"] = False
+
+        for update_before_launch in (False, True):
+            with self.subTest(update_before_launch=update_before_launch):
+                launcher = self.make_launcher(update_before_launch)
+
+                self.assertEqual(launcher.gui_tasks, self.first_install_tasks)
+
+    def test_below_minimum_installation_selects_repair_tasks_with_or_without_flag(self):
+        with open(self.changelog, "wb") as changelog:
+            changelog.write(b"Tor Browser 12.0\n")
+
+        for update_before_launch in (False, True):
+            with self.subTest(update_before_launch=update_before_launch):
+                launcher = self.make_launcher(update_before_launch)
+
+                self.assertEqual(launcher.gui_tasks, self.first_install_tasks)
+
+    def test_flagged_first_install_retains_version_check_recovery(self):
+        self.common.settings["installed"] = False
+        launcher = self.make_launcher(update_before_launch=True)
+
+        self.fail_version_check(launcher)
+
+        self.assertEqual(launcher.gui, "error_try_default_mirror")
+
     def test_equal_fresh_version_selects_run_without_installation(self):
         launcher = self.make_launcher(update_before_launch=True)
         self.write_metadata("14.5.4")
@@ -98,6 +153,19 @@ class UpdateBeforeLaunchTest(unittest.TestCase):
 
         self.assertEqual(launcher.gui_tasks, ["run"])
         self.common.build_paths.assert_not_called()
+
+    def test_older_acceptable_installation_selects_existing_installer_tasks(self):
+        launcher = self.make_launcher(update_before_launch=True)
+        self.write_metadata("14.5.5")
+        launcher.gui_task_i = 1
+
+        with mock.patch.object(launcher, "update"):
+            launcher.run_task()
+
+        self.assertEqual(
+            launcher.gui_tasks,
+            self.install_tasks,
+        )
 
     def test_newer_installed_version_logs_and_selects_run_without_downgrade(self):
         launcher = self.make_launcher(update_before_launch=True)
@@ -126,23 +194,8 @@ class UpdateBeforeLaunchTest(unittest.TestCase):
     def test_failed_fresh_download_does_not_fall_back_to_cached_metadata(self):
         launcher = self.make_launcher(update_before_launch=True)
         self.write_metadata("14.5.4")
-        thread = mock.Mock(
-            progress_update=_Signal(),
-            download_complete=_Signal(),
-            download_error=_Signal(),
-        )
 
-        with (
-            mock.patch(
-                "torbrowser_launcher.launcher.DownloadThread", return_value=thread
-            ),
-            mock.patch("torbrowser_launcher.launcher.time.sleep"),
-        ):
-            launcher.run_task()
-        with mock.patch.object(launcher, "update"):
-            thread.download_error.emit(
-                "error_try_default_mirror", "Metadata download failed."
-            )
+        self.fail_version_check(launcher)
 
         self.assertEqual(launcher.gui, "error")
         self.assertEqual(launcher.gui_tasks, [])
