@@ -64,6 +64,15 @@ class Launcher(QtWidgets.QMainWindow):
     Launcher window.
     """
 
+    INSTALL_TASKS = [
+        "set_version",
+        "download_sig",
+        "download_tarball",
+        "verify",
+        "extract",
+        "run",
+    ]
+
     def __init__(self, common, app, url_list, update_before_launch=False):
         super(Launcher, self).__init__()
         self.common = common
@@ -71,6 +80,7 @@ class Launcher(QtWidgets.QMainWindow):
 
         self.url_list = url_list
         self.update_before_launch = update_before_launch
+        self.checking_for_update = False
         self.force_redownload = False
         self._threads = []
 
@@ -124,21 +134,14 @@ class Launcher(QtWidgets.QMainWindow):
             self.set_state(
                 "task",
                 download_message,
-                [
-                    "download_version_check",
-                    "set_version",
-                    "download_sig",
-                    "download_tarball",
-                    "verify",
-                    "extract",
-                    "run",
-                ],
+                ["download_version_check", *self.INSTALL_TASKS],
             )
 
             if self.common.settings["download_over_tor"]:
                 print(_("Downloading over Tor"))
 
         elif self.update_before_launch:
+            self.checking_for_update = True
             check_message = _("Checking for a Tor Browser update.")
             print(check_message)
             self.set_state(
@@ -330,11 +333,15 @@ class Launcher(QtWidgets.QMainWindow):
                 print(launch_message)
                 self.set_state("task", launch_message, ["run"])
             else:
+                download_message = _(
+                    "Your version of Tor Browser is out-of-date. "
+                    "Downloading the newest version."
+                )
+                print(download_message)
                 self.set_state(
-                    "error",
-                    _("A newer stable Tor Browser release is available."),
-                    [],
-                    False,
+                    "task",
+                    download_message,
+                    self.INSTALL_TASKS.copy(),
                 )
             self.update()
 
@@ -419,7 +426,7 @@ class Launcher(QtWidgets.QMainWindow):
 
         def download_error(gui, message):
             print(message)
-            if self.update_before_launch and name == "version check":
+            if self.checking_for_update and name == "version check":
                 gui = "error"
             self.set_state(gui, message, [], False)
             self.update()
