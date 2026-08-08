@@ -57,7 +57,7 @@ msgstr "Nem lehetett importálni a kulcsot ujjlenyomattal: %s."
 
 #: common.py:259
 msgid "Not all keys were imported successfully!"
-msgstr ""
+msgstr "Nem sikerült minden kulcsot importálni"
 
 #: launcher.py:83
 #, fuzzy
@@ -69,7 +69,7 @@ msgstr "Tor böngésző letöltése és telepítése első alkalommal."
 msgid ""
 "Your version of Tor Browser is out-of-date. Downloading the newest version."
 msgstr ""
-"A Tor böngésző verziója elavult. Töltsük le és telepítsük a legfrissebb "
+"A Tor böngésző ezen változata elavult. Töltsük le és telepítsük a legfrissebb "
 "változatot."
 
 #: launcher.py:100
@@ -86,11 +86,11 @@ msgstr "Elindítás"
 
 #: launcher.py:174
 msgid "Yes"
-msgstr ""
+msgstr "Igen"
 
 #: launcher.py:178
 msgid "Exit"
-msgstr ""
+msgstr "Kilépés"
 
 #: launcher.py:192 settings.py:136
 msgid "Cancel"
@@ -107,7 +107,7 @@ msgstr "Legújabb változat: {}"
 
 #: launcher.py:241
 msgid "Error detecting Tor Browser version."
-msgstr "Hiba a Tor böngésző verzió felsimerésekor"
+msgstr "Hiba a Tor böngésző verziójának felsimerésekor"
 
 #: launcher.py:256 launcher.py:357
 msgid "Verifying Signature"
@@ -123,11 +123,11 @@ msgstr "Fut"
 
 #: launcher.py:268
 msgid "Starting download over again"
-msgstr "Újra letöltés indítása"
+msgstr "A letöltés újrakezdése elöről"
 
 #: launcher.py:279 launcher.py:295
 msgid "(over Tor)"
-msgstr ""
+msgstr "(Tor-on)"
 
 #: launcher.py:293
 msgid "Downloaded"
@@ -147,7 +147,7 @@ msgid ""
 "The version of Tor Browser you have installed is earlier than it should be, "
 "which could be a sign of an attack!"
 msgstr ""
-"A Tor böngésződ verziója egy korábbi verzió mint amilyennek lennie kellene, "
+"A Tor böngésződ verziója egy korábbi verzió, mint amilyennek lennie kellene, "
 "ami lehet egy támadás jele!"
 
 #: launcher.py:446
@@ -169,7 +169,7 @@ msgstr "Valóban szeretnéd visszaváltani alapértelmezettre?"
 
 #: launcher.py:527
 msgid "Would you like to try the English version of Tor Browser instead?"
-msgstr "Ehelyett megpróbálod a Tor böngésző angol változatát ?"
+msgstr "Szeretnéd megpróbálni a Tor böngésző angol változatát?"
 
 #: launcher.py:548
 #, python-brace-format
@@ -179,10 +179,14 @@ msgid ""
 "\n"
 "You may be under attack."
 msgstr ""
+"Érvénytelen SSL-tanúsítvány ehhez:\n"
+"{0}\n"
+"\n"
+"Lehet, hogy támadás alatt állsz."
 
 #: launcher.py:550
 msgid "Try the download again using Tor?"
-msgstr "Megpróbálod újra a Tor letöltését?"
+msgstr "Próbálja újra a letöltést a Tor használatával?"
 
 #: launcher.py:559
 #, python-brace-format
@@ -194,6 +198,12 @@ msgid ""
 "Trying to download over Tor. Are you sure Tor is configured correctly and "
 "running?"
 msgstr ""
+"Hiba az alábbi letöltés indításakor:\n"
+"\n"
+"{0}\n"
+"\n"
+"Toron keresztül próbálok letölteni. Biztos benne, hogy a Tor megfelelően "
+"van beállítva és fut?"
 
 #: launcher.py:563
 #, python-brace-format
@@ -216,11 +226,11 @@ msgstr "Tör böngésző indító beállítások"
 
 #: settings.py:50
 msgid "Download over system Tor"
-msgstr "Letöltés rendszer Tor-on keresztül"
+msgstr "Letöltés a Tor rendszeren keresztül"
 
 #: settings.py:57
 msgid "Force downloading English version of Tor Browser"
-msgstr "Kényszerítse a Tor angol változatának letöltését"
+msgstr "Az angol Tor változat letöltésének kényszerítése"
 
 #: settings.py:66
 msgid "Tor server"
@@ -236,11 +246,11 @@ msgstr "Állapot: Nincs telepítve"
 
 #: settings.py:87
 msgid "Install Tor Browser"
-msgstr "Tor-böngésző telepítése"
+msgstr "Tor-böngésző feltelepítése"
 
 #: settings.py:92
 msgid "Reinstall Tor Browser"
-msgstr "Tor böngésző úratelepítése"
+msgstr "Tor böngésző újratelepítése"
 
 #: settings.py:115
 msgid "Mirror"
