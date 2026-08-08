@@ -155,7 +155,7 @@ class Common(object):
                     "start": tbb_local
                     + "/tbb/"
                     + self.architecture
-                    + "/tor-browser/start-tor-browser.desktop",
+                    + "/tor-browser/Browser/start-tor-browser",
                 },
             }
 

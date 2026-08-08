@@ -483,7 +483,8 @@ class Launcher(QtWidgets.QMainWindow):
 
         # Run Tor Browser
         subprocess.call(
-            [self.common.paths["tbb"]["start"]], cwd=self.common.paths["tbb"]["dir_tbb"]
+            [self.common.paths["tbb"]["start"], "--detach"] + self.url_list,
+            cwd=self.common.paths["tbb"]["dir_tbb"],
         )
         sys.exit(0)
 
