@@ -1,0 +1,254 @@
+# Georgian translation for Tor Broswer Launcher.
+# Copyright (C) 2026 Tor Broswer Launcher's authors
+# This file is distributed under the same license as the Tor Broswer Launcher package.
+# Ekaterine Papava <papava.e@gtu.ge>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Tor Browser Launcher\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-09 17:04+0100\n"
+"PO-Revision-Date: 2026-03-02 22:28+0100\n"
+"Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
+"Language-Team: Georgian\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+
+#: __init__.py:76 launcher.py:520
+msgid "Tor Browser Launcher"
+msgstr "Tor Browser-ის გამშვები"
+
+#: __init__.py:77
+msgid "By Micah Lee & Tor Project, licensed under MIT"
+msgstr "მიკა ლის და Tor Project-ის მიერ. ვრცელდება MIT ლიცენზიით"
+
+#: __init__.py:78
+#, python-brace-format
+msgid "version {0}"
+msgstr "ვერსია {0}"
+
+#: common.py:90
+#, python-brace-format
+msgid "Error creating {0}"
+msgstr "{0}-ის შექმნის შეცდომა"
+
+#: common.py:187
+#, python-brace-format
+msgid "Renamed {0} to {1}"
+msgstr "{0}-ს სახელი გადაერქვა {1}-ზე"
+
+#: common.py:201
+#, python-brace-format
+msgid "Cannot create directory {0}"
+msgstr "ვერ შევქმენი საქაღალდე {0}"
+
+#: common.py:204
+#, python-brace-format
+msgid "{0} is not writable"
+msgstr "{0} ჩაწერადი არაა"
+
+#: common.py:211
+msgid "Creating GnuPG homedir"
+msgstr "GnuPG-ის საწყისი საქაღალდის შექმნა"
+
+#: common.py:302
+#, python-format
+msgid "Could not import key with fingerprint: %s."
+msgstr "ანაბეჭდების მქონე გასაღების შემოტანა შეუძლებელია: %s."
+
+#: common.py:309
+msgid "Not all keys were imported successfully!"
+msgstr "ყველა გასაღები წარმატებით შემოტანილი არ იქნა!"
+
+#: launcher.py:87
+msgid "Downloading Tor Browser for the first time."
+msgstr "Tor Browser-ის გადმოწერა პირველად."
+
+#: launcher.py:90
+msgid ""
+"Your version of Tor Browser is out-of-date. Downloading the newest version."
+msgstr ""
+"Tor Browser-ის თქვენი ვერსია მოძველებულია. მიმდინარეობს ახალი ვერსიის "
+"გადმოწერა."
+
+#: launcher.py:111
+msgid "Downloading over Tor"
+msgstr "გადმოწერა Tor-ით"
+
+#: launcher.py:122
+msgid "Tor Browser"
+msgstr "Tor Browser"
+
+#: launcher.py:141
+msgid "Start"
+msgstr "გაშვება"
+
+#: launcher.py:191
+msgid "Yes"
+msgstr "დიახ"
+
+#: launcher.py:195
+msgid "Exit"
+msgstr "გასვლა"
+
+#: launcher.py:209 settings.py:136
+msgid "Cancel"
+msgstr "გაუქმება"
+
+#: launcher.py:246 launcher.py:267 launcher.py:276 launcher.py:315
+#: launcher.py:318
+msgid "Downloading"
+msgstr "მიმდინარეობს გადმოწერა"
+
+#: launcher.py:257
+msgid "Latest version: {}"
+msgstr "უკანასკნელი ვერსია: {}"
+
+#: launcher.py:261
+msgid "Error detecting Tor Browser version."
+msgstr "Tor Browser-ის ვერსიის დადგენის შეცდომა."
+
+#: launcher.py:291 launcher.py:389
+msgid "Verifying Signature"
+msgstr "ხელმოწერის გადამოწმება"
+
+#: launcher.py:295
+msgid "Extracting"
+msgstr "გაშლა"
+
+#: launcher.py:299
+msgid "Running"
+msgstr "გაშვებულია"
+
+#: launcher.py:303
+msgid "Starting download over again"
+msgstr "გადმოწერა თავიდან იწყება"
+
+#: launcher.py:315 launcher.py:334
+msgid "(over Tor)"
+msgstr "(Tor-ით)"
+
+#: launcher.py:330
+msgid "Downloaded"
+msgstr "გადმოწერილია"
+
+#: launcher.py:431
+msgid "Installing"
+msgstr "დაყენება"
+
+#: launcher.py:440
+#, python-brace-format
+msgid "Tor Browser Launcher doesn't understand the file format of {0}"
+msgstr "Tor Browser-ის გამშვებს {0}-ის ფაილის ფორმატი არ ესმის"
+
+#: launcher.py:471
+msgid ""
+"The version of Tor Browser you have installed is earlier than it should be, "
+"which could be a sign of an attack!"
+msgstr ""
+"Tor Browser-ის ვერსია, რომელიც დაყენებული გაქვთ, უფრო ძველია, ვიდრე ის უნდა "
+"იყოს. ეს, შეიძლება, შეტევის ნიშანს წარმოადგენდეს!"
+
+#: launcher.py:488
+msgid "Downloading Tor Browser over again."
+msgstr "Tor Browser-ის კიდევ ერთხელ გადმოწერა."
+
+#: launcher.py:561 launcher.py:569
+msgid "Download Error:"
+msgstr "გადმოწერის შეცდომა:"
+
+#: launcher.py:563
+msgid "You are currently using a non-default mirror"
+msgstr "ამჟამად იყენებთ არანაგულისხმევ სარკეს"
+
+#: launcher.py:565
+msgid "Would you like to switch back to the default?"
+msgstr "გნებავთ ისევ ნაგულისხმევზე გადართვა?"
+
+#: launcher.py:585
+#, python-brace-format
+msgid ""
+"Invalid SSL certificate for:\n"
+"{0}\n"
+"\n"
+"You may be under attack."
+msgstr ""
+"არასწორი SSL სერტიფიკატი საიტისთვის:\n"
+"{0}\n"
+"\n"
+"შეიძლება, გიტევენ."
+
+#: launcher.py:588
+msgid "Try the download again using Tor?"
+msgstr "ვცადო გადმოწერა კიდევ ერთხელ Tor-ის გამოყენებით?"
+
+#: launcher.py:598
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Trying to download over Tor. Are you sure Tor is configured correctly and "
+"running?"
+msgstr ""
+"გადმოწერის დაწყების შეცდომა:\n"
+"\n"
+"{0}\n"
+"\n"
+"ვცდილობ, Tor-ით გადმოვწერო. დარწმუნებული ბრძანდებით, რომ Tor სწორადაა "
+"მორგებული და გაშვებულია?"
+
+#: launcher.py:604
+#, python-brace-format
+msgid ""
+"Error starting download:\n"
+"\n"
+"{0}\n"
+"\n"
+"Are you connected to the internet?"
+msgstr ""
+"გადმოწერის დაწყების შეცდომა:\n"
+"\n"
+"{0}\n"
+"\n"
+"ინტერნეტი გაქვთ?"
+
+#: settings.py:48
+msgid "Tor Browser Launcher Settings"
+msgstr "Tor Browser-ის გამშვების მორგება"
+
+#: settings.py:52
+msgid "Download over system Tor"
+msgstr "სისტემური Tor-ით გადმოწერა"
+
+#: settings.py:59
+msgid "Tor server"
+msgstr "Tor სერვერი"
+
+#: settings.py:74
+msgid "Status: Installed"
+msgstr "სტატუსი: დაყენებულია"
+
+#: settings.py:76
+msgid "Status: Not Installed"
+msgstr "სტატუსი: დაყენებული არაა"
+
+#: settings.py:79
+msgid "Install Tor Browser"
+msgstr "Tor Browser-ის დაყენება"
+
+#: settings.py:86
+msgid "Reinstall Tor Browser"
+msgstr "Tor Browser-ის თავიდან დაყენება"
+
+#: settings.py:111
+msgid "Mirror"
+msgstr "სარკე"
+
+#: settings.py:129
+msgid "Save && Exit"
+msgstr "შენახვა && გასვლა"
