@@ -58,6 +58,12 @@ def main():
         dest="settings",
         help="Open Tor Browser Launcher settings",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=False,
+        help="Launch browser in debug mode (foreground, log to terminal)",
+    )
     parser.add_argument("url", nargs="*", help="URL to load")
     args = parser.parse_args()
 
@@ -91,7 +97,7 @@ def main():
         gui = Settings(common, app)
     else:
         # Launcher mode
-        gui = Launcher(common, app, url_list)
+        gui = Launcher(common, app, url_list, debug=args.debug)
 
     # Center the window
     screen_size = app.primaryScreen().size()
