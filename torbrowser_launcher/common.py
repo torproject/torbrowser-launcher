@@ -96,8 +96,6 @@ class Common(object):
             # tarball filename
             if self.architecture == "x86_64":
                 arch = "linux-x86_64"
-            elif self.architecture == "i686":
-                arch = "linux-i686"
             elif self.architecture == "aarch64":
                 arch = "linux-aarch64"
 
