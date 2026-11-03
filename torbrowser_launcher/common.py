@@ -98,6 +98,8 @@ class Common(object):
                 arch = "linux-x86_64"
             elif self.architecture == "aarch64":
                 arch = "linux-aarch64"
+            else:
+                raise ValueError("Unsupported architecture!", self.architecture)
 
             tarball_filename = "tor-browser-" + arch + "-" + tbb_version + ".tar.xz"
 
