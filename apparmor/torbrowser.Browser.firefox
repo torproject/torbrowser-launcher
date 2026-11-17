@@ -207,5 +207,15 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
       bus=session
       path=/org/torproject/firefox{,/**},
 
+  # Settings portal
+  dbus send bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.portal.Settings
+      member=ReadAll,
+  dbus receive bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.portal.Settings
+      member=SettingChanged,
+
   #include <local/torbrowser.Browser.firefox>
 }
