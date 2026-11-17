@@ -217,5 +217,22 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
       interface=org.freedesktop.portal.Settings
       member=SettingChanged,
 
+  # File chooser portal
+  dbus send bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.DBus.Properties
+      member=GetAll,
+  dbus send bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.host.portal.Registry
+      member=Register,
+  dbus send bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.portal.FileChooser,
+  dbus receive bus=session
+      path=/org/freedesktop/portal/desktop/request/**
+      interface=org.freedesktop.portal.Request
+      member=Response,
+
   #include <local/torbrowser.Browser.firefox>
 }
