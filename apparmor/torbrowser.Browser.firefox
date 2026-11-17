@@ -193,5 +193,19 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   /etc/glvnd/egl_vendor.d/{*,.json} r,
   /usr/share/glvnd/egl_vendor.d/{,*.json} r,
 
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/DBus
+      interface=org.freedesktop.DBus
+      member={ReleaseName,RequestName},
+
+  # Opening URLs with --allow-remote
+  dbus (bind)
+      bus=session
+      name=org.torproject.firefox.*,
+  dbus (send,receive)
+      bus=session
+      path=/org/torproject/firefox{,/**},
+
   #include <local/torbrowser.Browser.firefox>
 }
