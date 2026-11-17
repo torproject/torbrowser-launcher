@@ -26,7 +26,6 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   # Audio support
   /{,usr/}bin/pulseaudio Pixr,
 
-  #dbus,
   network netlink raw,
   network tcp,
 
