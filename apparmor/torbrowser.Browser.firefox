@@ -26,7 +26,6 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   # Audio support
   /{,usr/}bin/pulseaudio Pixr,
 
-  #dbus,
   network netlink raw,
   network tcp,
 
@@ -192,6 +191,53 @@ profile torbrowser_firefox @{torbrowser_firefox_executable} {
   # to include them
   /etc/glvnd/egl_vendor.d/{*,.json} r,
   /usr/share/glvnd/egl_vendor.d/{,*.json} r,
+
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/DBus
+      interface=org.freedesktop.DBus
+      member={ReleaseName,RequestName},
+
+  # Opening URLs with --allow-remote
+  dbus (bind)
+      bus=session
+      name=org.torproject.firefox.*,
+  dbus (send,receive)
+      bus=session
+      path=/org/torproject/firefox{,/**},
+
+  # Settings portal
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.portal.Settings
+      member=ReadAll,
+  dbus (receive)
+      bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.portal.Settings
+      member=SettingChanged,
+
+  # File chooser portal
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.DBus.Properties
+      member=GetAll,
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.host.portal.Registry
+      member=Register,
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/portal/desktop
+      interface=org.freedesktop.portal.FileChooser,
+  dbus (receive)
+      bus=session
+      path=/org/freedesktop/portal/desktop/request/**
+      interface=org.freedesktop.portal.Request
+      member=Response,
 
   #include <local/torbrowser.Browser.firefox>
 }
